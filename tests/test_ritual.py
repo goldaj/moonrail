@@ -363,6 +363,8 @@ class RitualProductTests(unittest.TestCase):
 
     def test_gacha_is_animated_random_and_run_end_has_no_manual_card_choice(self):
         self.assertIn("function showRitualGachaLab()", self.source)
+        self.assertIn("function confirmQaProgressReset()", self.source)
+        self.assertIn("function resetQaProgressToStart()", self.source)
         self.assertIn("function rollRitualGacha", self.source)
         self.assertIn("function openRunEndGacha", self.source)
         self.assertIn("function showRitualGachaAnimation", self.source)
@@ -373,6 +375,12 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("gachaRewardRevealMarkup", self.source)
         self.assertIn("data-action=\"ritual-open-run-gacha\"", self.source)
         self.assertIn("Chaque fin de run ouvre un vrai tirage aléatoire", self.source)
+        self.assertIn("data-action='ritual-qa-reset'", self.source)
+        self.assertIn("data-action=\"ritual-confirm-qa-reset\"", self.source)
+        self.assertIn("profile = normalizeProfile(structuredClone(DEFAULT_PROFILE))", self.source)
+        self.assertIn("localStorage.removeItem(PROFILE_KEY)", self.source)
+        self.assertIn("localStorage.removeItem(RUN_KEY)", self.source)
+        self.assertIn(".gacha-lab-actions .qa-reset-button", self.css)
         self.assertIn("GACHA_TIERS", self.source)
         self.assertIn("return fresh;", self.source)
         self.assertIn("Le gacha ne crée plus de doublons", self.source)

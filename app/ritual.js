@@ -3818,7 +3818,30 @@
       const selected = run?.murmur?.id === murmur.id || (!run && profile.nextRunMurmur === murmur.id);
       return `<button class="${selected ? 'selected' : ''}" data-ritual-lab-murmur="${esc(murmur.id)}"><b>${esc(murmur.icon)} ${esc(murmur.title)}</b><span>${run ? selected ? 'Actif sur la run en cours' : 'Forcer sur la run en cours' : selected ? 'Préparé pour la prochaine run' : 'Préparer la prochaine run'}</span></button>`;
     }).join('');
-    openRitualModal(`<span class='kicker'>CENTRE DE TEST GACHA</span><h2>Tirages animés et gains réels</h2><p>Le bouton de test utilise la même animation que la fin de run. Les scénarios QA ignorent les conditions de progression, modifient vraiment le profil et injectent les cartes dans la run active.</p><section class='gacha-lab-section'><header><b>Tirage réel par palier</b><small>Aléatoire, avec pitié et verrous de progression normaux</small></header><div class='banner-selector ritual-gacha-tier-grid'>${tierButtons}</div></section><section class='gacha-lab-section'><header><b>Scénarios QA · cartes</b><small>Force n’importe quelle carte non-signature, même déjà possédée</small></header><div class='ritual-catalogue lab-cards'>${cardsToTest.map(card => `<button data-ritual-lab-unlock='card:${card.id}'>${ritualCardDisplayMarkup(card)}<small>${profile.unlockedCards.includes(card.id) ? 'déjà possédée · injecter/tester' : 'débloquer + ajouter au deck courant si une run existe'}</small></button>`).join('')}</div></section><section class='gacha-lab-section'><header><b>Spell Cards personnelles</b><small>Force les six signatures de base, même sans avoir terminé leur progression</small></header><div class='ritual-catalogue lab-cards'>${spellButtons}</div></section><section class='gacha-lab-section'><header><b>Last Words très rares</b><small>Force les six secondes Spell Cards et leur état d’éveil</small></header><div class='ritual-catalogue lab-cards'>${awakeningButtons}</div></section><section class='gacha-lab-section'><header><b>Scénarios QA · progression secrète</b><small>Force archives, fils contradictoires et constellations pour tester toute la chaîne de secrets</small></header><div class='ritual-catalogue lab-cards'>${progressButtons}</div></section><section class='gacha-lab-section'><header><b>Scénarios QA · murmures de run</b><small>Force l’objectif mystérieux actuel ou prépare celui de la prochaine tentative</small></header><div class='gacha-lab-chip-grid murmur-lab-grid'>${murmurButtons}</div></section><section class='gacha-lab-section'><header><b>Conductrices uniques</b><small>QA : tous les portraits et unlocks sont testables</small></header><div class='planned-roster-grid gacha-guardian-grid'>${guardianButtons}</div></section><section class='gacha-lab-section recap-lab-section'><header><b>Récapitulatif de fin de run</b><small>Prévisualise la vraie insertion dans la collection sans modifier le profil</small></header><button class='secondary-button large' data-action='ritual-lab-run-recap'>Prévisualiser le récapitulatif complet</button></section><div class='modal-actions'><button class='primary-button' data-action='ritual-modal-close'>Fermer</button></div>`, 'gacha-lab-dashboard');
+    openRitualModal(`<span class='kicker'>CENTRE DE TEST GACHA</span><h2>Tirages animés et gains réels</h2><p>Le bouton de test utilise la même animation que la fin de run. Les scénarios QA ignorent les conditions de progression, modifient vraiment le profil et injectent les cartes dans la run active.</p><section class='gacha-lab-section'><header><b>Tirage réel par palier</b><small>Aléatoire, avec pitié et verrous de progression normaux</small></header><div class='banner-selector ritual-gacha-tier-grid'>${tierButtons}</div></section><section class='gacha-lab-section'><header><b>Scénarios QA · cartes</b><small>Force n’importe quelle carte non-signature, même déjà possédée</small></header><div class='ritual-catalogue lab-cards'>${cardsToTest.map(card => `<button data-ritual-lab-unlock='card:${card.id}'>${ritualCardDisplayMarkup(card)}<small>${profile.unlockedCards.includes(card.id) ? 'déjà possédée · injecter/tester' : 'débloquer + ajouter au deck courant si une run existe'}</small></button>`).join('')}</div></section><section class='gacha-lab-section'><header><b>Spell Cards personnelles</b><small>Force les six signatures de base, même sans avoir terminé leur progression</small></header><div class='ritual-catalogue lab-cards'>${spellButtons}</div></section><section class='gacha-lab-section'><header><b>Last Words très rares</b><small>Force les six secondes Spell Cards et leur état d’éveil</small></header><div class='ritual-catalogue lab-cards'>${awakeningButtons}</div></section><section class='gacha-lab-section'><header><b>Scénarios QA · progression secrète</b><small>Force archives, fils contradictoires et constellations pour tester toute la chaîne de secrets</small></header><div class='ritual-catalogue lab-cards'>${progressButtons}</div></section><section class='gacha-lab-section'><header><b>Scénarios QA · murmures de run</b><small>Force l’objectif mystérieux actuel ou prépare celui de la prochaine tentative</small></header><div class='gacha-lab-chip-grid murmur-lab-grid'>${murmurButtons}</div></section><section class='gacha-lab-section'><header><b>Conductrices uniques</b><small>QA : tous les portraits et unlocks sont testables</small></header><div class='planned-roster-grid gacha-guardian-grid'>${guardianButtons}</div></section><section class='gacha-lab-section recap-lab-section'><header><b>Récapitulatif de fin de run</b><small>Prévisualise la vraie insertion dans la collection sans modifier le profil</small></header><button class='secondary-button large' data-action='ritual-lab-run-recap'>Prévisualiser le récapitulatif complet</button></section><div class='modal-actions gacha-lab-actions'><button class='secondary-button danger-button qa-reset-button' data-action='ritual-qa-reset'>Réinitialiser</button><button class='primary-button' data-action='ritual-modal-close'>Fermer</button></div>`, 'gacha-lab-dashboard');
+  }
+
+  function confirmQaProgressReset() {
+    openRitualModal(`<span class="kicker">OUTIL QA</span><h2>Réinitialiser toute la progression ?</h2><p>Cette action remet le profil au tout début : run en cours, vérités, cartes découvertes, gacha, pity, conductrices débloquées, tutoriels vus et historiques de test seront effacés. Les deux conductrices de départ resteront disponibles comme dans une nouvelle installation.</p><div class="modal-actions qa-reset-confirm-actions"><button class="secondary-button" data-action="test-gacha">Annuler</button><button class="secondary-button danger-button" data-action="ritual-confirm-qa-reset">Oui, reprendre à zéro</button></div>`, 'qa-reset-modal');
+  }
+
+  function resetQaProgressToStart() {
+    closeCardZoom();
+    closeCodexPortraitZoom();
+    clearFeedback();
+    pendingGuardian = null;
+    pendingCardZoomAction = null;
+    ritualPointerDrag?.ghost?.remove();
+    ritualPointerDrag = null;
+    suppressNextClick = false;
+    run = null;
+    profile = normalizeProfile(structuredClone(DEFAULT_PROFILE));
+    localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem(RUN_KEY);
+    persist();
+    closeRitualModal();
+    showRitualScreen('menu');
+    ritualToast('Progression réinitialisée : nouveau départ prêt.');
   }
 
   async function openRitualLabRoll(tier) {
@@ -4678,6 +4701,8 @@
         'ritual-confirm-abandon': () => finishRitualRun(false),
         'ritual-close-tutorial': () => { profile.tutorialSeen = true; persist(); closeRitualModal(); },
         'test-gacha': showRitualGachaLab,
+        'ritual-qa-reset': confirmQaProgressReset,
+        'ritual-confirm-qa-reset': resetQaProgressToStart,
         'collection': showCollectionHub,
         'codex': showLoreCodex,
         'settings': showRitualSettings,

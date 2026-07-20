@@ -373,6 +373,7 @@ Le bouton Test gacha du dashboard ouvre :
 - les six murmures de run ;
 - les six conductrices avec leur portrait.
 - une prévisualisation non destructive du récapitulatif complet de fin de run et de son insertion dans la collection.
+- un bouton QA discret pour réinitialiser le profil au tout début après confirmation, afin de retester les mécaniques de début de jeu.
 
 Les scénarios QA ignorent volontairement les prérequis et appliquent réellement le gain au profil et au deck actif. Ils servent à vérifier le combat, pas seulement l’animation.
 
