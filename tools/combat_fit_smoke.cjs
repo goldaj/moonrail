@@ -80,6 +80,18 @@ async function main() {
         const rect = element.getBoundingClientRect();
         return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > 0 && rect.width > 1 && rect.height > 1;
       };
+      const rectOf = element => {
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+        return {
+          left:Math.round(rect.left),
+          right:Math.round(rect.right),
+          top:Math.round(rect.top),
+          bottom:Math.round(rect.bottom),
+          width:Math.round(rect.width),
+          height:Math.round(rect.height),
+        };
+      };
       const tableRect = document.querySelector('#screen-ritual-battle .ritual-table')?.getBoundingClientRect();
       const cards = [...document.querySelectorAll('#screen-ritual-battle .ritual-hand .ritual-card')].filter(visible).map(card => {
         const rect = card.getBoundingClientRect();
@@ -104,6 +116,30 @@ async function main() {
         })
         .map(element => `${element.tagName}.${String(element.className || '').slice(0, 48)}`)
         .slice(0, 12);
+      const lifeBars = [...document.querySelectorAll('#screen-ritual-battle .combat-life-bar')].filter(visible).map(bar => {
+        const points = bar.querySelector('header b');
+        const label = bar.querySelector('header span');
+        const track = bar.querySelector('.health-track');
+        return {
+          label:label?.textContent?.trim() || '',
+          points:points?.textContent?.trim() || '',
+          rect:rectOf(bar),
+          labelSize:label ? Number.parseFloat(getComputedStyle(label).fontSize) : 0,
+          pointsSize:points ? Number.parseFloat(getComputedStyle(points).fontSize) : 0,
+          track:rectOf(track),
+        };
+      });
+      const piles = rectOf(document.querySelector('#screen-ritual-battle .ritual-piles'));
+      const resources = rectOf(document.querySelector('#screen-ritual-battle .ritual-resource-orbs'));
+      const hintElement = document.querySelector('#screen-ritual-battle #ritual-hint');
+      const hintStyle = hintElement ? getComputedStyle(hintElement) : null;
+      const hint = hintElement ? {
+        rect:rectOf(hintElement),
+        fontSize:Number.parseFloat(hintStyle.fontSize),
+        visible:visible(hintElement),
+        text:hintElement.textContent.trim(),
+        overflow:hintElement.scrollHeight > hintElement.clientHeight + 2 || hintElement.scrollWidth > hintElement.clientWidth + 2,
+      } : null;
       return {
         table:tableRect ? {
           top:Math.round(tableRect.top),
@@ -112,6 +148,10 @@ async function main() {
           viewport:innerHeight,
         } : null,
         cards,
+        lifeBars,
+        piles,
+        resources,
+        hint,
         overflow,
       };
     });
@@ -123,6 +163,19 @@ async function main() {
       if (card.width < 122 || card.height < 170) failures.push(`${card.id}: carte trop compacte ${card.width}x${card.height}`);
       if (card.titleSize < 11.6 || card.copySize < 9.2 || card.copyHeight < 25) failures.push(`${card.id}: texte trop petit ${card.titleSize}/${card.copySize}/${card.copyHeight}`);
       if (card.overlap) failures.push(`${card.id}: texte chevauche les stats`);
+    }
+    if (metrics.lifeBars.length !== 2) failures.push(`jauges /10 absentes ou masquées (${metrics.lifeBars.length}/2)`);
+    for (const bar of metrics.lifeBars) {
+      if (!/\/10$/.test(bar.points)) failures.push(`${bar.label || 'jauge'}: compteur /10 illisible (${bar.points})`);
+      if (bar.pointsSize < 18 || bar.labelSize < 9) failures.push(`${bar.label || 'jauge'}: typographie jauge trop petite ${bar.pointsSize}/${bar.labelSize}`);
+      if (!bar.track || bar.track.width < 120 || bar.track.height < 14) failures.push(`${bar.label || 'jauge'}: barre de progression trop compacte`);
+    }
+    const rectsIntersect = (a, b) => a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    if (rectsIntersect(metrics.piles, metrics.resources)) failures.push('lueurs/cendres chevauchent les boutons de gauche');
+    if (!metrics.hint || !metrics.hint.visible) failures.push('aide basse absente');
+    else {
+      if (metrics.hint.fontSize < 10 || metrics.hint.rect.height < 22) failures.push(`aide basse trop petite ${metrics.hint.fontSize}/${metrics.hint.rect.height}`);
+      if (metrics.hint.overflow) failures.push('aide basse tronquée');
     }
     for (const item of metrics.overflow) failures.push(`débordement viewport: ${item}`);
     if (failures.length) {

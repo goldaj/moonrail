@@ -981,7 +981,7 @@
       const card = getCard(id);
       return card ? `<article class="guardian-deck-card">${ritualCardDisplayMarkup(card)}<b>×${count}</b></article>` : '';
     }).join('');
-    openRitualModal(`<span class="kicker">CONFIRMER LA CONDUCTRICE</span><h2>${esc(guardian.name)}</h2>
+    openRitualModal(`<div class="guardian-preview-title"><span class="kicker">CONFIRMER LA CONDUCTRICE</span><h2>${esc(guardian.name)}</h2></div>
       <div class="guardian-preview-layout"><aside>${guardianPortraitMarkup(guardianId)}<small>${esc(guardian.title)}</small><strong>${esc(guardian.perk)}</strong><p>${esc(guardian.voice)}</p></aside>
       <section><div class="guardian-preview-toolbar"><div class="guardian-deck-summary"><span><b>${deck.length}</b> cartes de départ</span>${secretSummaries}</div><div class="modal-actions sticky-actions"><button class="secondary-button" data-action="ritual-choose-guardian">Revenir</button><button class="primary-button large" data-action="ritual-confirm-guardian">Lancer la run <b>→</b></button></div></div><div class="ritual-deck-grid guardian-start-deck">${cardsMarkup}</div></section></div>`, 'guardian-preview-modal deck-modal');
   }
@@ -1011,7 +1011,7 @@
     });
     startBattle(false, false, true);
     queueCurrentDeckTutorials();
-    showPendingCardTypeTutorial();
+    if (!$('#modal-layer')?.classList.contains('open')) showPendingCardTypeTutorial();
   }
 
   function availableHunters() {
@@ -3102,8 +3102,8 @@
       return `<section class="battle-coach resolving" data-coach-state="resolving"><i>➤</i><div><b>Résolution en cours</b><span>${esc(hint)}</span></div><em>${esc(pileInfo)}</em></section>`;
     }
     if (!selected) {
-      const action = battle.stokedThisTurn ? 'Posez une carte ou allégez la main.' : `Posez une carte ou chauffez pour +${BALANCE.stokeGain} Lueurs.`;
-      return `<section class="battle-coach idle" data-coach-state="idle"><i>☾</i><div><b>Choisissez une carte</b><span>${esc(hint)}</span></div><em>${esc(handInfo)} · ${esc(action)}</em></section>`;
+      const action = battle.stokedThisTurn ? 'Posez une carte ou allégez la main.' : `Glissez vers un wagon ou chauffez pour +${BALANCE.stokeGain} Lueurs.`;
+      return `<section class="battle-coach idle" data-coach-state="idle"><i>☾</i><div><b>Choisissez une carte</b><span>${esc(action)}</span></div><em>${esc(handInfo)} · ${esc(pileInfo)}</em></section>`;
     }
     const resource = cardAffordable(selected, battle);
     const cost = resource.amount;
@@ -4656,11 +4656,13 @@
   }
 
   function showRitualTutorial() {
-    openRitualModal(`<span class="kicker">PREMIER DÉPART · 60 SECONDES</span><h2>Faites avancer le Moonrail avant d’être rattrapé</h2><div class="onboarding-objective"><div><small>VOTRE JAUGE</small><strong>MOONRAIL 0/10</strong><span>Une attaque sans obstacle fait avancer le train.</span></div><b>CONTRE</b><div><small>LA MENACE</small><strong>POURSUITE 0/10</strong><span>Une attaque ennemie sans défense rapproche le contrôle.</span></div></div><div class="ritual-tutorial"><div><b>1</b><strong>Main automatique</strong><span>Le jeu pioche pour vous. Au-delà de 4 cartes, un sacrifice définitif est demandé.</span></div><div><b>2</b><strong>Affectez un passager</strong><span>Les cartes ✦ coûtent de la Lueur ; les cartes ✹ utilisent les Cendres. Glissez-les ou cliquez.</span></div><div><b>3</b><strong>La mort persiste</strong><span>Une carte blessée garde sa Vie entre les combats. Une morte quitte la run et peut déclencher un renfort. Seules les signatures personnelles reviennent au combat suivant.</span></div><div><b>4</b><strong>Chauffez avec prudence</strong><span>La première carte donne +2 Lueurs et +1 Cendre. Les suivantes sont détruites pour la run et donnent seulement +1 Cendre.</span></div></div><div class="modal-actions"><button class="secondary-button" data-action="ritual-rulebook">Voir les règles complètes</button><button class="primary-button large" data-action="ritual-close-tutorial">Jouer le premier départ</button></div>`, 'tutorial-modal');
+    openRitualModal(`<h2>Faites avancer le Moonrail avant d’être rattrapé</h2><div class="onboarding-objective"><div><small>VOTRE JAUGE</small><strong>MOONRAIL 0/10</strong><span>Une attaque sans obstacle fait avancer le train.</span></div><b>CONTRE</b><div><small>LA MENACE</small><strong>POURSUITE 0/10</strong><span>Une attaque ennemie sans défense rapproche le contrôle.</span></div></div><div class="ritual-tutorial"><div><b>1</b><strong>Main automatique</strong><span>Le jeu pioche pour vous. Au-delà de 4 cartes, un sacrifice définitif est demandé.</span></div><div><b>2</b><strong>Affectez un passager</strong><span>Les cartes ✦ coûtent de la Lueur ; les cartes ✹ utilisent les Cendres. Glissez-les ou cliquez.</span></div><div><b>3</b><strong>La mort persiste</strong><span>Une carte blessée garde sa Vie entre les combats. Une morte quitte la run et peut déclencher un renfort. Seules les signatures personnelles reviennent au combat suivant.</span></div><div><b>4</b><strong>Chauffez avec prudence</strong><span>La première carte donne +2 Lueurs et +1 Cendre. Les suivantes sont détruites pour la run et donnent seulement +1 Cendre.</span></div></div><div class="modal-actions"><button class="secondary-button" data-action="ritual-rulebook-from-tutorial">Voir les règles complètes</button><button class="primary-button large" data-action="ritual-close-tutorial">Jouer le premier départ</button></div>`, 'tutorial-modal');
   }
 
-  function showRitualRulebook() {
-    openRitualModal(`<span class="kicker">MANUEL DE CONDUITE</span><h2>Les règles du Moonrail</h2><div class="rulebook-grid"><section><b>①</b><h3>La course</h3><p>Atteignez 10 Progression avant 10 Poursuite. Une unité sans opposant ajoute sa Puissance à la jauge correspondante.</p></section><section><b>②</b><h3>Lueur et Cendres</h3><p>Les coûts ✦ utilisent la Lueur du tour. Les coûts ✹ utilisent les Cendres produites en chauffant, sacrifiant ou perdant des cartes.</p></section><section><b>③</b><h3>Jouer ou remplacer</h3><p>Glissez une carte vers un wagon. Une carte ordinaire écrasée meurt pour la run ; une signature brisée reviendra seulement au prochain combat.</p></section><section><b>④</b><h3>Blessures persistantes</h3><p>La Vie restante est conservée entre les combats. Une carte morte quitte la run et le deck est remonté à 10. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p></section><section><b>⑤</b><h3>Main et chaudière</h3><p>La limite est de 4. La première chauffe donne +2 Lueurs et +1 Cendre sans perdre la carte ; les destructions suivantes donnent seulement +1 Cendre.</p></section><section><b>⑥</b><h3>Les manœuvres</h3><p>La rangée du haut annonce les ennemis à venir. Les règles de boss et les deux jauges restent visibles pendant leur activation.</p></section><section><b>⑦</b><h3>Choisir la ligne</h3><p>La carte montre les embranchements futurs, mais seules les étapes reliées au train sont cliquables. Vous choisissez à nouveau après chaque arrêt.</p></section><section><b>⑧</b><h3>Présages et gacha</h3><p>Tous les 3 Présages stellaires ajoutent 2 profondeurs virtuelles au prisme de fin de run. Une victoire ouvre aussi son gacha avant la fin personnelle.</p></section></div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir au plateau</button></div>`, 'rulebook-modal');
+  function showRitualRulebook(fromTutorial = false) {
+    const returnAction = fromTutorial ? 'ritual-return-opening-tutorial' : 'ritual-modal-close';
+    const returnLabel = fromTutorial ? 'Revenir au premier départ' : 'Revenir au plateau';
+    openRitualModal(`<span class="kicker">MANUEL DE CONDUITE</span><h2>Les règles du Moonrail</h2><div class="rulebook-grid"><section><b>①</b><h3>La course</h3><p>Atteignez 10 Progression avant 10 Poursuite. Une unité sans opposant ajoute sa Puissance à la jauge correspondante.</p></section><section><b>②</b><h3>Lueur et Cendres</h3><p>Les coûts ✦ utilisent la Lueur du tour. Les coûts ✹ utilisent les Cendres produites en chauffant, sacrifiant ou perdant des cartes.</p></section><section><b>③</b><h3>Jouer ou remplacer</h3><p>Glissez une carte vers un wagon. Une carte ordinaire écrasée meurt pour la run ; une signature brisée reviendra seulement au prochain combat.</p></section><section><b>④</b><h3>Blessures persistantes</h3><p>La Vie restante est conservée entre les combats. Une carte morte quitte la run et le deck est remonté à 10. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p></section><section><b>⑤</b><h3>Main et chaudière</h3><p>La limite est de 4. La première chauffe donne +2 Lueurs et +1 Cendre sans perdre la carte ; les destructions suivantes donnent seulement +1 Cendre.</p></section><section><b>⑥</b><h3>Les manœuvres</h3><p>La rangée du haut annonce les ennemis à venir. Les règles de boss et les deux jauges restent visibles pendant leur activation.</p></section><section><b>⑦</b><h3>Choisir la ligne</h3><p>La carte montre les embranchements futurs, mais seules les étapes reliées au train sont cliquables. Vous choisissez à nouveau après chaque arrêt.</p></section><section><b>⑧</b><h3>Présages et gacha</h3><p>Tous les 3 Présages stellaires ajoutent 2 profondeurs virtuelles au prisme de fin de run. Une victoire ouvre aussi son gacha avant la fin personnelle.</p></section></div><div class="modal-actions"><button class="primary-button" data-action="${returnAction}">${returnLabel}</button></div>`, 'rulebook-modal');
   }
 
   function guardianStoryProgress(guardianId) {
@@ -4790,7 +4792,9 @@
         'ritual-card-type-tutorial-close': closeRitualModal,
         'ritual-end-turn': resolveRitualTurn,
         'ritual-stoke': stokeSelectedCard,
-        'ritual-rulebook': showRitualRulebook,
+        'ritual-rulebook': () => showRitualRulebook(false),
+        'ritual-rulebook-from-tutorial': () => showRitualRulebook(true),
+        'ritual-return-opening-tutorial': showRitualTutorial,
         'ritual-run-murmur-detail': showRunMurmurDetail,
         'ritual-skip-reward': finishPendingReward,
         'ritual-boss-reward': () => showCardReward('boss'),
@@ -4815,7 +4819,7 @@
         'codex': showLoreCodex,
         'sound': toggleSound,
         'fullscreen': toggleFullscreen,
-        'help': showRitualRulebook
+        'help': () => showRitualRulebook(false)
       })[action];
       if (handled) return handled();
     }
