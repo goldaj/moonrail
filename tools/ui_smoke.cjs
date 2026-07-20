@@ -201,6 +201,8 @@ async function auditViewport(browser, viewport) {
   await clickDom(page, '[data-action="ritual-modal-close"]');
   await clickDom(page, '[data-action="ritual-observatory"]');
   results.push(await inspectScreen(page, 'observatory_masked', viewport, errors));
+  await clickDom(page, '[data-action="ritual-night-album"]');
+  results.push(await inspectScreen(page, 'night_album', viewport, errors));
   await clickDom(page, '[data-action="ritual-modal-close"]');
   await clickDom(page, '[data-action="test-gacha"]');
   results.push(await inspectScreen(page, 'gacha_lab', viewport, errors));

@@ -1446,7 +1446,7 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--teal);outl
 /* Secrets profonds : constellations de vérités dans l'observatoire. */
 .collection-rarity-summary{margin:12px 0;padding:12px;border:1px solid rgba(255,208,120,.18);border-radius:14px;background:linear-gradient(145deg,rgba(43,30,18,.34),rgba(9,12,25,.28))}
 .collection-rarity-summary header{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:10px}
-.collection-rarity-summary header small{color:#ffd078;font-size:7px;letter-spacing:.16em;text-transform:uppercase}
+.collection-rarity-summary header small{color:#ffd078;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
 .collection-rarity-summary header h3{margin:2px 0 0;font:21px var(--display);color:#fff0c4}
 .collection-rarity-summary>div{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .collection-rarity-summary article{padding:8px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.035)}
@@ -4239,10 +4239,197 @@ button:focus-visible,
   line-height:1.45!important;
 }
 
+/* Passe produit 10.0 : l'album devient une destination dédiée, sans texte de spoil. */
+#modal-layer .observatory-modal .observatory-progress.quiet{
+  height:12px!important;
+  min-height:12px!important;
+  margin:14px 0 18px!important;
+  overflow:hidden!important;
+}
+
+#modal-layer .observatory-modal .observatory-progress.quiet span{
+  display:block!important;
+  height:100%!important;
+}
+
+#modal-layer .observatory-modal .observatory-progress.quiet b{
+  display:none!important;
+}
+
+#modal-layer .observatory-modal .night-album-entry{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:16px!important;
+  width:100%!important;
+  margin-top:14px!important;
+  padding:16px 18px!important;
+  border:1px solid rgba(126,219,213,.36)!important;
+  border-radius:16px!important;
+  background:
+    radial-gradient(circle at 92% 18%,rgba(126,219,213,.16),transparent 32%),
+    linear-gradient(145deg,rgba(18,30,43,.94),rgba(13,14,28,.96))!important;
+  color:#f7f0fa!important;
+  text-align:left!important;
+  cursor:pointer!important;
+}
+
+#modal-layer .observatory-modal .night-album-entry:hover,
+#modal-layer .observatory-modal .night-album-entry:focus-visible{
+  border-color:#9ff4ef!important;
+  box-shadow:0 16px 34px rgba(0,0,0,.32),0 0 28px rgba(126,219,213,.12)!important;
+  transform:translateY(-2px)!important;
+}
+
+#modal-layer .observatory-modal .night-album-entry small,
+#modal-layer .observatory-modal .night-album-entry strong{
+  display:block!important;
+}
+
+#modal-layer .observatory-modal .night-album-entry small{
+  color:#9ff0eb!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.14em!important;
+}
+
+#modal-layer .observatory-modal .night-album-entry strong{
+  margin-top:4px!important;
+  color:#fff1c9!important;
+  font:clamp(22px,2vw,30px) var(--display)!important;
+  line-height:1.05!important;
+}
+
+#modal-layer .observatory-modal .night-album-entry>b{
+  display:grid!important;
+  place-items:center!important;
+  width:56px!important;
+  height:56px!important;
+  border:1px solid rgba(255,224,163,.38)!important;
+  border-radius:15px!important;
+  background:rgba(255,224,163,.07)!important;
+  color:#ffe2aa!important;
+  font-size:26px!important;
+}
+
+#modal-layer .night-album-modal{
+  width:min(1220px,calc(100vw - 34px))!important;
+  max-width:calc(100vw - 34px)!important;
+}
+
+#modal-layer .night-album-modal>.night-album-hero{
+  display:grid!important;
+  grid-template-columns:74px minmax(0,1fr)!important;
+  gap:16px!important;
+  align-items:center!important;
+  margin:16px 0 18px!important;
+  padding:16px!important;
+  border:1px solid rgba(255,224,163,.2)!important;
+  border-radius:18px!important;
+  background:linear-gradient(145deg,rgba(255,224,163,.06),rgba(126,219,213,.04))!important;
+}
+
+#modal-layer .night-album-modal>.night-album-hero>i{
+  display:grid!important;
+  place-items:center!important;
+  width:70px!important;
+  height:70px!important;
+  border-radius:18px!important;
+  background:#111928!important;
+  color:#ffe2aa!important;
+  font-size:34px!important;
+  font-style:normal!important;
+}
+
+#modal-layer .night-album-modal>.night-album-hero strong,
+#modal-layer .night-album-modal>.night-album-hero span{
+  display:block!important;
+}
+
+#modal-layer .night-album-modal>.night-album-hero strong{
+  color:#fff1c9!important;
+  font:25px var(--display)!important;
+}
+
+#modal-layer .night-album-modal>.night-album-hero span{
+  margin-top:5px!important;
+  color:#e3d7e8!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+}
+
+#modal-layer .night-album-rarity{
+  margin:18px 0!important;
+  padding:16px!important;
+  border:1px solid rgba(255,255,255,.1)!important;
+  border-radius:18px!important;
+  background:rgba(8,10,20,.62)!important;
+}
+
+#modal-layer .night-album-rarity>header{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  margin-bottom:12px!important;
+}
+
+#modal-layer .night-album-rarity>header small{
+  color:#9ff0eb!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.14em!important;
+  text-transform:uppercase!important;
+}
+
+#modal-layer .night-album-rarity>header b{
+  color:#ffe2aa!important;
+  font:23px var(--display)!important;
+}
+
+#modal-layer .night-album-grid{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr))!important;
+  gap:12px!important;
+}
+
+#modal-layer .night-album-card{
+  display:grid!important;
+  grid-template-columns:92px minmax(0,1fr)!important;
+  gap:13px!important;
+  min-height:118px!important;
+  padding:13px!important;
+  border-radius:15px!important;
+}
+
+#modal-layer .night-album-card>i{
+  width:92px!important;
+  height:92px!important;
+  border-radius:14px!important;
+}
+
+#modal-layer .night-album-card strong{
+  font-size:18px!important;
+  line-height:1.15!important;
+}
+
+#modal-layer .night-album-card small,
+#modal-layer .night-album-card span{
+  display:block!important;
+  font-size:10.5px!important;
+  line-height:1.38!important;
+}
+
+#modal-layer .night-album-card span{
+  margin-top:6px!important;
+  color:#ddd3e2!important;
+}
+
 @media(max-width:760px){
   #modal-layer .gacha-lab-dashboard,
   #modal-layer .collection-modal,
-  #modal-layer .observatory-modal{
+  #modal-layer .observatory-modal,
+  #modal-layer .night-album-modal{
     width:calc(100vw - 18px)!important;
     max-width:calc(100vw - 18px)!important;
     max-height:calc(100vh - 18px)!important;
@@ -4263,6 +4450,7 @@ button:focus-visible,
     .observatory-grid,
     .milestone-shelf>div,
     .ritual-catalogue,
+    .night-album-grid,
     .lesson-shelf>div
   ){
     grid-template-columns:1fr!important;

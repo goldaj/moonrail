@@ -4339,12 +4339,34 @@
 
   function collectionRaritySummaryMarkup(collectible = cards.filter(card => card.rarity !== 'offering')) {
     const order = ['common','uncommon','rare','secret','unique'];
+    const seenCount = collectible.filter(card => profile.discoveredCards.includes(card.id)).length;
     const byRarity = order.map(rarity => {
       const total = collectible.filter(card => card.rarity === rarity).length;
       const seen = collectible.filter(card => card.rarity === rarity && profile.discoveredCards.includes(card.id)).length;
       return { rarity, total, seen, ratio:total ? seen / total : 0 };
     }).filter(item => item.total > 0);
-    return `<section class="collection-rarity-summary"><header><small>COMPLÉTION DES CARTES</small><h3>Où manque encore la nuit ?</h3></header><div>${byRarity.map(item => `<article data-rarity="${esc(item.rarity)}"><b>${esc(item.rarity)}</b><strong>${item.seen}/${item.total}</strong><i><em style="width:${Math.round(item.ratio * 100)}%"></em></i></article>`).join('')}</div></section>`;
+    return `<section class="collection-rarity-summary"><header><small>COMPLÉTION DES CARTES</small><h3>Où manque encore la nuit ?</h3></header><div>${byRarity.map(item => `<article data-rarity="${esc(item.rarity)}"><b>${esc(item.rarity)}</b><strong>${item.seen}/${item.total}</strong><i><em style="width:${Math.round(item.ratio * 100)}%"></em></i></article>`).join('')}</div><button class="night-album-entry" data-action="ritual-night-album"><span><small>ALBUM DE LA NUIT</small><strong>${seenCount}/${collectible.length} cartes aperçues</strong></span><b>◇</b></button></section>`;
+  }
+
+  function nightAlbumCatalogueMarkup(collectible = cards.filter(card => card.rarity !== 'offering')) {
+    const order = ['common','uncommon','rare','secret','unique'];
+    return order.map(rarity => {
+      const group = collectible.filter(card => card.rarity === rarity);
+      if (!group.length) return '';
+      const entries = group.map(card => {
+        const seen = profile.discoveredCards.includes(card.id);
+        return `<article class="catalogue-card night-album-card ${seen ? 'seen' : 'unknown'}" data-rarity="${esc(card.rarity)}"><i style="${seen ? cardArtStyle(card) : ''}"></i><div><small>${seen ? `${esc(card.tribe)} · ${esc(card.rarity)}` : 'Entrée scellée'}</small><strong>${seen ? esc(card.name) : 'Carte inconnue'}</strong><span>${seen ? esc(card.text) : 'Son image et son rôle apparaîtront après une rencontre.'}</span></div></article>`;
+      }).join('');
+      const seen = group.filter(card => profile.discoveredCards.includes(card.id)).length;
+      return `<section class="night-album-rarity" data-rarity="${esc(rarity)}"><header><small>${esc(rarity)}</small><b>${seen}/${group.length}</b></header><div class="night-album-grid">${entries}</div></section>`;
+    }).join('');
+  }
+
+  function showNightAlbum() {
+    if (!ritualReady) return;
+    const collectible = cards.filter(card => card.rarity !== 'offering');
+    const seenCount = collectible.filter(card => profile.discoveredCards.includes(card.id)).length;
+    openRitualModal(`<span class="kicker">ALBUM DE LA NUIT</span><h2>${seenCount}/${collectible.length} cartes aperçues</h2><div class="night-album-hero"><i>◇</i><div><strong>Le registre des rencontres</strong><span>Chaque entrée garde la trace de ce que vous avez vraiment croisé. Les inconnues restent muettes jusqu’à leur première apparition.</span></div></div>${nightAlbumCatalogueMarkup(collectible)}<div class="modal-actions"><button class="secondary-button" data-action="ritual-observatory">Retour à l’observatoire</button><button class="primary-button" data-action="ritual-modal-close">Refermer</button></div>`, 'observatory-modal night-album-modal');
   }
 
   function observatoryShelf(title, explanation, className, gridClass, content) {
@@ -4383,8 +4405,6 @@
       return `<button class="observatory-object ${found ? 'found' : 'available'}" data-ritual-truth="${truth.id}"><i>${found ? '✦' : '◉'}</i><small>${found ? 'VÉRITÉ DÉCOUVERTE · RELIRE' : 'NOUVEL OBJET À EXAMINER'}</small><strong>${found ? esc(truth.title) : 'Examiner la trace'}</strong><span>${found ? esc(truth.hint) : 'Une action de votre dernière run a rendu cette trace lisible.'}</span></button>`;
     }).join('');
     const collectible = cards.filter(card => card.rarity !== 'offering');
-    const seenCount = collectible.filter(card => profile.discoveredCards.includes(card.id)).length;
-    const catalogue = collectible.map(card => { const seen = profile.discoveredCards.includes(card.id); return `<article class="catalogue-card ${seen ? 'seen' : 'unknown'}"><i style="${seen ? cardArtStyle(card) : ''}"></i><div><strong>${seen ? esc(card.name) : 'Créature inconnue'}</strong><small>${seen ? `${esc(card.tribe)} · ${esc(card.rarity)}` : 'Rencontrez-la pendant une nuit.'}</small></div></article>`; }).join('');
     const milestones = MILESTONES.map(item => { const done = profile.milestones.includes(item.id); return `<article class="milestone ${done ? 'done' : ''}"><i>${done ? '✓' : '○'}</i><div><strong>${esc(item.name)}</strong><small>${esc(item.text)}</small></div><span>${done ? `Débloqué · ${esc(getCard(item.reward)?.name || 'récompense')}` : 'À accomplir'}</span></article>`; }).join('');
     const lessons = SALVAGE_LESSONS.filter(lesson => profile.lessons.includes(lesson.id));
     const guidance = observatoryGuidanceMarkup();
@@ -4403,8 +4423,8 @@
       observatoryShelf('Jugements secrets du Tribunal','Jugements rendus ou prêts à l’être. Les autres restent entièrement cachés.','secret-verdict-shelf','secret-verdict-grid',secretVerdictMarkup()),
       observatoryShelf('Constellations de secrets','Constellations complètes ou archivées uniquement.','constellation-shelf','constellation-grid',constellationMarkup())
     ].join('') : '';
-    const progress = hasFirstTruth ? `<div class="observatory-progress"><span style="--truth-progress:${profile.truths.length / truthTotal() * 100}%"></span><b>${profile.truths.length} vérités · ${profile.constellations.length} constellations · ${profile.secretThreads.length} fils · ${profile.routeSecrets.length} dossiers · ${profile.relationshipMemories.length} souvenirs · ${profile.secretVerdicts.length} verdicts · ${profile.resolvedMurmurs.length} murmures · ${completedDialoguePairs().length} dialogues · ${seenCount}/${collectible.length} créatures vues</b></div>` : '';
-    openRitualModal(`<span class="kicker">ENTRE LES TENTATIVES</span><h2>L’observatoire du dernier wagon</h2><p>Rien n’est affiché avant d’avoir réellement été découvert. Les catégories apparaissent une à une, sans catalogue de cadenas ni spoiler.</p>${progress}${hasFirstTruth ? raritySummary + guidance : ''}${truthSection}${unlockedShelves}<section class="milestone-shelf"><h3>Défis de maîtrise</h3><div>${milestones}</div></section><section class="catalogue-shelf"><h3>Album de la nuit</h3><div class="ritual-catalogue">${catalogue}</div></section><section class="lesson-shelf"><h3>Plans sauvés des anciennes runs</h3>${lessons.length ? `<div>${lessons.map(lesson => `<article><i>⚙</i><div><strong>${esc(lesson.name)}</strong><small>${esc(lesson.text)}</small></div></article>`).join('')}</div>` : '<p>Le premier convoi rattrapé laissera un plan de reconstruction.</p>'}</section><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Refermer</button></div>`, 'observatory-modal');
+    const progress = hasFirstTruth ? `<div class="observatory-progress quiet" aria-label="Progression de l’observatoire"><span style="--truth-progress:${profile.truths.length / truthTotal() * 100}%"></span></div>` : '';
+    openRitualModal(`<span class="kicker">ENTRE LES TENTATIVES</span><h2>L’observatoire du dernier wagon</h2>${progress}${raritySummary}${hasFirstTruth ? guidance : ''}${truthSection}${unlockedShelves}<section class="milestone-shelf"><h3>Défis de maîtrise</h3><div>${milestones}</div></section><section class="lesson-shelf"><h3>Plans sauvés des anciennes runs</h3>${lessons.length ? `<div>${lessons.map(lesson => `<article><i>⚙</i><div><strong>${esc(lesson.name)}</strong><small>${esc(lesson.text)}</small></div></article>`).join('')}</div>` : '<p>Le premier convoi rattrapé laissera un plan de reconstruction.</p>'}</section><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Refermer</button></div>`, 'observatory-modal');
   }
 
   function placeholderPanel(title, subtitle, detail) {
@@ -4598,6 +4618,7 @@
         'home': () => showRitualScreen('menu'),
         'ritual-new': beginRitual,
         'ritual-observatory': showObservatory,
+        'ritual-night-album': showNightAlbum,
         'ritual-choose-guardian': showGuardianChoice,
         'ritual-confirm-guardian': () => pendingGuardian && startRitual(pendingGuardian),
         'ritual-modal-close': closeRitualModal,

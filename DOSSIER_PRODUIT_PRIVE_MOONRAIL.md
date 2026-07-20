@@ -152,6 +152,8 @@ Pitié rare : 10 tirages en Crépusculaire, 8 en Lunaire, 6 en Stellaire, 5 en S
 
 Après le reveal du prisme, toute run ouvre un récapitulatif durable avant la fin personnelle ou le retour au menu. Il compare un instantané du profil pris au départ avec l’état final : nouvelles cartes, conductrices, Spell Cards, Last Words, vérités, fins, archives, souvenirs, fils, dossiers, verdicts, constellations, murmures et défis. Les nouvelles cartes glissent une à une dans l’Album de la nuit avec le compteur de collection avant/après. Les cartes seulement obtenues temporairement pendant la run ne sont jamais présentées comme permanentes.
 
+L’Album de la nuit est la destination principale de complétion des cartes. Dans l’Observatoire, il apparaît comme un bouton dédié sous « Où manque encore la nuit ? » et ouvre une interface large de type registre/Pokédex ; l’Observatoire ne garde plus la grille complète en bas de page.
+
 Les Présages stellaires ne sont pas des cartes. Ils sont visibles dans le pied de carte de run, améliorent le score du prisme par groupes de trois et servent de récompense aux haltes d’enquête et aux murmures.
 
 ## 7. Histoire : lecture de surface et profondeur
@@ -378,6 +380,9 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 
 - Une catégorie secrète n’apparaît dans l’Observatoire qu’après sa première découverte ou lorsqu’un objet est immédiatement réclamable.
 - Aucun catalogue de cadenas ne doit révéler à l’avance les murmures, dialogues, souvenirs, dossiers, fils, verdicts, constellations ou vérités.
+- L’Observatoire ne doit pas expliquer sa logique de masquage au joueur par des phrases méta ; il montre seulement les traces disponibles, les pistes vécues et une barre silencieuse de progression.
+- La barre de progression de l’Observatoire ne liste aucune catégorie ni quantité. Elle avance visuellement sans nommer les systèmes cachés.
+- Le dashboard principal ne montre pas Collection & équipe. La collection de cartes passe par l’Album de la nuit dans l’Observatoire, et le bouton texte du dashboard ouvre directement le Manuel.
 - Toute modification, perte, fusion, réglage, déblocage ou remplacement de carte montre la carte concernée et explique l’effet durable.
 - En combat, le nom d’une carte dispose de trois lignes avant troncature et son texte court reste lisible sans zoom ; les cartes de la main conservent au moins 122 px de large, 170 px de haut, un effet à 9,2 px minimum et 25 px de hauteur visible. L’aperçu détaillé conserve toujours le nom et l’effet complets.
 - Les statistiques, sigils et micro-libellés utiles des cartes restent à 9 px minimum, y compris dans le centre de test, le Grimoire, les cartes posées et le récapitulatif de run.
