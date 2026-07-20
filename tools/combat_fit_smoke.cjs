@@ -32,6 +32,7 @@ const viewports = [
   { label:'1366x768', width:1366, height:768 },
   { label:'1024x768', width:1024, height:768 },
   { label:'1600x900', width:1600, height:900 },
+  { label:'1920x1080', width:1920, height:1080 },
 ];
 
 async function clickDom(page, selector) {
@@ -55,6 +56,30 @@ async function dismissOnboarding(page) {
     await clickDom(page, selector);
     await page.waitForTimeout(140);
   }
+}
+
+async function playScoringTurn(page) {
+  await page.setViewportSize({ width:1366, height:768 });
+  const placement = await page.evaluate(() => {
+    const lumen = Number(document.querySelector('#ritual-lumen')?.textContent || 0);
+    const hand = [...document.querySelectorAll('#ritual-hand [data-ritual-hand]')];
+    const cardIndex = hand.findIndex(card => {
+      const cost = card.querySelector('.ritual-cost')?.textContent || '';
+      const amount = Number(cost.match(/\d+/)?.[0] || 0);
+      const power = Number(card.querySelector('.ritual-card-stats b')?.textContent || 0);
+      return cost.includes('✦') && amount <= lumen && power > 0;
+    });
+    const playerSlots = [...document.querySelectorAll('#ritual-player-board [data-ritual-player-slot]')];
+    const enemySlots = [...document.querySelectorAll('#ritual-enemy-board .ritual-slot')];
+    const laneIndex = playerSlots.findIndex((slot, index) => slot.classList.contains('empty') && enemySlots[index]?.classList.contains('empty'));
+    return { cardIndex, laneIndex };
+  });
+  if (placement.cardIndex < 0 || placement.laneIndex < 0) throw new Error(`Tour de jauge impossible: ${JSON.stringify(placement)}`);
+  await clickDom(page, `[data-ritual-hand="${placement.cardIndex}"]`);
+  await clickDom(page, `[data-ritual-player-slot="${placement.laneIndex}"]`);
+  await clickDom(page, '#ritual-bell');
+  await page.waitForFunction(() => Number(document.querySelector('#ritual-turn')?.textContent || 0) > 1, null, { timeout:7000 });
+  await page.waitForTimeout(650);
 }
 
 async function measureCombat(page, viewport) {
@@ -112,6 +137,9 @@ async function measureCombat(page, viewport) {
       const points = bar.querySelector('header b');
       const labelElement = bar.querySelector('header span');
       const track = bar.querySelector('.health-track');
+      const fill = bar.querySelector('.health-fill');
+      const trackRect = track?.getBoundingClientRect();
+      const fillRect = fill?.getBoundingClientRect();
       return {
         label:labelElement?.textContent?.trim() || '',
         points:points?.textContent?.trim() || '',
@@ -120,6 +148,8 @@ async function measureCombat(page, viewport) {
         pointsSize:points ? Number.parseFloat(getComputedStyle(points).fontSize) : 0,
         labelOverflow:overflowOf(labelElement),
         track:rectOf(track),
+        fill:rectOf(fill),
+        fillRatio:trackRect?.width ? fillRect.width / trackRect.width : 0,
       };
     });
     const forecastCards = [...document.querySelectorAll('#screen-ritual-battle .forecast-row .ritual-card')].filter(visible).map(card => ({
@@ -190,9 +220,12 @@ function validateCombat(metrics) {
     if (bar.pointsSize < 18 || bar.labelSize < 9) fail(`${bar.label}: typographie trop petite ${bar.pointsSize}/${bar.labelSize}`);
     if (bar.labelOverflow) fail(`${bar.label}: libellé tronqué`);
     if (!bar.track || bar.track.width < 120 || bar.track.height < 12) fail(`${bar.label}: barre de progression trop compacte`);
+    const expectedRatio = Number.parseInt(bar.points, 10) / 10;
+    if (!bar.fill || Math.abs(bar.fillRatio - expectedRatio) > .025) fail(`${bar.label}: remplissage désynchronisé (${bar.fillRatio.toFixed(3)} au lieu de ${expectedRatio.toFixed(3)})`);
   }
-  const minCardWidth = metrics.viewport.width <= 1100 ? 116 : 122;
-  const minCardHeight = metrics.viewport.height <= 740 ? 150 : metrics.viewport.height < 860 ? 154 : 170;
+  const compactDesktop = metrics.viewport.width >= 1500 && metrics.viewport.height >= 850;
+  const minCardWidth = metrics.viewport.width <= 1100 ? 116 : compactDesktop ? 110 : 122;
+  const minCardHeight = metrics.viewport.height <= 740 ? 150 : metrics.viewport.height < 860 ? 154 : compactDesktop ? 154 : 170;
   for (const card of metrics.cards) {
     if (card.width < minCardWidth || card.height < minCardHeight) fail(`${card.id}: carte trop compacte ${card.width}x${card.height}`);
     if (card.titleSize < 11.6 || card.copySize < 9.2 || card.copyHeight < 25) fail(`${card.id}: texte trop petit ${card.titleSize}/${card.copySize}/${card.copyHeight}`);
@@ -217,6 +250,7 @@ function validateCombat(metrics) {
     if (ordered[index].rect.top < ordered[index - 1].rect.bottom - 2) fail('deux zones verticales du combat se chevauchent');
   }
   for (const item of metrics.overflow) fail(`débordement viewport: ${item}`);
+  if (compactDesktop && metrics.table.rect.width > 1260) fail(`densité desktop trop zoomée (${metrics.table.rect.width}px)`);
   return failures;
 }
 
@@ -243,6 +277,7 @@ async function main() {
     await page.locator('#screen-ritual-battle.active').waitFor({ state:'visible', timeout:15000 });
     await dismissOnboarding(page);
     await page.waitForTimeout(500);
+    await playScoringTurn(page);
     const reports = [];
     const failures = [];
     for (const viewport of viewports) {
@@ -253,7 +288,7 @@ async function main() {
     console.log(JSON.stringify(reports.map(report => ({
       viewport:report.label,
       table:report.table.rect,
-      bars:report.lifeBars.map(bar => ({ text:bar.points, rect:bar.rect, track:bar.track })),
+      bars:report.lifeBars.map(bar => ({ text:bar.points, rect:bar.rect, track:bar.track, fill:bar.fill, fillRatio:Number(bar.fillRatio.toFixed(3)) })),
       cards:report.cards.map(card => `${card.width}x${card.height}`),
       guide:report.guide.rect,
       feed:report.feed.rect,
