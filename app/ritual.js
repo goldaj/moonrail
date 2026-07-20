@@ -875,7 +875,7 @@
   function codexDailyPortraitMarkup(guardianId) {
     const guardian = GUARDIANS[guardianId];
     if (!guardian) return '';
-    return `<span class="codex-daily-portrait" data-codex-portrait="${esc(guardianId)}" style="${spriteSheetStyle('codex-daily-life-sheet-v1.png', 3, 2, guardian.portrait)}"></span>`;
+    return `<button class="codex-daily-portrait" data-ritual-codex-portrait="${esc(guardianId)}" aria-label="Voir l’artwork de ${esc(guardian.name)} en grand" style="${spriteSheetStyle('codex-daily-life-sheet-v1.png', 3, 2, guardian.portrait)}"><span>Voir l’artwork</span></button>`;
   }
 
   function beginRitual() {
@@ -4546,13 +4546,30 @@
     const arc = GUARDIAN_STORY_ARCS[guardianId];
     const progress = guardianStoryProgress(guardianId);
     if (!arc) return '';
-    const step = (label, text, revealed, hint) => `<article class="${revealed ? 'revealed' : 'locked'}"><small>${label}</small><p>${revealed ? esc(text) : esc(hint)}</p></article>`;
-    return `<div class="guardian-arc-progress">
-      ${step('DÉSIR VISIBLE', arc.want, true, '')}
-      ${step('FAUTE ANCIENNE', arc.wound, progress.wound, 'Complétez un dialogue contre une autre conductrice.')}
-      ${step('BASCULE', arc.turn, progress.turn, 'Atteignez une fin avec cette conductrice pour graver sa Spell Card.')}
-      ${step(progress.epilogue ? 'ÉPILOGUE ÉVEILLÉ' : 'FIN PERSONNELLE', arc.ending, progress.ending, 'La fin personnelle reste cachée tant que sa progression n’est pas terminée.')}
-    </div>`;
+    const awakeningName = getCard(GUARDIAN_SIGNATURES[guardianId]?.awakening)?.name || 'Last Word éveillé';
+    const epilogueText = `${GUARDIANS[guardianId]?.name || 'Cette conductrice'} porte maintenant son second nom : ${awakeningName}. Le Codex ne sait pas encore si c’est une délivrance ou une preuve supplémentaire.`;
+    const steps = [
+      ['DÉSIR', arc.want, true],
+      ['FAUTE', arc.wound, progress.wound],
+      ['BASCULE', arc.turn, progress.turn],
+      ['FIN PERSONNELLE', arc.ending, progress.ending],
+      ['ÉPILOGUE ÉVEILLÉ', epilogueText, progress.epilogue]
+    ].filter(([, text, revealed]) => text && revealed);
+    return `<div class="guardian-arc-progress">${steps.map(([label, text]) => `<article class="revealed"><small>${label}</small><p>${esc(text)}</p></article>`).join('')}</div>`;
+  }
+
+  function showCodexPortraitZoom(guardianId) {
+    const guardian = GUARDIANS[guardianId];
+    if (!guardian || document.querySelector('.portrait-zoom-layer')) return;
+    const layer = document.createElement('div');
+    layer.className = 'portrait-zoom-layer';
+    layer.innerHTML = `<button class="portrait-zoom-backdrop" data-action="ritual-portrait-zoom-close" aria-label="Fermer l’artwork"></button><section class="portrait-zoom-panel"><button class="portrait-zoom-close" data-action="ritual-portrait-zoom-close">×</button><div class="portrait-zoom-art" style="${spriteSheetStyle('codex-daily-life-sheet-v1.png', 3, 2, guardian.portrait)}"></div><aside><span class="kicker">ARTWORK DU CODEX</span><h2>${esc(guardian.name)}</h2><p>${esc(guardian.title)}</p><small>Scène quotidienne conservée dans le Codex des Cent Lunes.</small></aside></section>`;
+    document.body.appendChild(layer);
+    requestAnimationFrame(() => layer.classList.add('visible'));
+  }
+
+  function closeCodexPortraitZoom() {
+    document.querySelector('.portrait-zoom-layer')?.remove();
   }
 
   function showLoreCodex() {
@@ -4624,6 +4641,7 @@
       if (button.dataset.ritualSecretThread) return claimSecretThread(button.dataset.ritualSecretThread);
       if (button.dataset.ritualSecretVerdict) return claimSecretVerdict(button.dataset.ritualSecretVerdict);
       if (button.dataset.ritualAlbumCard) return showAlbumCardZoom(button.dataset.ritualAlbumCard);
+      if (button.dataset.ritualCodexPortrait) return showCodexPortraitZoom(button.dataset.ritualCodexPortrait);
       if (button.dataset.ritualLabRoll) return openRitualLabRoll(button.dataset.ritualLabRoll);
       if (button.dataset.ritualLabUnlock) return applyRitualLabUnlock(button.dataset.ritualLabUnlock);
       if (button.dataset.ritualLabMurmur) return forceRunMurmur(button.dataset.ritualLabMurmur);
@@ -4637,6 +4655,7 @@
         'ritual-confirm-guardian': () => pendingGuardian && startRitual(pendingGuardian),
         'ritual-modal-close': closeRitualModal,
         'ritual-card-zoom-close': closeCardZoom,
+        'ritual-portrait-zoom-close': closeCodexPortraitZoom,
         'ritual-card-zoom-confirm': confirmCardZoomAction,
         'ritual-card-type-tutorial-close': closeRitualModal,
         'ritual-end-turn': resolveRitualTurn,
@@ -4754,6 +4773,10 @@
   }
 
   function handleKey(event) {
+    if (document.querySelector('.portrait-zoom-layer') && event.key === 'Escape') {
+      event.preventDefault();
+      return closeCodexPortraitZoom();
+    }
     if (document.querySelector('.card-zoom-layer') && event.key === 'Escape') {
       event.preventDefault();
       return closeCardZoom();

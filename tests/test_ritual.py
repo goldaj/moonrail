@@ -534,9 +534,16 @@ class RitualProductTests(unittest.TestCase):
             self.assertIn(memory_id, {memory["id"] for memory in self.story["relationshipMemories"]})
         for narrative_feature in (
             "GUARDIAN_STORY_ARCS", "RELATIONSHIP_REPRISES", "dialogueVariantPriority",
-            "relationshipRepriseDialogue", "guardianArcMarkup",
+            "relationshipRepriseDialogue", "guardianArcMarkup", "showCodexPortraitZoom",
         ):
             self.assertIn(narrative_feature, self.source)
+        self.assertIn("['DÉSIR', arc.want, true]", self.source)
+        self.assertIn("['FAUTE', arc.wound, progress.wound]", self.source)
+        self.assertIn("].filter(([, text, revealed]) => text && revealed)", self.source)
+        self.assertIn("data-ritual-codex-portrait", self.source)
+        self.assertIn("portrait-zoom-layer", self.source + self.css)
+        self.assertNotIn("DÉSIR VISIBLE", self.source)
+        self.assertNotIn("FAUTE ANCIENNE", self.source)
         self.assertIn("secretThreads", self.story)
         self.assertGreaterEqual(len(self.story["secretThreads"]), 6)
         for thread in self.story["secretThreads"]:
@@ -758,6 +765,11 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("#modal-layer .ritual-settings-modal", self.css)
         self.assertIn("grid-template-columns:repeat(auto-fit,minmax(320px,1fr))!important", self.css)
         self.assertIn("codex-lead", self.source + self.css)
+        self.assertIn("Verrou final Codex 10.0", self.css)
+        self.assertIn("#modal-layer .codex-lore-modal .codex-character-entry>p{grid-column:1/-1!important", self.css)
+        self.assertIn("#modal-layer .codex-lore-modal .guardian-arc-progress{grid-column:1/-1!important", self.css)
+        self.assertIn("#modal-layer .codex-lore-modal .guardian-arc-progress article.locked{display:none!important}", self.css)
+        self.assertIn("#modal-layer .codex-lore-modal .codex-character-heading>mark{font-size:12px!important", self.css)
         self.assertIn("Repères de conduite", self.source)
         self.assertIn("Contrôles essentiels", self.source)
         self.assertIn("Ouvrir le manuel", self.source)
