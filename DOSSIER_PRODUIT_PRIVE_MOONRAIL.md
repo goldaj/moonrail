@@ -393,6 +393,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - À partir de 1600 px de large et 900 px de haut, le combat agrandit réellement les wagons, les cartes, les textes et les contrôles au lieu de conserver la densité du 1366×768 au sommet de l’écran.
 - Sur écran large, la sélection des conductrices présente six fiches horizontales en trois colonnes et deux rangées : portrait carré dédié à gauche, identité et règle de jeu lisibles à droite.
 - Les sigils sont superposés dans l’angle supérieur droit de l’illustration ; ils ne partagent jamais la zone du titre et ne peuvent donc pas masquer le nom d’une carte ou d’une Last Word.
+- La confirmation de conductrice et de deck de départ utilise une échelle compacte proche d’un zoom navigateur à 90 %, afin de mieux respirer à 100 % sans changer le zoom global du jeu.
 - Dans la confirmation d’une conductrice, chaque nom de carte dispose de trois lignes ; les indices des conductrices verrouillées restent lisibles tandis que leur portrait seul porte le traitement visuel de verrouillage.
 - Dans cette confirmation, l’effet court est limité proprement à deux lignes et ne peut jamais empiéter sur les statistiques ; le zoom conserve l’effet complet.
 - Les cartes annoncées du prochain départ sont des miniatures d’illustration sans faux micro-texte ; les cartes posées, la main et le Grimoire disposent chacun d’un gabarit dédié qui réserve physiquement la zone des statistiques.
