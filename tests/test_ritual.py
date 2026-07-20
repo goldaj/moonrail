@@ -29,6 +29,10 @@ class RitualProductTests(unittest.TestCase):
         for removed_handler in ("showRunJournal", "showDailySeed", "chooseSalvage"):
             self.assertNotIn(removed_handler, self.source)
 
+    def test_intro_goal_label_does_not_tease_hidden_objectives(self):
+        self.assertIn("<small>VOTRE BUT</small>", self.source)
+        self.assertNotIn("VOTRE BUT VISIBLE", self.source)
+
     def test_ritual_card_pool_is_large_ratioed_and_well_formed(self):
         counts = Counter(card["rarity"] for card in self.cards)
         self.assertGreaterEqual(len(self.cards), 304)

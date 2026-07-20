@@ -385,6 +385,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - La barre de progression de l’Observatoire ne liste aucune catégorie ni quantité. Elle avance visuellement sans nommer les systèmes cachés.
 - Le dashboard principal ne montre pas Collection & équipe. La collection de cartes passe par l’Album de la nuit dans l’Observatoire, et le bouton texte du dashboard ouvre directement le Manuel.
 - Le CTA principal du dashboard affiche uniquement « Entrer dans la Centième Nuit » : aucun sous-titre n’est nécessaire sous ce libellé.
+- Dans le prologue avant le choix de conductrice, l’objectif annoncé s’appelle « Votre but » et ne sous-entend pas qu’un autre but invisible existe.
 - Toute modification, perte, fusion, réglage, déblocage ou remplacement de carte montre la carte concernée et explique l’effet durable.
 - En combat, le nom d’une carte dispose de trois lignes avant troncature et son texte court reste lisible sans zoom ; les cartes de la main conservent au moins 122 px de large, 170 px de haut, un effet à 9,2 px minimum et 25 px de hauteur visible. L’aperçu détaillé conserve toujours le nom et l’effet complets.
 - Les statistiques, sigils et micro-libellés utiles des cartes restent à 9 px minimum, y compris dans le centre de test, le Grimoire, les cartes posées et le récapitulatif de run.

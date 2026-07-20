@@ -893,7 +893,7 @@
     const first = profile.attempts === 0;
     openRitualModal(`<span class="kicker">${first ? 'PROLOGUE' : 'UNE AUTRE NUIT'}</span><h2>${first ? 'Le matin n’est pas venu' : 'Le train se souvient de vous'}</h2>
       <p>${first ? esc(story.premise) : 'La voie a changé, les dieux aussi. Une carte porte encore la marque de votre dernière mort.'}</p>
-      <div class="story-vow"><small>VOTRE BUT VISIBLE</small><strong>${esc(story.surface_goal)}</strong></div>
+      <div class="story-vow"><small>VOTRE BUT</small><strong>${esc(story.surface_goal)}</strong></div>
       <div class="modal-actions"><button class="primary-button large" data-action="ritual-choose-guardian">Choisir qui conduit <b>→</b></button></div>`, 'story-modal');
   }
 
