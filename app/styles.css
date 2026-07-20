@@ -4921,9 +4921,8 @@ button:focus-visible,
   }
 }
 
-/* Passe UI lisible 6.16 : aide, codex et paramètres comme vrais écrans de joueur. */
-#modal-layer .rulebook-modal,
-#modal-layer .ritual-settings-modal{
+/* Passe UI lisible 6.16 : manuel et codex comme vrais écrans de joueur. */
+#modal-layer .rulebook-modal{
   width:min(1080px,calc(100vw - 44px))!important;
   max-width:calc(100vw - 44px)!important;
   max-height:calc(100vh - 42px)!important;
@@ -4933,22 +4932,17 @@ button:focus-visible,
 
 #modal-layer .rulebook-modal>.kicker,
 #modal-layer .rulebook-modal>h2,
-#modal-layer .rulebook-modal>.codex-lead,
-#modal-layer .ritual-settings-modal>.kicker,
-#modal-layer .ritual-settings-modal>h2,
-#modal-layer .ritual-settings-modal>p{
+#modal-layer .rulebook-modal>.codex-lead{
   text-align:center!important;
 }
 
-#modal-layer .rulebook-modal>h2,
-#modal-layer .ritual-settings-modal>h2{
+#modal-layer .rulebook-modal>h2{
   color:#fff1c9!important;
   font-size:clamp(38px,3.7vw,56px)!important;
   line-height:1!important;
 }
 
 #modal-layer .rulebook-modal>p,
-#modal-layer .ritual-settings-modal>p,
 #modal-layer .codex-lead{
   max-width:860px!important;
   color:#efe6f2!important;
@@ -4956,8 +4950,7 @@ button:focus-visible,
   line-height:1.5!important;
 }
 
-#modal-layer .rulebook-grid,
-#modal-layer .ritual-settings-grid{
+#modal-layer .rulebook-grid{
   display:grid!important;
   grid-template-columns:repeat(auto-fit,minmax(320px,1fr))!important;
   gap:14px!important;
@@ -4966,8 +4959,7 @@ button:focus-visible,
   padding:4px!important;
 }
 
-#modal-layer .rulebook-grid section,
-#modal-layer .ritual-settings-grid section{
+#modal-layer .rulebook-grid section{
   position:relative!important;
   min-height:132px!important;
   padding:18px 18px 18px 64px!important;
@@ -4977,8 +4969,7 @@ button:focus-visible,
   box-shadow:0 16px 38px rgba(0,0,0,.28),inset 0 0 24px rgba(255,255,255,.018)!important;
 }
 
-#modal-layer .rulebook-grid section>b,
-#modal-layer .ritual-settings-grid section>b{
+#modal-layer .rulebook-grid section>b{
   position:absolute!important;
   left:16px!important;
   top:17px!important;
@@ -4994,8 +4985,7 @@ button:focus-visible,
   line-height:1!important;
 }
 
-#modal-layer .rulebook-grid section small,
-#modal-layer .ritual-settings-grid section small{
+#modal-layer .rulebook-grid section small{
   display:block!important;
   color:#ffdca1!important;
   font-size:9.5px!important;
@@ -5004,16 +4994,14 @@ button:focus-visible,
   text-transform:uppercase!important;
 }
 
-#modal-layer .rulebook-grid h3,
-#modal-layer .ritual-settings-grid h3{
+#modal-layer .rulebook-grid h3{
   margin:0 0 8px!important;
   color:#fff2c8!important;
   font-size:clamp(20px,1.55vw,24px)!important;
   line-height:1.1!important;
 }
 
-#modal-layer .rulebook-grid p,
-#modal-layer .ritual-settings-grid p{
+#modal-layer .rulebook-grid p{
   margin:0!important;
   color:#e4d9e7!important;
   font-size:clamp(12.5px,.98vw,14px)!important;
@@ -5032,25 +5020,14 @@ button:focus-visible,
   margin-top:3px!important;
 }
 
-#modal-layer .ritual-settings-modal .modal-actions{
-  margin-top:18px!important;
-}
-
-#modal-layer .ritual-settings-modal .secondary-button,
-#modal-layer .ritual-settings-modal .primary-button{
-  min-width:190px!important;
-}
-
 @media(max-width:760px){
-  #modal-layer .rulebook-modal,
-  #modal-layer .ritual-settings-modal{
+  #modal-layer .rulebook-modal{
     width:calc(100vw - 18px)!important;
     max-width:calc(100vw - 18px)!important;
     padding:18px 14px!important;
   }
 
   #modal-layer .rulebook-grid,
-  #modal-layer .ritual-settings-grid,
   #modal-layer .codex-lore-grid{
     grid-template-columns:1fr!important;
   }
@@ -5101,20 +5078,9 @@ button:focus-visible,
   line-height:1.38!important;
 }
 
-#modal-layer .ritual-settings-grid{
-  grid-template-columns:repeat(auto-fit,minmax(245px,1fr))!important;
-  max-height:min(48vh,340px)!important;
-}
-
-#modal-layer .ritual-settings-grid section{
-  min-height:132px!important;
-  padding:16px 16px 16px 58px!important;
-}
-
 @media(max-width:760px){
   #modal-layer .rulebook-modal:not(.codex-lore-modal) .rulebook-grid,
-  #modal-layer .codex-lore-grid,
-  #modal-layer .ritual-settings-grid{
+  #modal-layer .codex-lore-grid{
     grid-template-columns:1fr!important;
     max-height:58vh!important;
   }
@@ -6429,5 +6395,60 @@ button:focus-visible,
   #modal-layer .codex-lore-modal .codex-lore-grid{grid-template-columns:1fr!important}
   #modal-layer .codex-lore-modal .codex-character-entry{grid-template-columns:128px minmax(0,1fr)!important;padding:14px!important}
   #modal-layer .codex-lore-modal .codex-daily-portrait{width:128px!important;height:128px!important}
+}
+
+/* Boucle principale 10.1 : le premier écran de run privilégie la carte, sans présélection ni encart parasite. */
+#screen-ritual-map .ritual-map-shell{width:min(1500px,calc(100vw - 28px))!important;height:min(900px,calc(100vh - 78px))!important;min-height:min(820px,calc(100vh - 78px))!important;padding:clamp(16px,1.7vw,26px)!important;gap:12px!important;overflow:hidden!important}
+#screen-ritual-map .ritual-run-header{display:grid!important;grid-template-columns:minmax(260px,1fr) minmax(430px,auto)!important;align-items:start!important;gap:16px!important;min-height:0!important}
+#screen-ritual-map .ritual-run-metrics{display:flex!important;align-items:stretch!important;justify-content:flex-end!important;gap:9px!important;min-width:0!important;flex-wrap:wrap!important}
+#screen-ritual-map .ritual-run-metrics .ritual-deck-pill,#screen-ritual-map .ritual-run-metrics .ritual-resources>span,#screen-ritual-map .ritual-run-metrics .hunter-clock{min-height:42px!important;margin:0!important}
+#screen-ritual-map .ritual-run-metrics .ritual-deck-pill{padding:8px 12px!important}
+#screen-ritual-map .ritual-run-metrics .ritual-resources{display:flex!important;align-items:stretch!important;gap:8px!important}
+#screen-ritual-map .ritual-run-metrics .ritual-resources>span{display:flex!important;align-items:center!important;gap:6px!important;padding:7px 10px!important;border:1px solid rgba(255,255,255,.13)!important;border-radius:10px!important;background:rgba(7,14,25,.7)!important;color:#d9d0de!important;font-size:10px!important;line-height:1.2!important;white-space:nowrap!important}
+#screen-ritual-map .ritual-run-metrics .ritual-resources b{color:#ffd078!important;font:18px var(--display)!important;line-height:1!important}
+#screen-ritual-map .ritual-run-metrics .hunter-clock{min-width:112px!important;padding:8px 11px!important}
+#screen-ritual-map .ritual-run-metrics .hunter-clock strong{font-size:30px!important}
+#screen-ritual-map .ritual-map-main{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto minmax(430px,1fr) auto!important;gap:12px!important;flex:1 1 auto!important;min-height:0!important}
+#screen-ritual-map .hunter-omen{grid-row:1!important;width:100%!important;grid-template-columns:76px minmax(0,1fr) minmax(180px,260px)!important;gap:14px!important;margin:0!important;padding:11px 14px!important}
+#screen-ritual-map .moonrail-route-board{grid-row:2!important;min-height:0!important;height:100%!important;display:flex!important;flex-direction:column!important;padding:14px 16px 16px!important}
+#screen-ritual-map .moonrail-route-board>header{flex:0 0 auto!important;margin-bottom:6px!important}
+#screen-ritual-map .ritual-route-map{flex:1 1 auto!important;min-height:430px!important;height:auto!important}
+#screen-ritual-map .route-board-help,#screen-ritual-map .ritual-path-choices{display:none!important}
+#screen-ritual-map .run-murmur{grid-row:3!important;width:100%!important;margin:0!important}
+#screen-ritual-map .run-murmur-card{appearance:none!important;width:100%!important;display:grid!important;grid-template-columns:42px minmax(0,1fr) minmax(150px,220px)!important;align-items:center!important;gap:12px!important;padding:9px 12px 12px!important;border:1px solid rgba(126,219,213,.22)!important;border-radius:14px!important;background:radial-gradient(circle at 8% 40%,rgba(126,219,213,.14),transparent 34%),linear-gradient(135deg,rgba(12,30,43,.8),rgba(22,13,35,.86))!important;color:inherit!important;font:inherit!important;text-align:left!important;cursor:pointer!important}
+#screen-ritual-map .run-murmur-card:hover,#screen-ritual-map .run-murmur-card:focus-visible{border-color:rgba(255,208,120,.5)!important;box-shadow:0 0 0 3px rgba(255,208,120,.1),0 14px 36px rgba(0,0,0,.35)!important}
+#screen-ritual-map .run-murmur-card small{color:#7edbd5!important;font-size:10px!important;letter-spacing:.16em!important}
+#screen-ritual-map .run-murmur-card strong{margin:2px 0 0!important;color:#fff7d7!important;font:18px var(--display)!important;line-height:1.08!important}
+#screen-ritual-map .run-murmur-card mark{justify-self:end!important;padding:7px 10px!important;border:1px solid rgba(255,255,255,.12)!important;border-radius:999px!important;background:rgba(255,255,255,.045)!important;color:#d9fff9!important;font-size:10px!important;line-height:1.15!important;text-align:center!important}
+#screen-ritual-map .run-murmur-progress{left:66px!important;right:244px!important;bottom:7px!important;height:4px!important}
+#screen-ritual-map .ritual-map-footer{display:flex!important;justify-content:flex-end!important;align-items:center!important;min-height:30px!important;padding-top:0!important}
+#modal-layer .route-choice-modal{max-width:920px!important}
+#modal-layer .route-choice-modal .route-detail-card{cursor:default!important;min-height:300px!important;margin:12px 0 16px!important;padding:22px!important}
+#modal-layer .route-choice-modal .route-detail-card:hover{transform:none!important}
+#modal-layer .route-choice-modal .route-detail-card .route-art{opacity:.24!important}
+#modal-layer .route-choice-actions{justify-content:flex-end!important}
+#modal-layer .run-murmur-detail-modal{max-width:820px!important}
+#modal-layer .run-murmur-detail{display:grid!important;grid-template-columns:72px 1fr!important;gap:14px!important;text-align:left!important}
+#modal-layer .run-murmur-detail>i{grid-row:1 / 5!important;display:grid!important;place-items:center!important;width:64px!important;height:64px!important;border:1px solid rgba(255,208,120,.32)!important;border-radius:18px!important;background:rgba(255,208,120,.07)!important;color:#ffd078!important;font-size:32px!important;font-style:normal!important}
+#modal-layer .run-murmur-detail section{padding:12px 14px!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:12px!important;background:rgba(255,255,255,.035)!important}
+#modal-layer .run-murmur-detail small{display:block!important;color:#7edbd5!important;font-size:10px!important;letter-spacing:.14em!important;text-transform:uppercase!important}
+#modal-layer .run-murmur-detail p,#modal-layer .run-murmur-detail q{display:block!important;margin:6px 0 0!important;color:#eee5f1!important;font-size:15px!important;line-height:1.48!important}
+#modal-layer .run-murmur-detail strong{display:block!important;margin:6px 0 8px!important;color:#ffe1a0!important;font:22px var(--display)!important}
+#modal-layer .run-murmur-progress.detail{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;display:block!important;height:8px!important}
+@media(max-width:980px){
+  #screen-ritual-map .ritual-map-shell{height:auto!important;min-height:calc(100vh - 12px)!important;overflow:auto!important}
+  #screen-ritual-map .ritual-run-header{grid-template-columns:1fr!important}
+  #screen-ritual-map .ritual-run-metrics{justify-content:flex-start!important}
+  #screen-ritual-map .ritual-map-main{grid-template-rows:auto minmax(360px,1fr) auto!important}
+  #screen-ritual-map .ritual-route-map{min-height:360px!important}
+}
+@media(max-width:720px){
+  #screen-ritual-map .hunter-omen{grid-template-columns:64px 1fr!important}
+  #screen-ritual-map .hunter-advice{grid-column:1 / 3!important;border-left:0!important;border-top:1px solid rgba(255,255,255,.12)!important}
+  #screen-ritual-map .run-murmur-card{grid-template-columns:36px 1fr!important}
+  #screen-ritual-map .run-murmur-card mark{grid-column:1 / 3!important;justify-self:stretch!important}
+  #screen-ritual-map .run-murmur-progress{left:58px!important;right:12px!important;bottom:42px!important}
+  #modal-layer .run-murmur-detail{grid-template-columns:1fr!important}
+  #modal-layer .run-murmur-detail>i{grid-row:auto!important}
 }
 

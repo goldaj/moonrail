@@ -718,13 +718,27 @@
     if (!murmur || !progress) return '';
     const state = run.murmur.claimed ? 'claimed' : progress.complete ? 'ready' : 'active';
     const status = run.murmur.claimed ? 'MURMURE RÉSOLU' : progress.complete ? 'PRÊT À S’INSCRIRE' : `${progress.current}/${progress.goal} ${progress.label}`;
-    const reaction = runMurmurReaction(murmur.id);
-    return `<article class="run-murmur-card ${state}">
+    return `<button class="run-murmur-card ${state}" data-action="ritual-run-murmur-detail" type="button">
       <i>${esc(murmur.icon)}</i>
-      <div><small>MURMURE DE CETTE RUN</small><strong>${esc(murmur.title)}</strong><span>${esc(murmur.hint)}</span>${reaction ? `<q>${esc(reaction)}</q>` : ''}<em>${esc(murmur.reward)}</em></div>
+      <div><small>MURMURE</small><strong>${esc(murmur.title)}</strong></div>
       <b class="run-murmur-progress" style="--murmur-progress:${Math.round(progress.ratio * 100)}%"><span></span></b>
       <mark>${esc(status)}</mark>
-    </article>`;
+    </button>`;
+  }
+
+  function showRunMurmurDetail() {
+    const murmur = currentRunMurmur();
+    const progress = runMurmurProgress();
+    if (!murmur || !progress) return ritualToast('Aucun murmure ne traverse cette run.');
+    const status = run.murmur.claimed ? 'Murmure résolu' : progress.complete ? 'Prêt à s’inscrire' : `${progress.current}/${progress.goal} ${progress.label}`;
+    const reaction = runMurmurReaction(murmur.id);
+    openRitualModal(`<span class="kicker">MURMURE</span><h2>${esc(murmur.title)}</h2><div class="run-murmur-detail">
+      <i>${esc(murmur.icon)}</i>
+      <section><small>Ce que la nuit demande</small><p>${esc(murmur.hint)}</p></section>
+      ${reaction ? `<section><small>Voix de la conductrice</small><q>${esc(reaction)}</q></section>` : ''}
+      <section><small>Avancement</small><strong>${esc(status)}</strong><b class="run-murmur-progress detail" style="--murmur-progress:${Math.round(progress.ratio * 100)}%"><span></span></b></section>
+      <section><small>Récompense si accompli</small><p>${esc(murmur.reward)}</p></section>
+    </div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Retour à la carte</button></div>`, 'run-murmur-detail-modal story-modal');
   }
 
   function renderRitualProfile() {
@@ -956,7 +970,7 @@
       <section><div class="guardian-preview-toolbar"><div class="guardian-deck-summary"><span><b>${deck.length}</b> cartes de départ</span>${secretSummaries}</div><div class="modal-actions sticky-actions"><button class="secondary-button" data-action="ritual-choose-guardian">Revenir</button><button class="primary-button large" data-action="ritual-confirm-guardian">Lancer la run <b>→</b></button></div></div><div class="ritual-deck-grid guardian-start-deck">${cardsMarkup}</div></section></div>`, 'guardian-preview-modal deck-modal');
   }
 
-  function startRitual(guardianId) {
+  async function startRitual(guardianId) {
     if (!profile.unlockedGuardians.includes(guardianId)) return;
     const seed = Date.now();
     const deck = guardianDeckForStart(guardianId);
@@ -975,7 +989,11 @@
     createRouteGraph();
     closeRitualModal();
     persist();
-    showRitualMap();
+    await showRitualTravelAnimation(-1, 0, {
+      label:'Départ du quai zéro',
+      text:'Le Moonrail s’arrache à la gare avant que la carte ne consente à se dessiner.'
+    });
+    startBattle(false, false, true);
   }
 
   function availableHunters() {
@@ -1083,7 +1101,7 @@
     for (const node of rows.at(-1) || []) node.connections = [boss.uid];
     run.routeGraph = { act:run.act, rows, boss, currentRow:0, previousNodeId:null, visited:[] };
     syncPathChoicesFromGraph();
-    run.routePreviewId = run.pathChoices[0]?.routeUid || null;
+    run.routePreviewId = null;
   }
 
   function ensureRouteGraph() {
@@ -1130,9 +1148,7 @@
     if (!node || !reachable.some(candidate => candidate.uid === uid)) {
       return ritualToast('La suite reste visible, mais le Moonrail choisit un seul embranchement à la fois.');
     }
-    run.routePreviewId = uid;
-    persist();
-    showRitualMap();
+    return showRouteNodeDetail(uid);
   }
 
   function advanceRouteGraph() {
@@ -1147,7 +1163,7 @@
     graph.currentRow++;
     run.selectedRouteNodeId = null;
     syncPathChoicesFromGraph();
-    run.routePreviewId = reachableRouteNodes()[0]?.uid || graph.boss?.uid || null;
+    run.routePreviewId = null;
   }
 
   function routeNodePosition(node) {
@@ -1195,11 +1211,11 @@
     return `<svg class="route-map-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join('')}</svg>${nodeButtons}<span class="route-map-train" style="--train-y:${trainY}%">🚂</span>`;
   }
 
-  function routeDetailMarkup() {
+  function routeDetailMarkup(nodeOverride = null, includeAction = true) {
     const graph = run?.routeGraph;
     if (!graph) return '';
     const reachable = reachableRouteNodes();
-    const node = routeGraphNode(run.routePreviewId) || reachable[0] || graph.boss;
+    const node = nodeOverride || routeGraphNode(run.routePreviewId);
     if (!node) return '';
     const family = ROUTE_FAMILIES[node.type] || ROUTE_FAMILIES.secret;
     const isCurrent = node.row === graph.currentRow && reachable.some(candidate => candidate.uid === node.uid);
@@ -1207,7 +1223,7 @@
     const state = isCurrent
       ? 'PROCHAIN ARRÊT · DÉCISION ACTIVE'
       : 'APERÇU DE LA LIGNE · CHOIX FUTUR';
-    const action = isCurrent
+    const action = includeAction && isCurrent
       ? `<button class="primary-button route-commit-button" data-ritual-path="${esc(node.id)}">${esc(family.verb)} · prendre cette voie <b>→</b></button>`
       : '';
     return `<article class="ritual-path-card route-detail-card type-${node.type} tone-${family.tone}">
@@ -1218,6 +1234,15 @@
       ${routeMurmurHintMarkup(node)}${routeImpactMarkup(node)}
       <footer>${action}</footer>
     </article>`;
+  }
+
+  function showRouteNodeDetail(uid) {
+    const node = routeGraphNode(uid);
+    const reachable = reachableRouteNodes();
+    if (!node || !reachable.some(candidate => candidate.uid === uid)) {
+      return ritualToast('La suite reste visible, mais le Moonrail choisit un seul embranchement à la fois.');
+    }
+    openRitualModal(`<span class="kicker">PROCHAIN ARRÊT</span><h2>Confirmer cette voie ?</h2>${routeDetailMarkup(node, false)}<div class="modal-actions route-choice-actions"><button class="secondary-button" data-action="ritual-modal-close">Retour à la carte</button><button class="primary-button large" data-ritual-path="${esc(node.id)}">${esc((ROUTE_FAMILIES[node.type] || ROUTE_FAMILIES.secret).verb)} cette voie <b>→</b></button></div>`, 'route-choice-modal');
   }
 
   function showRitualMap() {
@@ -1245,7 +1270,8 @@
     }
     const routeMap = $('#ritual-route-map');
     if (routeMap) routeMap.innerHTML = routeGraphMarkup();
-    $('#ritual-path-choices').innerHTML = routeDetailMarkup();
+    const routeChoices = $('#ritual-path-choices');
+    if (routeChoices) routeChoices.innerHTML = '';
     persist();
   }
 
@@ -1418,11 +1444,13 @@
   function choosePath(id) {
     if (!run || run.battle) return;
     if (id === 'hunt') {
+      closeRitualModal();
       run.selectedRouteNodeId = run.routeGraph?.boss?.uid || null;
       return startBattle(true);
     }
     const node = run.pathChoices.find(choice => choice.id === id);
     if (!node) return;
+    closeRitualModal();
     run.selectedPathId = id;
     run.selectedRouteNodeId = node.routeUid || node.uid || null;
     if (node.type === 'combat') return startBattle(false);
@@ -1993,6 +2021,7 @@
     const after = run?.pendingAfterReward;
     if (run) { run.pendingAfterReward = null; run.rewardChoices = null; }
     closeRitualModal();
+    if (after === 'opening') return showRitualMap();
     if (after === 'boss') advanceAfterHunter(); else completeNode();
   }
 
@@ -2342,10 +2371,12 @@
     openRitualModal(`<span class="kicker">AIGUILLAGE ACTIONNÉ</span><h2>${esc(choice?.name || 'Levier tiré')}</h2><p>${esc(choice?.text || '')}</p><div class="malus-impact-card scout"><i>${choice?.icon || '?'}</i><strong>${esc(secretLine)}</strong><span>Indice plutôt que jackpot : cette route modifie la trajectoire, les ressources ou l’information, pas votre deck par magie.</span></div><div class="modal-actions"><button class="primary-button" data-action="ritual-complete-event">Reprendre les rails</button></div>`, 'switch-modal story-modal');
   }
 
-  async function showRitualTravelAnimation(fromStep, toStep) {
+  async function showRitualTravelAnimation(fromStep, toStep, options = {}) {
     const overlay = document.createElement('div');
     overlay.className = 'travel-overlay ritual-travel-overlay';
-    overlay.innerHTML = `<div class="travel-card"><small>MOONRAIL EN MOUVEMENT</small><strong>Arrêt ${fromStep + 1} → ${toStep + 1}</strong><div class="travel-track"><span></span><i class="origin"></i><i class="passed"></i><i class="destination"></i><b>🚂</b></div><p>La carte de route se recalcule pendant que le train change d’aiguillage.</p></div>`;
+    const label = options.label || `Arrêt ${fromStep + 1} → ${toStep + 1}`;
+    const text = options.text || 'La carte de route se recalcule pendant que le train change d’aiguillage.';
+    overlay.innerHTML = `<div class="travel-card"><small>MOONRAIL EN MOUVEMENT</small><strong>${esc(label)}</strong><div class="travel-track"><span></span><i class="origin"></i><i class="passed"></i><i class="destination"></i><b>🚂</b></div><p>${esc(text)}</p></div>`;
     document.body.appendChild(overlay);
     requestAnimationFrame(() => overlay.classList.add('visible'));
     await wait(850);
@@ -2593,11 +2624,11 @@
     return true;
   }
 
-  function startBattle(isHunter, isMiniboss = false) {
+  function startBattle(isHunter, isMiniboss = false, isOpening = false) {
     const encounter = encounterForBattle(isHunter, isMiniboss);
     const battleDeck = shuffle(ensureRunCardStates().map(runBattleRef));
     run.battle = {
-      encounter, isHunter, isMiniboss, deck:battleDeck, discard:[], hand:[],
+      encounter, isHunter, isMiniboss, isOpening, deck:battleDeck, discard:[], hand:[],
       playerBoard:Array(BALANCE.lanes).fill(null), enemyBoard:Array(BALANCE.lanes).fill(null), forecast:Array(BALANCE.lanes).fill(null),
       selectedHand:null, progress:0, pursuit:(encounter.startPursuit || 0) + (run.maluses || []).filter(malus => malus.id === 'watching_eye').reduce((sum, malus) => sum + malus.value, 0),
       lumen:baseLumenForRun(), ashes:0, casualties:[],
@@ -3425,7 +3456,7 @@
     run.pendingBossLoot = null;
     persist();
     if (continuation === 'boss') return showBossOutroDialogue(bossLoot);
-    return showCardReward('complete', continuation === 'miniboss');
+    return showCardReward(continuation === 'opening' ? 'opening' : 'complete', continuation === 'miniboss');
   }
 
   function finishBattle(won) {
@@ -3442,6 +3473,7 @@
     if (overdrive >= 3) markTruthReady('five_teeth');
     const wasHunter = battle.isHunter;
     const wasMiniboss = battle.isMiniboss;
+    const wasOpening = battle.isOpening;
     const bossLoot = wasHunter ? `boss_${battle.encounter.id}_technique` : null;
     const casualtyReport = finalizeRunDeckAfterBattle(battle);
     run.battle = null;
@@ -3462,9 +3494,9 @@
     }
     run.pendingBossLoot = bossLoot;
     persist();
-    if (casualtyReport.lost.length || casualtyReport.returned.length) return showRunCasualtyReport(casualtyReport, wasHunter ? 'boss' : wasMiniboss ? 'miniboss' : 'combat');
+    if (casualtyReport.lost.length || casualtyReport.returned.length) return showRunCasualtyReport(casualtyReport, wasHunter ? 'boss' : wasOpening ? 'opening' : wasMiniboss ? 'miniboss' : 'combat');
     if (wasHunter) showBossOutroDialogue(bossLoot);
-    else showCardReward('complete', wasMiniboss);
+    else showCardReward(wasOpening ? 'opening' : 'complete', wasMiniboss);
   }
 
   function advanceAfterHunter() {
@@ -4617,10 +4649,6 @@
     openRitualModal(`<span class='kicker'>CODEX DES CENT LUNES</span><h2>Six versions de la même faute</h2><p class='codex-lead'>Le Festival des Cent Reflets n’a pas seulement perdu son aube : chaque conductrice a participé différemment au cycle qui l’effaçait. Les dialogues, fins et souvenirs relationnels révèlent progressivement leur responsabilité.</p><div class='rulebook-grid codex-lore-grid'>${entries}</div><div class='modal-actions'><button class='primary-button' data-action='ritual-modal-close'>Refermer</button></div>`, 'rulebook-modal codex-lore-modal');
   }
 
-  function showRitualSettings() {
-    openRitualModal(`<span class='kicker'>PARAMÈTRES & ACCESSIBILITÉ</span><h2>Repères de conduite</h2><p>Ce prototype garde les réglages simples, mais l’écran sert maintenant de mémo jouable : contrôles, lecture des cartes et options de confort.</p><div class='settings-grid ritual-settings-grid'><section><b>▣</b><h3>Contrôles essentiels</h3><p>Cliquez une carte puis un wagon, ou glissez-déposez directement. Le bouton Grimoire affiche le deck courant à tout moment.</p></section><section><b>?</b><h3>Comprendre une carte</h3><p>Cliquez une carte pour ouvrir son aperçu détaillé ; en combat, sélectionnez-la pour afficher son effet complet dans le panneau du bas. Les récompenses indiquent aussi son rôle avant le choix.</p></section><section><b>☾</b><h3>Lisibilité actuelle</h3><p>Les textes critiques, cartes de deck et ateliers ont été agrandis. Les animations servent surtout à attirer l’œil sur PV, gains, pertes et modifications.</p></section><section><b>♫</b><h3>Confort</h3><p>Le son peut être coupé depuis la barre du haut. Le plein écran est conseillé pour les écrans de collection et d’observatoire.</p></section></div><div class='modal-actions'><button class='secondary-button' data-action='ritual-rulebook'>Ouvrir le manuel</button><button class='primary-button' data-action='ritual-modal-close'>Fermer</button></div>`, 'settings-modal ritual-settings-modal');
-  }
-
   function toggleSound() {
     profile.soundMuted = !profile.soundMuted;
     ritualToast(profile.soundMuted ? 'Sons coupés pour cette session.' : 'Sons réactivés.');
@@ -4694,6 +4722,7 @@
         'ritual-end-turn': resolveRitualTurn,
         'ritual-stoke': stokeSelectedCard,
         'ritual-rulebook': showRitualRulebook,
+        'ritual-run-murmur-detail': showRunMurmurDetail,
         'ritual-skip-reward': finishPendingReward,
         'ritual-boss-reward': () => showCardReward('boss'),
         'ritual-complete-event': () => { closeRitualModal(); completeNode(); },
@@ -4715,7 +4744,6 @@
         'ritual-confirm-qa-reset': resetQaProgressToStart,
         'collection': showCollectionHub,
         'codex': showLoreCodex,
-        'settings': showRitualSettings,
         'sound': toggleSound,
         'fullscreen': toggleFullscreen,
         'help': showRitualRulebook

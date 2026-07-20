@@ -108,12 +108,13 @@ Le pool contient des murs gratuits, des effets instantanés à 0 Vie, des cartes
 - Les pertes de Vie persistent entre les combats ; le rapport de fin de combat sépare les pertes définitives, les renforts tirés pour revenir à 10 et les signatures reformées.
 - Le deck peut être consulté pendant toute la run avec l’état sain, blessé, mort, réglé, main, pioche, défausse et plateau.
 - L’abandon volontaire reste accessible depuis la carte et discrètement depuis le combat ; il demande confirmation puis suit le même gacha et le même récapitulatif qu’une défaite.
+- Après validation de la conductrice, la run démarre par une animation de départ du Moonrail puis un combat-prologue obligatoire. La carte de route n’apparaît qu’après la réussite de ce premier combat et sa récompense éventuelle ; ce combat ne consomme pas encore d’embranchement.
 
 Longueur cible actuelle : cinq haltes entre chaque contrôle divin, avec des combats nettement plus fréquents et une chance de miniboss après les premières étapes. Une run complète doit demander plusieurs cycles de combat, pas seulement une succession de cadeaux.
 
 ## 5. Carte et familles de routes
 
-Le joueur ne planifie pas toute la route. La carte montre les embranchements futurs comme information, mais seules les étapes reliées à la position actuelle sont cliquables. À chaque arrêt, le train avance visuellement puis un nouvel embranchement devient disponible.
+Le joueur ne planifie pas toute la route. La carte montre les embranchements futurs comme information, mais seules les étapes reliées à la position actuelle sont cliquables. À chaque arrêt, le train avance visuellement puis un nouvel embranchement devient disponible. Aucun arrêt n’est présélectionné sur la carte : cliquer sur un nœud ouvre une fenêtre de détail, puis le joueur confirme ou revient à la carte.
 
 | Famille | Rôle |
 |---|---|
@@ -385,7 +386,9 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - La barre de progression de l’Observatoire ne liste aucune catégorie ni quantité. Elle avance visuellement sans nommer les systèmes cachés.
 - Le dashboard principal ne montre pas Collection & équipe. La collection de cartes passe par l’Album de la nuit dans l’Observatoire, et le bouton texte du dashboard ouvre directement le Manuel.
 - Le CTA principal du dashboard affiche uniquement « Entrer dans la Centième Nuit » : aucun sous-titre n’est nécessaire sous ce libellé.
+- L’ancien écran « Repères de conduite » est supprimé. Les raccourcis d’aide en haut de l’écran ouvrent directement le Manuel.
 - Dans le prologue avant le choix de conductrice, l’objectif annoncé s’appelle « Votre but » et ne sous-entend pas qu’un autre but invisible existe.
+- Le premier écran de run après le combat-prologue affiche le prochain contrôleur céleste sur toute la largeur, la carte au centre en grand, les cartes/Présages/éclats en haut, et un Murmure compact en bas. Le Murmure compact ne montre que son nom, son titre et son avancement ; le lore, la citation et la récompense sont réservés à sa popup détaillée.
 - Toute modification, perte, fusion, réglage, déblocage ou remplacement de carte montre la carte concernée et explique l’effet durable.
 - En combat, le nom d’une carte dispose de trois lignes avant troncature et son texte court reste lisible sans zoom ; les cartes de la main conservent au moins 122 px de large, 170 px de haut, un effet à 9,2 px minimum et 25 px de hauteur visible. L’aperçu détaillé conserve toujours le nom et l’effet complets.
 - Les statistiques, sigils et micro-libellés utiles des cartes restent à 9 px minimum, y compris dans le centre de test, le Grimoire, les cartes posées et le récapitulatif de run.

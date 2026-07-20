@@ -26,9 +26,8 @@
       <div class="top-actions">
         <button class="icon-button deck-button" data-action="deck" aria-label="Voir le grimoire"><span>▤</span><small>Grimoire</small><b id="deck-count">10</b></button>
         <button id="sound-button" class="icon-button" data-action="sound" aria-label="Couper le son">♫</button>
-        <button class="icon-button" data-action="settings" aria-label="Paramètres">⚙</button>
+        <button class="icon-button" data-action="ritual-rulebook" aria-label="Manuel">?</button>
         <button class="icon-button" data-action="fullscreen" aria-label="Plein écran">⛶</button>
-        <button class="icon-button" data-action="help" aria-label="Aide">?</button>
       </div>
     </header>
 
@@ -62,30 +61,28 @@
         <div class="ritual-map-shell">
           <header class="ritual-run-header">
             <div><span class="kicker">LA NUIT AVANCE</span><h2 id="ritual-map-title">Choisissez où arrêter le Moonrail</h2><p id="ritual-story-whisper">Quelque chose suit le train entre les arbres.</p></div>
-            <div class="hunter-clock"><small>CONTRÔLE CÉLESTE DANS</small><strong id="ritual-days-left">4</strong><span id="ritual-cycle-label">ARRÊTS</span></div>
+            <div class="ritual-run-metrics">
+              <button class="ritual-deck-pill" data-action="ritual-deck"><span>▤</span><strong id="ritual-deck-count">10</strong><small>cartes</small></button>
+              <div class="ritual-resources"><span title="Tous les 3 Présages ajoutent 2 profondeurs virtuelles au prisme de fin de run.">☾ <b id="ritual-omens">0</b> Présages stellaires</span><span>♢ <b id="ritual-teeth">0</b> éclats de voie</span></div>
+              <div class="hunter-clock"><small>CONTRÔLE CÉLESTE DANS</small><strong id="ritual-days-left">4</strong><span id="ritual-cycle-label">ARRÊTS</span></div>
+            </div>
           </header>
           <div class="ritual-map-main">
-            <div class="ritual-route-context">
-              <section class="hunter-omen" id="hunter-omen">
-                <div id="hunter-portrait" class="hunter-portrait"></div>
-                <div><small>PROCHAIN CONTRÔLEUR CÉLESTE</small><h3 id="hunter-name">L'Archiviste aux Bois Blancs</h3><p id="hunter-rule">Sa première manœuvre est révélée avant votre choix de route.</p></div>
-                <div class="hunter-advice"><small>PRÉPAREZ</small><strong id="hunter-advice">Des créatures nombreuses</strong></div>
-              </section>
-              <section id="ritual-run-murmur" class="run-murmur" aria-live="polite"></section>
-              <div id="ritual-path-choices" class="ritual-path-choices route-detail-stack" aria-label="Détail de la destination sélectionnée"></div>
-            </div>
+            <section class="hunter-omen" id="hunter-omen">
+              <div id="hunter-portrait" class="hunter-portrait"></div>
+              <div><small>PROCHAIN CONTRÔLEUR CÉLESTE</small><h3 id="hunter-name">L'Archiviste aux Bois Blancs</h3><p id="hunter-rule">Sa première manœuvre est révélée avant votre choix de route.</p></div>
+              <div class="hunter-advice"><small>PRÉPAREZ</small><strong id="hunter-advice">Des créatures nombreuses</strong></div>
+            </section>
             <section class="moonrail-route-board" aria-labelledby="route-board-title">
               <header>
                 <div><small>CARTE DE LA LIGNE</small><h3 id="route-board-title">Choisissez le prochain embranchement</h3></div>
                 <span><i></i> accessible maintenant</span>
               </header>
               <div id="ritual-route-map" class="ritual-route-map" aria-label="Carte à embranchements du Moonrail"></div>
-              <p class="route-board-help">Les prochains arrêts restent visibles pour anticiper. Seules les icônes reliées au train sont sélectionnables maintenant.</p>
             </section>
+            <section id="ritual-run-murmur" class="run-murmur" aria-live="polite"></section>
           </div>
           <footer class="ritual-map-footer">
-            <button class="ritual-deck-pill" data-action="ritual-deck"><span>▤</span><strong id="ritual-deck-count">10</strong><small>cartes</small></button>
-            <div class="ritual-resources"><span title="Tous les 3 Présages ajoutent 2 profondeurs virtuelles au prisme de fin de run.">☾ <b id="ritual-omens">0</b> Présages stellaires</span><span>♢ <b id="ritual-teeth">0</b> éclats de voie</span></div>
             <button class="text-button" data-action="ritual-abandon">Abandonner la nuit</button>
           </footer>
         </div>
