@@ -87,10 +87,10 @@
   const GUARDIAN_UNLOCKS = {
     controleur: { kind:'starter', hint:'Débloquée dès le départ : la prêtresse a juré sur la première cloche du Moonrail.' },
     mecano: { kind:'starter', hint:'Débloquée dès le départ : la kitsune connaît déjà la chaudière mieux que vous.' },
-    rinka: { kind:'clear', hint:'Indice : une oni ne monte que dans un train ayant déjà vu une fausse aube.' },
-    eir: { kind:'boiler', hint:'Indice : écoutez la voix sous les cendres. Dix cartes chauffées suffisent à l’attirer.' },
-    kaguya: { kind:'truths', hint:'Indice : son palais n’apparaît qu’à celles et ceux qui ont compris au moins huit vérités.' },
-    vespera: { kind:'gacha', hint:'Indice : aucune route ne la recrute. Seul un prisme souverain peut faire tomber la lune déchue.' }
+    rinka: { kind:'clear', hint:'Une oni ne monte que dans un train ayant déjà vu plusieurs fausses aubes.' },
+    eir: { kind:'boiler', hint:'Écoutez la voix sous les cendres. Quelques cartes chauffées suffisent à l’attirer.' },
+    kaguya: { kind:'truths', hint:'Son palais n’apparaît qu’à celles et ceux qui ont compris un fragment de la vérité.' },
+    vespera: { kind:'gacha', hint:'Aucune route ne la recrute. Seul un prisme souverain peut faire tomber la lune déchue.' }
   };
   const MALUS_CHOICES = [
     { id:'short_fuse', icon:'♨', name:'Chaudière jalouse', text:'Le prochain combat commence avec -1 Lueur.', apply:r => r.maluses.push({ id:'short_fuse', value:1 }) },
@@ -625,9 +625,9 @@
   function refreshGuardianUnlocks() {
     const unlock = id => { if (!profile.unlockedGuardians.includes(id)) profile.unlockedGuardians.push(id); };
     unlock('controleur'); unlock('mecano');
-    if (profile.clears >= 1 || profile.truths.includes('false_dawn')) unlock('rinka');
-    if (profile.lifetimeStokes >= 10 || profile.truths.includes('boiler')) unlock('eir');
-    if (profile.truths.length >= 8 || profile.truths.includes('name')) unlock('kaguya');
+    if (profile.clears >= 2) unlock('rinka');
+    if (profile.lifetimeStokes >= 50) unlock('eir');
+    if (profile.truths.length >= 10) unlock('kaguya');
   }
 
   function refreshMilestones() {
@@ -878,6 +878,16 @@
     return `<button class="codex-daily-portrait" data-ritual-codex-portrait="${esc(guardianId)}" aria-label="Voir l’artwork de ${esc(guardian.name)} en grand" style="${spriteSheetStyle('codex-daily-life-sheet-v1.png', 3, 2, guardian.portrait)}"><span>Voir l’artwork</span></button>`;
   }
 
+  function guardianLockedHintMarkup(guardianId) {
+    const hint = GUARDIAN_UNLOCKS[guardianId]?.hint || 'Une condition de déblocage est cachée dans le lore.';
+    const counters = {
+      rinka: `fausses aubes vues : ${Number(profile.clears || 0)}/?`,
+      eir: `Cartes chauffées : ${Number(profile.lifetimeStokes || 0)}/?`,
+      kaguya: `Vérités : ${Number(profile.truths?.length || 0)}/?`
+    };
+    return `${esc(hint)}${counters[guardianId] ? `<span class="guardian-unlock-counter">${esc(counters[guardianId])}</span>` : ''}`;
+  }
+
   function beginRitual() {
     if (!ritualReady) return ritualToast('Le rituel charge encore ses cartes.');
     const first = profile.attempts === 0;
@@ -895,7 +905,7 @@
       const spellUnlocked = profile.unlockedSpellCards.includes(id);
       const awakened = profile.unlockedAwakenings.includes(id);
       const spell = unlocked ? `${spellUnlocked ? `<span class="guardian-spell"><b>Signature gravée</b>${esc(signature.label)}</span>` : ''}${awakened ? `<span class="guardian-spell lastword"><b>Second nom éveillé</b>${esc(getCard(signature.awakening)?.name || 'Révélé')}</span>` : ''}<span class="guardian-lore">${esc(guardian.voice)}</span>` : '';
-      return `<button class="ritual-guardian ${unlocked ? '' : 'locked'}" data-ritual-guardian="${id}" ${unlocked ? '' : 'disabled'}>${guardianPortraitMarkup(id)}<small>${unlocked ? esc(guardian.title) : 'SOUVENIR VERROUILLÉ'}</small><strong>${unlocked ? esc(guardian.name) : '???'}</strong><em>${unlocked ? esc(guardian.perk) : esc(GUARDIAN_UNLOCKS[id]?.hint || 'Une condition de déblocage est cachée dans le lore.')}</em>${spell}</button>`;
+      return `<button class="ritual-guardian ${unlocked ? '' : 'locked'}" data-ritual-guardian="${id}" ${unlocked ? '' : 'disabled'}>${guardianPortraitMarkup(id)}<small>${unlocked ? esc(guardian.title) : 'SOUVENIR VERROUILLÉ'}</small><strong>${unlocked ? esc(guardian.name) : '???'}</strong><em>${unlocked ? esc(guardian.perk) : guardianLockedHintMarkup(id)}</em>${spell}</button>`;
     }).join('');
     openRitualModal(`<span class="kicker">QUI GARDE L’ÉTINCELLE ?</span><h2>Choisissez votre conductrice</h2><div class="ritual-guardian-grid">${options}</div><div class="modal-actions"><button class="text-button" data-action="ritual-modal-close">Retour</button></div>`, 'guardian-modal');
   }

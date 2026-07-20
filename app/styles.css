@@ -6208,6 +6208,17 @@ button:focus-visible,
 #modal-layer .guardian-modal .ritual-guardian.locked>small{color:#aaa0b3!important}
 #modal-layer .guardian-modal .ritual-guardian.locked>strong{color:#bbb0c4!important}
 #modal-layer .guardian-modal .ritual-guardian.locked>em{color:#b9afbf!important}
+#modal-layer .guardian-modal .guardian-unlock-counter{
+  display:block!important;
+  margin-top:8px!important;
+  padding-top:7px!important;
+  border-top:1px solid rgba(255,255,255,.1)!important;
+  color:#ffd078!important;
+  font-size:10px!important;
+  font-style:normal!important;
+  font-weight:900!important;
+  letter-spacing:.04em!important;
+}
 #modal-layer .guardian-preview-modal .guardian-start-deck .ritual-card-frame>strong{
   display:-webkit-box!important;
   min-height:39px!important;
