@@ -27,6 +27,12 @@ const chromeCandidates = [
   'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
 ].filter(candidate => candidate && fs.existsSync(candidate));
+const viewports = [
+  { label:'1280x720', width:1280, height:720 },
+  { label:'1366x768', width:1366, height:768 },
+  { label:'1024x768', width:1024, height:768 },
+  { label:'1600x900', width:1600, height:900 },
+];
 
 async function clickDom(page, selector) {
   await page.evaluate(selector => {
@@ -51,6 +57,169 @@ async function dismissOnboarding(page) {
   }
 }
 
+async function measureCombat(page, viewport) {
+  await page.setViewportSize({ width:viewport.width, height:viewport.height });
+  await page.waitForTimeout(100);
+  return page.evaluate(label => {
+    const visible = element => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > 0 && rect.width > 1 && rect.height > 1;
+    };
+    const rectOf = element => {
+      if (!element) return null;
+      const rect = element.getBoundingClientRect();
+      return {
+        left:Math.round(rect.left),
+        right:Math.round(rect.right),
+        top:Math.round(rect.top),
+        bottom:Math.round(rect.bottom),
+        width:Math.round(rect.width),
+        height:Math.round(rect.height),
+      };
+    };
+    const overflowOf = element => element
+      ? element.scrollHeight > element.clientHeight + 2 || element.scrollWidth > element.clientWidth + 2
+      : false;
+    const elementMetric = selector => {
+      const element = document.querySelector(selector);
+      if (!element) return null;
+      const style = getComputedStyle(element);
+      return {
+        rect:rectOf(element),
+        display:style.display,
+        visible:visible(element),
+        overflow:overflowOf(element),
+      };
+    };
+    const table = document.querySelector('#screen-ritual-battle .ritual-table');
+    const cards = [...document.querySelectorAll('#screen-ritual-battle .ritual-hand .ritual-card')].filter(visible).map(card => {
+      const rect = card.getBoundingClientRect();
+      const title = card.querySelector('.ritual-card-frame>strong');
+      const copy = card.querySelector('.ritual-card-frame>p');
+      const stats = card.querySelector('.ritual-card-stats');
+      return {
+        id:card.dataset.cardId || card.textContent.trim().slice(0, 42),
+        width:Math.round(rect.width),
+        height:Math.round(rect.height),
+        titleSize:Number.parseFloat(getComputedStyle(title).fontSize),
+        copySize:Number.parseFloat(getComputedStyle(copy).fontSize),
+        copyHeight:Math.round(copy.getBoundingClientRect().height),
+        overlap:copy.getBoundingClientRect().bottom > stats.getBoundingClientRect().top + 1,
+      };
+    });
+    const lifeBars = [...document.querySelectorAll('#screen-ritual-battle .combat-life-bar')].filter(visible).map(bar => {
+      const points = bar.querySelector('header b');
+      const labelElement = bar.querySelector('header span');
+      const track = bar.querySelector('.health-track');
+      return {
+        label:labelElement?.textContent?.trim() || '',
+        points:points?.textContent?.trim() || '',
+        rect:rectOf(bar),
+        labelSize:labelElement ? Number.parseFloat(getComputedStyle(labelElement).fontSize) : 0,
+        pointsSize:points ? Number.parseFloat(getComputedStyle(points).fontSize) : 0,
+        labelOverflow:overflowOf(labelElement),
+        track:rectOf(track),
+      };
+    });
+    const forecastCards = [...document.querySelectorAll('#screen-ritual-battle .forecast-row .ritual-card')].filter(visible).map(card => ({
+      rect:rectOf(card),
+      titleSize:Number.parseFloat(getComputedStyle(card.querySelector('.ritual-card-frame>strong')).fontSize),
+      overflow:overflowOf(card),
+    }));
+    const feedItems = [...document.querySelectorAll('#screen-ritual-battle .combat-feed-item')].filter(visible).map(item => ({
+      rect:rectOf(item),
+      overflow:overflowOf(item),
+    }));
+    const overflow = [...document.querySelectorAll('#screen-ritual-battle *')]
+      .filter(visible)
+      .filter(element => {
+        const rect = element.getBoundingClientRect();
+        return rect.left < -2 || rect.top < -2 || rect.right > innerWidth + 2 || rect.bottom > innerHeight + 2;
+      })
+      .map(element => `${element.tagName}.${String(element.className || '').slice(0, 48)}`)
+      .slice(0, 12);
+    const hintElement = document.querySelector('#screen-ritual-battle #ritual-hint');
+    const hintStyle = hintElement ? getComputedStyle(hintElement) : null;
+    return {
+      label,
+      viewport:{ width:innerWidth, height:innerHeight },
+      table:{ ...elementMetric('#screen-ritual-battle .ritual-table'), clientWidth:table?.clientWidth || 0, clientHeight:table?.clientHeight || 0 },
+      topbar:elementMetric('#topbar'),
+      header:elementMetric('#screen-ritual-battle .ritual-battle-header'),
+      forecast:elementMetric('#screen-ritual-battle .forecast-row'),
+      lane:elementMetric('#screen-ritual-battle .lane-readout-shell'),
+      enemy:elementMetric('#screen-ritual-battle .enemy-board'),
+      player:elementMetric('#screen-ritual-battle .player-board'),
+      guide:elementMetric('#screen-ritual-battle .ritual-quick-guide'),
+      feed:elementMetric('#screen-ritual-battle .combat-action-feed'),
+      controls:elementMetric('#screen-ritual-battle .ritual-battle-controls'),
+      hint:hintElement ? {
+        rect:rectOf(hintElement),
+        fontSize:Number.parseFloat(hintStyle.fontSize),
+        visible:visible(hintElement),
+        overflow:overflowOf(hintElement),
+      } : null,
+      cards,
+      lifeBars,
+      forecastCards,
+      feedItems,
+      piles:rectOf(document.querySelector('#screen-ritual-battle .ritual-piles')),
+      resources:rectOf(document.querySelector('#screen-ritual-battle .ritual-resource-orbs')),
+      overflow,
+    };
+  }, viewport.label);
+}
+
+function validateCombat(metrics) {
+  const failures = [];
+  const prefix = `[${metrics.label}]`;
+  const fail = message => failures.push(`${prefix} ${message}`);
+  const rectsIntersect = (a, b) => a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+  if (!metrics.table?.rect) fail('table absente');
+  else {
+    if (metrics.table.rect.bottom > metrics.viewport.height + 2) fail(`table dépasse le viewport (${metrics.table.rect.bottom}/${metrics.viewport.height})`);
+    if (metrics.table.overflow) fail('table interne tronquée');
+  }
+  if (!metrics.topbar?.rect || !metrics.header?.rect) fail('bandeau global ou bandeau de combat absent');
+  else if (metrics.header.rect.top < metrics.topbar.rect.bottom + 2) fail(`bandeau de combat masqué par la barre haute (${metrics.header.rect.top}/${metrics.topbar.rect.bottom})`);
+  if (metrics.lifeBars.length !== 2) fail(`jauges /10 absentes ou masquées (${metrics.lifeBars.length}/2)`);
+  for (const bar of metrics.lifeBars) {
+    if (!/\/10$/.test(bar.points)) fail(`${bar.label || 'jauge'}: compteur /10 illisible (${bar.points})`);
+    if (bar.rect.top < (metrics.topbar?.rect?.bottom || 0) + 2) fail(`${bar.label}: jauge sous la barre haute`);
+    if (bar.pointsSize < 18 || bar.labelSize < 9) fail(`${bar.label}: typographie trop petite ${bar.pointsSize}/${bar.labelSize}`);
+    if (bar.labelOverflow) fail(`${bar.label}: libellé tronqué`);
+    if (!bar.track || bar.track.width < 120 || bar.track.height < 12) fail(`${bar.label}: barre de progression trop compacte`);
+  }
+  const minCardWidth = metrics.viewport.width <= 1100 ? 116 : 122;
+  const minCardHeight = metrics.viewport.height <= 740 ? 150 : metrics.viewport.height < 860 ? 154 : 170;
+  for (const card of metrics.cards) {
+    if (card.width < minCardWidth || card.height < minCardHeight) fail(`${card.id}: carte trop compacte ${card.width}x${card.height}`);
+    if (card.titleSize < 11.6 || card.copySize < 9.2 || card.copyHeight < 25) fail(`${card.id}: texte trop petit ${card.titleSize}/${card.copySize}/${card.copyHeight}`);
+    if (card.overlap) fail(`${card.id}: texte chevauche les stats`);
+  }
+  for (const card of metrics.forecastCards) {
+    if (card.rect.height > 50 || card.rect.height < 34) fail(`aperçu annoncé mal dimensionné (${card.rect.width}x${card.rect.height})`);
+    if (card.titleSize < 9.5 || card.overflow) fail('aperçu annoncé tronqué ou illisible');
+  }
+  if (!metrics.guide?.visible || metrics.guide.overflow) fail('repères rapides absents ou tronqués');
+  if (!metrics.hint?.visible) fail('aide basse absente');
+  else {
+    if (metrics.hint.fontSize < 10 || metrics.hint.rect.height < 24) fail(`aide basse trop petite ${metrics.hint.fontSize}/${metrics.hint.rect.height}`);
+    if (metrics.hint.overflow) fail('aide basse tronquée');
+  }
+  for (const item of metrics.feedItems) if (item.overflow) fail('entrée du journal de combat tronquée');
+  if (rectsIntersect(metrics.piles, metrics.resources)) fail('Lueurs/Cendres chevauchent les boutons de gauche');
+  if (rectsIntersect(metrics.controls?.rect, metrics.hint?.rect)) fail('aide basse superposée à la main');
+  const ordered = [metrics.header, metrics.forecast, metrics.lane, metrics.enemy, metrics.player, metrics.guide, metrics.feed, metrics.controls, metrics.hint]
+    .filter(item => item?.visible && item.rect);
+  for (let index = 1; index < ordered.length; index++) {
+    if (ordered[index].rect.top < ordered[index - 1].rect.bottom - 2) fail('deux zones verticales du combat se chevauchent');
+  }
+  for (const item of metrics.overflow) fail(`débordement viewport: ${item}`);
+  return failures;
+}
+
 async function main() {
   const browser = await chromium.launch({
     headless:true,
@@ -58,7 +227,7 @@ async function main() {
     args:['--hide-scrollbars'],
   });
   try {
-    const context = await browser.newContext({ viewport:{ width:1366, height:768 } });
+    const context = await browser.newContext({ viewport:{ width:1280, height:720 } });
     const page = await context.newPage();
     page.setDefaultTimeout(12000);
     await page.goto(baseUrl, { waitUntil:'load', timeout:15000 });
@@ -74,110 +243,23 @@ async function main() {
     await page.locator('#screen-ritual-battle.active').waitFor({ state:'visible', timeout:15000 });
     await dismissOnboarding(page);
     await page.waitForTimeout(500);
-    const metrics = await page.evaluate(() => {
-      const visible = element => {
-        const style = getComputedStyle(element);
-        const rect = element.getBoundingClientRect();
-        return style.display !== 'none' && style.visibility !== 'hidden' && Number(style.opacity) > 0 && rect.width > 1 && rect.height > 1;
-      };
-      const rectOf = element => {
-        if (!element) return null;
-        const rect = element.getBoundingClientRect();
-        return {
-          left:Math.round(rect.left),
-          right:Math.round(rect.right),
-          top:Math.round(rect.top),
-          bottom:Math.round(rect.bottom),
-          width:Math.round(rect.width),
-          height:Math.round(rect.height),
-        };
-      };
-      const tableRect = document.querySelector('#screen-ritual-battle .ritual-table')?.getBoundingClientRect();
-      const cards = [...document.querySelectorAll('#screen-ritual-battle .ritual-hand .ritual-card')].filter(visible).map(card => {
-        const rect = card.getBoundingClientRect();
-        const title = card.querySelector('.ritual-card-frame>strong');
-        const copy = card.querySelector('.ritual-card-frame>p');
-        const stats = card.querySelector('.ritual-card-stats');
-        return {
-          id:card.dataset.cardId || card.textContent.trim().slice(0, 42),
-          width:Math.round(rect.width),
-          height:Math.round(rect.height),
-          titleSize:Number.parseFloat(getComputedStyle(title).fontSize),
-          copySize:Number.parseFloat(getComputedStyle(copy).fontSize),
-          copyHeight:Math.round(copy.getBoundingClientRect().height),
-          overlap:copy.getBoundingClientRect().bottom > stats.getBoundingClientRect().top + 1,
-        };
-      });
-      const overflow = [...document.querySelectorAll('#screen-ritual-battle *')]
-        .filter(visible)
-        .filter(element => {
-          const rect = element.getBoundingClientRect();
-          return rect.left < -2 || rect.top < -2 || rect.right > innerWidth + 2 || rect.bottom > innerHeight + 2;
-        })
-        .map(element => `${element.tagName}.${String(element.className || '').slice(0, 48)}`)
-        .slice(0, 12);
-      const lifeBars = [...document.querySelectorAll('#screen-ritual-battle .combat-life-bar')].filter(visible).map(bar => {
-        const points = bar.querySelector('header b');
-        const label = bar.querySelector('header span');
-        const track = bar.querySelector('.health-track');
-        return {
-          label:label?.textContent?.trim() || '',
-          points:points?.textContent?.trim() || '',
-          rect:rectOf(bar),
-          labelSize:label ? Number.parseFloat(getComputedStyle(label).fontSize) : 0,
-          pointsSize:points ? Number.parseFloat(getComputedStyle(points).fontSize) : 0,
-          track:rectOf(track),
-        };
-      });
-      const piles = rectOf(document.querySelector('#screen-ritual-battle .ritual-piles'));
-      const resources = rectOf(document.querySelector('#screen-ritual-battle .ritual-resource-orbs'));
-      const hintElement = document.querySelector('#screen-ritual-battle #ritual-hint');
-      const hintStyle = hintElement ? getComputedStyle(hintElement) : null;
-      const hint = hintElement ? {
-        rect:rectOf(hintElement),
-        fontSize:Number.parseFloat(hintStyle.fontSize),
-        visible:visible(hintElement),
-        text:hintElement.textContent.trim(),
-        overflow:hintElement.scrollHeight > hintElement.clientHeight + 2 || hintElement.scrollWidth > hintElement.clientWidth + 2,
-      } : null;
-      return {
-        table:tableRect ? {
-          top:Math.round(tableRect.top),
-          bottom:Math.round(tableRect.bottom),
-          height:Math.round(tableRect.height),
-          viewport:innerHeight,
-        } : null,
-        cards,
-        lifeBars,
-        piles,
-        resources,
-        hint,
-        overflow,
-      };
-    });
-    console.log(JSON.stringify(metrics, null, 2));
+    const reports = [];
     const failures = [];
-    if (!metrics.table) failures.push('table absente');
-    else if (metrics.table.bottom > metrics.table.viewport + 2) failures.push(`table dépasse le viewport (${metrics.table.bottom}/${metrics.table.viewport})`);
-    for (const card of metrics.cards) {
-      if (card.width < 122 || card.height < 170) failures.push(`${card.id}: carte trop compacte ${card.width}x${card.height}`);
-      if (card.titleSize < 11.6 || card.copySize < 9.2 || card.copyHeight < 25) failures.push(`${card.id}: texte trop petit ${card.titleSize}/${card.copySize}/${card.copyHeight}`);
-      if (card.overlap) failures.push(`${card.id}: texte chevauche les stats`);
+    for (const viewport of viewports) {
+      const metrics = await measureCombat(page, viewport);
+      reports.push(metrics);
+      failures.push(...validateCombat(metrics));
     }
-    if (metrics.lifeBars.length !== 2) failures.push(`jauges /10 absentes ou masquées (${metrics.lifeBars.length}/2)`);
-    for (const bar of metrics.lifeBars) {
-      if (!/\/10$/.test(bar.points)) failures.push(`${bar.label || 'jauge'}: compteur /10 illisible (${bar.points})`);
-      if (bar.pointsSize < 18 || bar.labelSize < 9) failures.push(`${bar.label || 'jauge'}: typographie jauge trop petite ${bar.pointsSize}/${bar.labelSize}`);
-      if (!bar.track || bar.track.width < 120 || bar.track.height < 14) failures.push(`${bar.label || 'jauge'}: barre de progression trop compacte`);
-    }
-    const rectsIntersect = (a, b) => a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
-    if (rectsIntersect(metrics.piles, metrics.resources)) failures.push('lueurs/cendres chevauchent les boutons de gauche');
-    if (!metrics.hint || !metrics.hint.visible) failures.push('aide basse absente');
-    else {
-      if (metrics.hint.fontSize < 10 || metrics.hint.rect.height < 22) failures.push(`aide basse trop petite ${metrics.hint.fontSize}/${metrics.hint.rect.height}`);
-      if (metrics.hint.overflow) failures.push('aide basse tronquée');
-    }
-    for (const item of metrics.overflow) failures.push(`débordement viewport: ${item}`);
+    console.log(JSON.stringify(reports.map(report => ({
+      viewport:report.label,
+      table:report.table.rect,
+      bars:report.lifeBars.map(bar => ({ text:bar.points, rect:bar.rect, track:bar.track })),
+      cards:report.cards.map(card => `${card.width}x${card.height}`),
+      guide:report.guide.rect,
+      feed:report.feed.rect,
+      controls:report.controls.rect,
+      hint:report.hint.rect,
+    })), null, 2));
     if (failures.length) {
       console.log(`Combat fit smoke: ${failures.length} alerte(s)`);
       for (const failure of failures) console.log(`- ${failure}`);
