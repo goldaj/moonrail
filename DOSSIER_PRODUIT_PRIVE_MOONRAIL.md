@@ -384,6 +384,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - L’Observatoire ne doit pas expliquer sa logique de masquage au joueur par des phrases méta ; il montre seulement les traces disponibles, les pistes vécues et une barre silencieuse de progression.
 - La barre de progression de l’Observatoire ne liste aucune catégorie ni quantité. Elle avance visuellement sans nommer les systèmes cachés.
 - Le dashboard principal ne montre pas Collection & équipe. La collection de cartes passe par l’Album de la nuit dans l’Observatoire, et le bouton texte du dashboard ouvre directement le Manuel.
+- Le CTA principal du dashboard affiche uniquement « Entrer dans la Centième Nuit » : aucun sous-titre n’est nécessaire sous ce libellé.
 - Toute modification, perte, fusion, réglage, déblocage ou remplacement de carte montre la carte concernée et explique l’effet durable.
 - En combat, le nom d’une carte dispose de trois lignes avant troncature et son texte court reste lisible sans zoom ; les cartes de la main conservent au moins 122 px de large, 170 px de haut, un effet à 9,2 px minimum et 25 px de hauteur visible. L’aperçu détaillé conserve toujours le nom et l’effet complets.
 - Les statistiques, sigils et micro-libellés utiles des cartes restent à 9 px minimum, y compris dans le centre de test, le Grimoire, les cartes posées et le récapitulatif de run.
@@ -422,7 +423,7 @@ Cette bible est un contrat vivant. Toute modification de règle, contenu, progre
 
 Le smoke test UI considère désormais comme bloquants tout texte visible sous 8,8 px, tout bouton ou titre dont le contenu dépasse son cadre, et toute carte de main en combat qui retombe sous le gabarit lisible défini ci-dessus. Cette règle complète le contrôle visuel manuel aux résolutions 1366×768 et 1920×1080.
 
-Le démarrage du smoke attend le chargement de la page puis la présence visible de l’action Nouvelle boucle principale ; il ne dépend pas d’un état `networkidle`, trop fragile pour une application riche en assets et animations.
+Le démarrage du smoke attend le chargement de la page puis la présence visible du CTA principal `[data-action="ritual-new"]` ; il ne dépend pas d’un état `networkidle`, trop fragile pour une application riche en assets et animations.
 
 Le lien stylesheet de l’app porte une version de passe UI afin que le navigateur local et le smoke ne conservent pas une ancienne feuille pendant les itérations rapides.
 
