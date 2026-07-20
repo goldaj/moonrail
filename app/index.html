@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07171d">
+  <link rel="icon" href="data:,">
+  <meta name="description" content="Moonrail — roguelite de cartes, convois célestes et secrets sous une nuit sans fin.">
+  <title>Moonrail — La Centième Nuit</title>
+  <link rel="stylesheet" href="styles.css?v=ui-9-6">
+</head>
+<body>
+  <div id="app" class="app">
+    <div class="backdrop" aria-hidden="true"></div>
+    <div class="fog fog-a" aria-hidden="true"></div>
+    <div class="fog fog-b" aria-hidden="true"></div>
+    <div id="particles" class="particles" aria-hidden="true"></div>
+
+    <header id="topbar" class="topbar hidden">
+      <button class="brand-mini" data-action="home" aria-label="Retour au menu"><span>✦</span> MOONRAIL</button>
+      <div class="run-stats">
+        <div class="stat-chip"><span class="stat-icon">♥</span><strong id="hud-hp">—</strong><small>arrêts</small></div>
+        <div class="stat-chip"><span class="stat-icon brass">◉</span><strong id="hud-tickets">0</strong><small>éclats</small></div>
+        <div class="stat-chip"><span class="stat-icon cyan">◆</span><strong id="hud-act">—</strong><small>ligne</small></div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-button deck-button" data-action="deck" aria-label="Voir le grimoire"><span>▤</span><small>Grimoire</small><b id="deck-count">10</b></button>
+        <button id="sound-button" class="icon-button" data-action="sound" aria-label="Couper le son">♫</button>
+        <button class="icon-button" data-action="settings" aria-label="Paramètres">⚙</button>
+        <button class="icon-button" data-action="fullscreen" aria-label="Plein écran">⛶</button>
+        <button class="icon-button" data-action="help" aria-label="Aide">?</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <section id="screen-menu" class="screen menu-screen active" aria-labelledby="game-title">
+        <div class="menu-vignette"></div>
+        <div class="menu-content">
+          <div class="eyebrow"><span></span> RITUEL DE CARTES · ROGUELITE À SECRETS <span></span></div>
+          <h1 id="game-title"><span>MOON</span><em>RAIL</em></h1>
+          <p class="tagline">L'aube a disparu. Le Moonrail transporte la dernière étoile.<br>Les dieux arrivent avant la fin de la troisième nuit.</p>
+          <div class="menu-actions">
+            <button class="primary-button large ritual-primary" data-action="ritual-new"><span>Entrer dans la Centième Nuit<small>Nouvelle boucle principale</small></span><b>→</b></button>
+            <button class="secondary-button large observatory-button" data-action="ritual-observatory"><span>Explorer l'observatoire<small>Objets, énigmes et vérités cachées</small></span><b>◐</b></button>
+            <button class="secondary-button large" data-action="collection"><span>Collection & équipe<small>Compagnons · cartes stabilisées</small></span><b>◇</b></button>
+            <button class="secondary-button large" data-action="codex"><span>Codex des Cent Lunes<small>Univers · personnages · créatures</small></span><b>✦</b></button>
+            <button class="text-button" data-action="settings">Paramètres & accessibilité</button>
+            <button class="secondary-button large gacha-test-button" data-action="test-gacha"><span>Centre de test complet<small>Gacha · pitié · doublons · statistiques</small></span><b>◈</b></button>
+          </div>
+          <div class="profile-strip">
+            <div><strong id="ritual-attempts">0</strong><span>nuits tentées</span></div>
+            <i></i>
+            <div><strong id="ritual-truths">0/64</strong><span>vérités</span></div>
+            <i></i>
+            <div><strong id="ritual-clears">0</strong><span>aubes atteintes</span></div>
+            <span class="hidden" id="profile-runs">0</span><span class="hidden" id="profile-wins">0</span><span class="hidden" id="profile-fragments">0</span>
+          </div>
+        </div>
+        <div class="version">PROTOTYPE JOUABLE · CENTIÈME NUIT</div>
+      </section>
+
+      <section id="screen-ritual-map" class="screen ritual-map-screen" aria-labelledby="ritual-map-title">
+        <div class="ritual-map-shell">
+          <header class="ritual-run-header">
+            <div><span class="kicker">LA NUIT AVANCE</span><h2 id="ritual-map-title">Choisissez où arrêter le Moonrail</h2><p id="ritual-story-whisper">Quelque chose suit le train entre les arbres.</p></div>
+            <div class="hunter-clock"><small>CONTRÔLE CÉLESTE DANS</small><strong id="ritual-days-left">4</strong><span id="ritual-cycle-label">ARRÊTS</span></div>
+          </header>
+          <div class="ritual-map-main">
+            <div class="ritual-route-context">
+              <section class="hunter-omen" id="hunter-omen">
+                <div id="hunter-portrait" class="hunter-portrait"></div>
+                <div><small>PROCHAIN CONTRÔLEUR CÉLESTE</small><h3 id="hunter-name">L'Archiviste aux Bois Blancs</h3><p id="hunter-rule">Sa première manœuvre est révélée avant votre choix de route.</p></div>
+                <div class="hunter-advice"><small>PRÉPAREZ</small><strong id="hunter-advice">Des créatures nombreuses</strong></div>
+              </section>
+              <section id="ritual-run-murmur" class="run-murmur" aria-live="polite"></section>
+              <div id="ritual-path-choices" class="ritual-path-choices route-detail-stack" aria-label="Détail de la destination sélectionnée"></div>
+            </div>
+            <section class="moonrail-route-board" aria-labelledby="route-board-title">
+              <header>
+                <div><small>CARTE DE LA LIGNE</small><h3 id="route-board-title">Choisissez le prochain embranchement</h3></div>
+                <span><i></i> accessible maintenant</span>
+              </header>
+              <div id="ritual-route-map" class="ritual-route-map" aria-label="Carte à embranchements du Moonrail"></div>
+              <p class="route-board-help">Les prochains arrêts restent visibles pour anticiper. Seules les icônes reliées au train sont sélectionnables maintenant.</p>
+            </section>
+          </div>
+          <footer class="ritual-map-footer">
+            <button class="ritual-deck-pill" data-action="ritual-deck"><span>▤</span><strong id="ritual-deck-count">10</strong><small>cartes</small></button>
+            <div class="ritual-resources"><span title="Tous les 3 Présages ajoutent 2 profondeurs virtuelles au prisme de fin de run.">☾ <b id="ritual-omens">0</b> Présages stellaires</span><span>♢ <b id="ritual-teeth">0</b> éclats de voie</span></div>
+            <button class="text-button" data-action="ritual-abandon">Abandonner la nuit</button>
+          </footer>
+        </div>
+      </section>
+
+      <section id="screen-ritual-battle" class="screen ritual-battle-screen" aria-label="Duel rituel">
+        <div class="ritual-table">
+          <header class="ritual-battle-header">
+            <div class="battle-title-block"><div id="battle-guardian-badge" class="battle-guardian-badge"></div><div><span class="kicker" id="ritual-encounter-kicker">RENCONTRE</span><h2 id="ritual-enemy-name">Gardien de la forêt inversée</h2></div></div>
+            <div id="ritual-balance" class="ritual-journey" aria-label="Jauges de combat"></div>
+            <div class="ritual-turn-info"><small>TOUR</small><strong id="ritual-turn">1</strong></div>
+          </header>
+          <div class="ritual-forecast-label">MANŒUVRES ANNONCÉES · CES CARTES ARRIVENT AU PROCHAIN DÉPART</div>
+          <div id="ritual-enemy-forecast" class="ritual-row forecast-row"></div>
+          <div id="ritual-lane-readout" class="lane-readout-shell" aria-live="polite" aria-label="Lecture tactique des wagons"></div>
+          <div id="ritual-enemy-board" class="ritual-row enemy-board"></div>
+          <div class="ritual-divider"><span></span><b>☾</b><span></span></div>
+          <div id="ritual-player-board" class="ritual-row player-board"></div>
+          <div class="ritual-quick-guide"><span><b>1</b> Main auto</span><span><b>2</b> Glissez ou cliquez vers un wagon</span><span><b>3</b> Chauffez si nécessaire</span><span><b>4</b> Lancez le convoi</span><button data-action="ritual-rulebook">Règles détaillées ?</button><button class="battle-abandon-link" data-action="ritual-abandon">Abandonner la nuit</button></div>
+          <aside id="ritual-combat-feed" class="combat-action-feed" aria-live="polite" aria-label="Journal de combat"></aside>
+          <div class="ritual-battle-controls">
+            <div class="ritual-piles">
+              <button data-ritual-draw="deck"><span>▤</span><strong id="ritual-draw-count">0</strong><small>Pioche auto</small></button>
+              <button data-action="ritual-stoke"><span>♨</span><strong>+2</strong><small>Chauffer</small></button>
+            </div>
+            <div class="ritual-resource-orbs"><span class="lumen-orb">✦ <b id="ritual-lumen">3</b><small>LUEUR</small></span><span class="ash-orb" title="Produites en chauffant ou en perdant des cartes. Paient les cartes ✹.">✹ <b id="ritual-ashes">0</b><small>CENDRES</small></span></div>
+            <div id="ritual-hand" class="ritual-hand" aria-label="Main rituelle"></div>
+            <button id="ritual-bell" class="ritual-bell" data-action="ritual-end-turn"><span>➤</span><strong>DÉPART</strong><small>Résoudre les trois wagons</small></button>
+          </div>
+          <div id="ritual-hint" class="ritual-hint">Votre main se remplit au départ. Dépensez de la Lueur, chauffez si nécessaire, puis lancez le train.</div>
+        </div>
+      </section>
+
+    </main>
+
+    <div id="feedback-layer" class="feedback-layer" aria-live="polite" aria-label="Événements importants"></div>
+    <div id="modal-layer" class="modal-layer" aria-live="polite"></div>
+    <div id="toast" class="toast" role="status"></div>
+  </div>
+  <noscript>Moonrail nécessite JavaScript pour fonctionner.</noscript>
+  <script src="ritual.js" defer></script>
+</body>
+</html>

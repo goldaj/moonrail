@@ -1,0 +1,4624 @@
+[
+  {
+    "id": "moon_hare",
+    "name": "Lièvre du croissant",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "sprinter"
+    ],
+    "rarity": "common",
+    "text": "Change de voie après avoir attaqué.",
+    "art": 1
+  },
+  {
+    "id": "paper_crane",
+    "name": "Grue talisman",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "airborne"
+    ],
+    "rarity": "common",
+    "text": "Survole les créatures sans Portée.",
+    "art": 4
+  },
+  {
+    "id": "shrine_fox",
+    "name": "Renarde du sanctuaire",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Protège une voie voisine menacée.",
+    "art": 5
+  },
+  {
+    "id": "lantern_moth",
+    "name": "Papillon-lanterne",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": [
+      "brittle",
+      "airborne"
+    ],
+    "rarity": "common",
+    "text": "Meurt après avoir attaqué.",
+    "art": 6
+  },
+  {
+    "id": "ink_tanuki",
+    "name": "Tanuki d'encre",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "fecund"
+    ],
+    "rarity": "uncommon",
+    "text": "Crée une copie pâle dans votre main.",
+    "art": 7
+  },
+  {
+    "id": "bell_toad",
+    "name": "Crapaud des sept cloches",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": [
+      "thorns",
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Bloque les volants et riposte.",
+    "art": 2
+  },
+  {
+    "id": "clock_harpy",
+    "name": "Harpie d'horlogerie",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "airborne"
+    ],
+    "rarity": "uncommon",
+    "text": "Ses ailes battent une seconde trop tôt.",
+    "art": 8
+  },
+  {
+    "id": "cloud_oni",
+    "name": "Ogre des nuages",
+    "tribe": "oni",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 3,
+    "sigils": [],
+    "rarity": "common",
+    "text": "Simple, lourd, fidèle quand le ciel tonne.",
+    "art": 9
+  },
+  {
+    "id": "porcelain_golem",
+    "name": "Golem de porcelaine",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 6,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "uncommon",
+    "text": "La première fissure ne suffit jamais.",
+    "art": 10
+  },
+  {
+    "id": "dream_butterfly",
+    "name": "Papillon du dernier rêve",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "deathless",
+      "airborne"
+    ],
+    "rarity": "rare",
+    "text": "La mort ne le réveille pas.",
+    "art": 6
+  },
+  {
+    "id": "star_kappa",
+    "name": "Kappa des étoiles",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Son bassin reflète les attaques célestes.",
+    "art": 11
+  },
+  {
+    "id": "moon_stag",
+    "name": "Cerf aux cent ramures",
+    "tribe": "bestial",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 5,
+    "sigils": [
+      "bifurcated"
+    ],
+    "rarity": "rare",
+    "text": "Frappe les deux voies adjacentes.",
+    "art": 12
+  },
+  {
+    "id": "wisp_scribe",
+    "name": "Feu-follet scribe",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "bone_digger"
+    ],
+    "rarity": "common",
+    "text": "Sa dynamo fournit +1 Lueur au prochain départ.",
+    "art": 13
+  },
+  {
+    "id": "rail_cat",
+    "name": "Chat des rails",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "many_lived"
+    ],
+    "rarity": "uncommon",
+    "text": "Chauffé, il retourne dans la pioche au lieu de la défausse.",
+    "art": 14
+  },
+  {
+    "id": "thorn_oracle",
+    "name": "Oracle des épines",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "thorns",
+      "reach"
+    ],
+    "rarity": "uncommon",
+    "text": "Elle lit l'avenir dans les blessures.",
+    "art": 15
+  },
+  {
+    "id": "mimic_orb",
+    "name": "Mimique à orbes",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "fecund"
+    ],
+    "rarity": "rare",
+    "text": "Chaque copie prétend être l'originale.",
+    "art": 16
+  },
+  {
+    "id": "bone_sparrow",
+    "name": "Moineau d'os",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "airborne"
+    ],
+    "rarity": "common",
+    "text": "Léger, rapide et peu gourmand en Lueur.",
+    "art": 17
+  },
+  {
+    "id": "skull_mochi",
+    "name": "Mochi funéraire",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "thorns"
+    ],
+    "rarity": "common",
+    "text": "Petit défenseur hérissé, efficace dès le premier départ.",
+    "art": 18
+  },
+  {
+    "id": "grave_crow",
+    "name": "Corneille des tombes",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 4,
+    "attack": 2,
+    "health": 2,
+    "sigils": [
+      "airborne",
+      "bone_digger"
+    ],
+    "rarity": "uncommon",
+    "text": "Elle rapporte toujours quelque chose.",
+    "art": 17
+  },
+  {
+    "id": "iron_wolf",
+    "name": "Loup de fer froid",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 6,
+    "attack": 4,
+    "health": 5,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "rare",
+    "text": "Un attelage lourd conçu pour tenir un wagon à lui seul.",
+    "art": 19
+  },
+  {
+    "id": "ember_ticket",
+    "name": "Ticket braise",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "Chauffé ou sacrifié, il fait avancer le Moonrail de 1.",
+    "art": 0
+  },
+  {
+    "id": "mirror_mouse",
+    "name": "Souris du miroir",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "hoard"
+    ],
+    "rarity": "common",
+    "text": "Gagne +1 Puissance si votre main est presque pleine.",
+    "art": 1
+  },
+  {
+    "id": "omen_lantern",
+    "name": "Lanterne contre-signe",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": [
+      "omen_break",
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "À l'arrivée, réduit la Poursuite de 1.",
+    "art": 6
+  },
+  {
+    "id": "furnace_kitsune",
+    "name": "Kitsune de fournaise",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "pyre",
+      "many_lived"
+    ],
+    "rarity": "uncommon",
+    "text": "Revient dans la pioche si elle chauffe la chaudière.",
+    "art": 5
+  },
+  {
+    "id": "archive_glutton",
+    "name": "Gloutonne des archives",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "hoard",
+      "guardian"
+    ],
+    "rarity": "uncommon",
+    "text": "Aime les mains trop pleines et garde une voie longtemps.",
+    "art": 13
+  },
+  {
+    "id": "red_thread_doll",
+    "name": "Poupée au fil rouge",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "pyre",
+      "deathless"
+    ],
+    "rarity": "rare",
+    "text": "La brûler ne suffit jamais : elle revient quand même.",
+    "art": 14
+  },
+  {
+    "id": "eclipse_librarian",
+    "name": "Bibliothécaire d'éclipse",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": [
+      "omen_break",
+      "bone_digger"
+    ],
+    "rarity": "rare",
+    "text": "Freine la Poursuite et prépare une Lueur future.",
+    "art": 15
+  },
+  {
+    "id": "overfull_mimic",
+    "name": "Mimique de main pleine",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "hoard",
+      "fecund"
+    ],
+    "rarity": "rare",
+    "text": "Plus votre main déborde, plus ses copies deviennent dangereuses.",
+    "art": 16
+  },
+  {
+    "id": "rinka_ember",
+    "name": "Rinka, corne écarlate",
+    "tribe": "oni",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 4,
+    "sigils": [
+      "bifurcated"
+    ],
+    "rarity": "unique",
+    "text": "Sa lame fend les deux aiguillages voisins.",
+    "art": 9
+  },
+  {
+    "id": "eir_mist",
+    "name": "Eir, première brume",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "deathless",
+      "reach"
+    ],
+    "rarity": "unique",
+    "text": "Elle revient tant que l'aube reste fausse.",
+    "art": 15
+  },
+  {
+    "id": "kaguya_astral",
+    "name": "Kaguya, dragon d'astre",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 6,
+    "sigils": [
+      "airborne",
+      "guardian"
+    ],
+    "rarity": "unique",
+    "text": "Son souffle traverse le toit du monde.",
+    "art": 12
+  },
+  {
+    "id": "vespera_fallen",
+    "name": "Vespera, lune déchue",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 7,
+    "sigils": [
+      "fecund",
+      "thorns"
+    ],
+    "rarity": "unique",
+    "text": "Chaque reflet d'elle exige un autre ciel.",
+    "art": 16
+  },
+  {
+    "id": "dawn_spark",
+    "name": "Étincelle de l'aube",
+    "tribe": "divin",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": [
+      "many_lived",
+      "bone_digger"
+    ],
+    "rarity": "secret",
+    "text": "Elle vous demande de ne pas la rendre aux dieux.",
+    "art": 0
+  },
+  {
+    "id": "centipede_train",
+    "name": "Train-mille-pattes",
+    "tribe": "automate",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 8,
+    "sigils": [
+      "sprinter",
+      "thorns"
+    ],
+    "rarity": "secret",
+    "text": "Il connaît une voie absente de toutes les cartes.",
+    "art": 19
+  },
+  {
+    "id": "sunless_conductor",
+    "name": "Conductrice sans soleil",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 8,
+    "attack": 5,
+    "health": 5,
+    "sigils": [
+      "deathless"
+    ],
+    "rarity": "secret",
+    "text": "Son billet porte votre propre écriture.",
+    "art": 13
+  },
+  {
+    "id": "spell_ayame_seal",
+    "name": "Spell Card — Sceau des Lunes Jumelles",
+    "tribe": "signature",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "guardian",
+      "reach"
+    ],
+    "rarity": "unique",
+    "text": "Ayame seule. À l’arrivée, scelle les wagons voisins : +1 Vie aux alliés adjacents et -1 Poursuite.",
+    "art": 0,
+    "owner": "controleur"
+  },
+  {
+    "id": "spell_ayame_boundary",
+    "name": "Last Word — Frontière du Clair de Lune",
+    "tribe": "signature",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 7,
+    "sigils": [
+      "guardian",
+      "thorns",
+      "reach"
+    ],
+    "rarity": "secret",
+    "text": "La frontière sait quel matin ne doit pas passer. Visible : À l’arrivée, -2 Poursuite et +1 Vie à tous vos passagers.",
+    "art": 1,
+    "owner": "controleur"
+  },
+  {
+    "id": "spell_kohana_gearfox",
+    "name": "Spell Card — Renard d'Horlogerie",
+    "tribe": "signature",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "bone_digger",
+      "many_lived"
+    ],
+    "rarity": "unique",
+    "text": "Kohana seule. À l’arrivée, pioche 1 carte ; si la chaudière a déjà chauffé ce combat, gagne aussi +1 Lueur.",
+    "art": 2,
+    "owner": "mecano"
+  },
+  {
+    "id": "spell_kohana_parade",
+    "name": "Last Word — Parade des Mille Automates",
+    "tribe": "signature",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "fecund",
+      "bone_digger"
+    ],
+    "rarity": "secret",
+    "text": "Les rouages défilent dans un ordre que personne n’a construit. Visible : À l’arrivée, pioche jusqu’à 2 cartes et gagne +1 Lueur.",
+    "art": 3,
+    "owner": "mecano"
+  },
+  {
+    "id": "spell_rinka_red_sun",
+    "name": "Spell Card — Nodachi du Soleil Rouge",
+    "tribe": "signature",
+    "blood": 2,
+    "bones": 0,
+    "attack": 4,
+    "health": 2,
+    "sigils": [
+      "bifurcated",
+      "brittle"
+    ],
+    "rarity": "unique",
+    "text": "Rinka seule. À l’arrivée, +1 Progression ; si un ennemi lui fait face, gagne +1 Puissance.",
+    "art": 4,
+    "owner": "rinka"
+  },
+  {
+    "id": "spell_rinka_petals",
+    "name": "Last Word — Enfer aux Cent Pétales",
+    "tribe": "signature",
+    "blood": 3,
+    "bones": 0,
+    "attack": 6,
+    "health": 3,
+    "sigils": [
+      "bifurcated",
+      "sprinter"
+    ],
+    "rarity": "secret",
+    "text": "Chaque pétale tombe avant que la lame n’apparaisse. Visible : À l’arrivée, +2 Progression et +2 dégâts à l’ennemi en face.",
+    "art": 5,
+    "owner": "rinka"
+  },
+  {
+    "id": "spell_eir_mist",
+    "name": "Spell Card — Brume du Premier Croissant",
+    "tribe": "signature",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": [
+      "deathless",
+      "reach"
+    ],
+    "rarity": "unique",
+    "text": "Eir seule. À l’arrivée, -1 Poursuite et soigne de 1 le passager allié le plus blessé.",
+    "art": 6,
+    "owner": "eir"
+  },
+  {
+    "id": "spell_eir_night",
+    "name": "Last Word — Nuit Sans Matin",
+    "tribe": "signature",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 6,
+    "sigils": [
+      "deathless",
+      "thorns",
+      "reach"
+    ],
+    "rarity": "secret",
+    "text": "La nuit pose un doigt sur la bouche du monde. Visible : À l’arrivée, -2 Poursuite et soigne tous vos passagers de 1.",
+    "art": 7,
+    "owner": "eir"
+  },
+  {
+    "id": "spell_kaguya_orbit",
+    "name": "Spell Card — Orbite de la Dragonne",
+    "tribe": "signature",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 5,
+    "sigils": [
+      "airborne",
+      "reach"
+    ],
+    "rarity": "unique",
+    "text": "Kaguya seule. À l’arrivée, +1 Progression par passager allié coûtant 3+ Lueurs sur le plateau.",
+    "art": 8,
+    "owner": "kaguya"
+  },
+  {
+    "id": "spell_kaguya_palace",
+    "name": "Last Word — Palais du Dragon Céleste",
+    "tribe": "signature",
+    "blood": 3,
+    "bones": 0,
+    "attack": 5,
+    "health": 7,
+    "sigils": [
+      "airborne",
+      "guardian",
+      "reach"
+    ],
+    "rarity": "secret",
+    "text": "Le palais descend sans toucher les rails. Visible : À l’arrivée, +1 Progression par wagon occupé et +1 Vie à ces passagers.",
+    "art": 9,
+    "owner": "kaguya"
+  },
+  {
+    "id": "spell_vespera_red_moon",
+    "name": "Spell Card — Lune Rouge Souveraine",
+    "tribe": "signature",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 4,
+    "sigils": [
+      "fecund",
+      "thorns"
+    ],
+    "rarity": "unique",
+    "text": "Vespera seule. À l’arrivée, +1 Poursuite ; gagne +1 Puissance pour chaque reflet d’elle déjà dans votre main ou vos wagons.",
+    "art": 10,
+    "owner": "vespera"
+  },
+  {
+    "id": "spell_vespera_hundred",
+    "name": "Last Word — Règne des Cent Lunes",
+    "tribe": "signature",
+    "blood": 4,
+    "bones": 0,
+    "attack": 6,
+    "health": 6,
+    "sigils": [
+      "fecund",
+      "thorns",
+      "bifurcated"
+    ],
+    "rarity": "secret",
+    "text": "Cent lunes regardent par la même fenêtre. Visible : À l’arrivée, +1 Poursuite, crée un reflet et gagne +2 Puissance.",
+    "art": 11,
+    "owner": "vespera"
+  },
+  {
+    "id": "dew_fox",
+    "name": "Renarde de rosée",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Protège le wagon avec une patience de sanctuaire.",
+    "art": 0
+  },
+  {
+    "id": "cinder_moth",
+    "name": "Mite des cendres",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": [
+      "brittle",
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "Brûle vite, mais pousse le train quand elle disparaît.",
+    "art": 1
+  },
+  {
+    "id": "tin_komainu",
+    "name": "Komainu de fer-blanc",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Un petit gardien qui préfère rouiller plutôt que reculer.",
+    "art": 2
+  },
+  {
+    "id": "mist_newt",
+    "name": "Triton de brume",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": [
+      "omen_break"
+    ],
+    "rarity": "common",
+    "text": "À l’arrivée, apaise l’œil céleste de 1.",
+    "art": 3
+  },
+  {
+    "id": "paper_badger",
+    "name": "Blaireau talisman",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "many_lived"
+    ],
+    "rarity": "common",
+    "text": "Revient parfois dans la pioche quand la chaudière le connaît.",
+    "art": 4
+  },
+  {
+    "id": "bell_cricket",
+    "name": "Grillon des cloches",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "destiny"
+    ],
+    "rarity": "common",
+    "text": "Au tirage, révèle un petit présage immédiat.",
+    "art": 5
+  },
+  {
+    "id": "ash_ticket",
+    "name": "Billet de cendre",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": [
+      "pyre",
+      "brittle"
+    ],
+    "rarity": "common",
+    "text": "Une carte presque blessure : mieux vaut la brûler au bon moment.",
+    "art": 6,
+    "role": "wound"
+  },
+  {
+    "id": "mirror_slug",
+    "name": "Limace miroir",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": [
+      "thorns"
+    ],
+    "rarity": "common",
+    "text": "Encaisse lentement et renvoie une piqûre.",
+    "art": 7
+  },
+  {
+    "id": "lantern_rat",
+    "name": "Rat à lanterne",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "bone_digger"
+    ],
+    "rarity": "common",
+    "text": "Laisse une étincelle pour le prochain départ.",
+    "art": 8
+  },
+  {
+    "id": "copper_finch",
+    "name": "Pinson de cuivre",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "airborne"
+    ],
+    "rarity": "common",
+    "text": "Petite unité aérienne, fragile mais précise.",
+    "art": 9
+  },
+  {
+    "id": "ink_monk",
+    "name": "Moine d’encre",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Intercepte les airs avec un pinceau trop long.",
+    "art": 10
+  },
+  {
+    "id": "bone_chime",
+    "name": "Carillon d’os",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "thorns"
+    ],
+    "rarity": "common",
+    "text": "Un os sonne quand on le frappe.",
+    "art": 11
+  },
+  {
+    "id": "dew_kappa",
+    "name": "Kappa de rosée",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": [
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Tient une voie mieux qu’il ne frappe.",
+    "art": 12
+  },
+  {
+    "id": "coal_sprite",
+    "name": "Esprit charbon",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "Fait avancer le train quand il est chauffé.",
+    "art": 13
+  },
+  {
+    "id": "sleepy_oni",
+    "name": "Oni somnolente",
+    "tribe": "oni",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [],
+    "rarity": "common",
+    "text": "Simple, solide, et trop fatiguée pour les subtilités.",
+    "art": 14
+  },
+  {
+    "id": "ribbon_crow",
+    "name": "Corbeau ruban",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 3,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "airborne",
+      "destiny"
+    ],
+    "rarity": "common",
+    "text": "Au tirage, croasse un présage avant de survoler ; un peu plus robuste qu’il n’en a l’air.",
+    "art": 15
+  },
+  {
+    "id": "steam_tanuki",
+    "name": "Tanuki vapeur",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "hoard"
+    ],
+    "rarity": "common",
+    "text": "Devient plus fort quand votre main déborde.",
+    "art": 16
+  },
+  {
+    "id": "white_cicada",
+    "name": "Cigale blanche",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "deathless"
+    ],
+    "rarity": "common",
+    "text": "Revient dans la main après destruction si la place existe.",
+    "art": 17
+  },
+  {
+    "id": "needle_imp",
+    "name": "Diablotin aiguille",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "thorns"
+    ],
+    "rarity": "common",
+    "text": "Punit les attaques directes.",
+    "art": 18
+  },
+  {
+    "id": "moon_shrimp",
+    "name": "Crevette lunaire",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Un minuscule renfort pour verrouiller une voie.",
+    "art": 19
+  },
+  {
+    "id": "wax_hare",
+    "name": "Lièvre de cire",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": [
+      "sprinter",
+      "brittle"
+    ],
+    "rarity": "common",
+    "text": "Traverse les wagons avant de fondre.",
+    "art": 0
+  },
+  {
+    "id": "rust_beetle",
+    "name": "Scarabée rouillé",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "many_lived"
+    ],
+    "rarity": "common",
+    "text": "La chaudière le recycle avec un bruit honteux.",
+    "art": 1
+  },
+  {
+    "id": "grave_pebble",
+    "name": "Caillou funéraire",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 3,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Pas brillant, mais très difficile à convaincre de partir.",
+    "art": 2
+  },
+  {
+    "id": "starling_mask",
+    "name": "Masque d’étourneau",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "airborne",
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Volant, mais capable de piquer les airs adverses.",
+    "art": 3
+  },
+  {
+    "id": "rain_tengu",
+    "name": "Tengu de pluie",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": [
+      "airborne",
+      "sprinter"
+    ],
+    "rarity": "common",
+    "text": "Change de wagon après avoir frôlé le ciel.",
+    "art": 4
+  },
+  {
+    "id": "lotus_wisp",
+    "name": "Feu follet lotus",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": [
+      "omen_break",
+      "destiny"
+    ],
+    "rarity": "common",
+    "text": "Apaise la poursuite et tire parfois un fil du destin.",
+    "art": 5
+  },
+  {
+    "id": "porcelain_pup",
+    "name": "Chiot porcelaine",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Se fissure avec dignité.",
+    "art": 6
+  },
+  {
+    "id": "thistle_mouse",
+    "name": "Souris chardon",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "thorns",
+      "hoard"
+    ],
+    "rarity": "common",
+    "text": "Petite, piquante, meilleure quand la main est pleine.",
+    "art": 7
+  },
+  {
+    "id": "paper_eel",
+    "name": "Anguille papier",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "sprinter"
+    ],
+    "rarity": "common",
+    "text": "Glisse d’un wagon à l’autre.",
+    "art": 8
+  },
+  {
+    "id": "soot_mirror",
+    "name": "Miroir de suie",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": [
+      "destiny",
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "À piocher ou à brûler : dans les deux cas, il répond.",
+    "art": 9
+  },
+  {
+    "id": "bell_maggot",
+    "name": "Asticot carillon",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "bone_digger"
+    ],
+    "rarity": "common",
+    "text": "Fouille les rails pour préparer de la Lueur.",
+    "art": 10
+  },
+  {
+    "id": "cloud_calf",
+    "name": "Veau nuage",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Regarde assez haut pour bloquer les airs.",
+    "art": 11
+  },
+  {
+    "id": "ember_grub",
+    "name": "Larve de braise",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "pyre",
+      "brittle"
+    ],
+    "rarity": "common",
+    "text": "Presque une blessure, sauf si vous aimez les chaudières.",
+    "art": 12,
+    "role": "wound"
+  },
+  {
+    "id": "clock_mouse",
+    "name": "Souris horloge",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "destiny"
+    ],
+    "rarity": "common",
+    "text": "Le destin fait tic avant de faire tac.",
+    "art": 13
+  },
+  {
+    "id": "bone_fan",
+    "name": "Éventail d’os",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 3,
+    "attack": 2,
+    "health": 2,
+    "sigils": [
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Un outil funéraire étonnamment précis.",
+    "art": 14
+  },
+  {
+    "id": "dew_mirrorling",
+    "name": "Refleton de rosée",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "fecund"
+    ],
+    "rarity": "common",
+    "text": "Fait une copie pâle si la main peut l’accueillir.",
+    "art": 15
+  },
+  {
+    "id": "red_leaf_spirit",
+    "name": "Esprit feuille rouge",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "many_lived",
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "Aime brûler, puis revenir dans les horaires.",
+    "art": 16
+  },
+  {
+    "id": "iron_mochi",
+    "name": "Mochi de fer",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Un mur rond et très poli.",
+    "art": 17
+  },
+  {
+    "id": "lantern_snail",
+    "name": "Escargot-lanterne",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": [
+      "omen_break"
+    ],
+    "rarity": "common",
+    "text": "Avance lentement, mais l’œil céleste cligne.",
+    "art": 18
+  },
+  {
+    "id": "thread_fox",
+    "name": "Renarde au fil",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "destiny",
+      "sprinter"
+    ],
+    "rarity": "common",
+    "text": "Le fil du destin passe par le wagon voisin.",
+    "art": 19
+  },
+  {
+    "id": "smoke_kodama",
+    "name": "Kodama fumée",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": [
+      "deathless"
+    ],
+    "rarity": "common",
+    "text": "Difficile de tuer une chose qui était déjà vapeur.",
+    "art": 0
+  },
+  {
+    "id": "cracked_ticket",
+    "name": "Ticket fendu",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": [
+      "brittle"
+    ],
+    "rarity": "common",
+    "text": "Blessure légère : occupe la main, bloque une voie, puis casse.",
+    "art": 1,
+    "role": "wound"
+  },
+  {
+    "id": "drowned_bell",
+    "name": "Cloche noyée",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": [
+      "thorns",
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Sa vibration mord les ailes.",
+    "art": 2
+  },
+  {
+    "id": "moon_ferret",
+    "name": "Furet lunaire",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": [
+      "sprinter"
+    ],
+    "rarity": "common",
+    "text": "Une petite course peut suffire à passer une voie.",
+    "art": 3
+  },
+  {
+    "id": "gear_minnow",
+    "name": "Vairon engrenage",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "bone_digger",
+      "brittle"
+    ],
+    "rarity": "common",
+    "text": "Fragile, mais laisse de la Lueur demain.",
+    "art": 4
+  },
+  {
+    "id": "ashen_mask",
+    "name": "Masque cendreux",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "hoard",
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "Plus utile quand votre main menace de craquer.",
+    "art": 5
+  },
+  {
+    "id": "grave_firefly",
+    "name": "Luciole funéraire",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 1,
+    "sigils": [
+      "airborne",
+      "destiny"
+    ],
+    "rarity": "common",
+    "text": "Un présage minuscule au-dessus des rails.",
+    "art": 6
+  },
+  {
+    "id": "mist_boar",
+    "name": "Sanglier de brume",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "guardian"
+    ],
+    "rarity": "common",
+    "text": "Peu subtil, très présent.",
+    "art": 7
+  },
+  {
+    "id": "paper_serpent",
+    "name": "Serpent talisman",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "bifurcated"
+    ],
+    "rarity": "common",
+    "text": "Mord les deux wagons voisins.",
+    "art": 8
+  },
+  {
+    "id": "coal_puppet",
+    "name": "Pantin charbon",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "pyre",
+      "many_lived"
+    ],
+    "rarity": "common",
+    "text": "Une marionnette faite pour recommencer.",
+    "art": 9
+  },
+  {
+    "id": "false_stop",
+    "name": "Fausse halte",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": [
+      "brittle",
+      "omen_break"
+    ],
+    "rarity": "common",
+    "text": "Carte blessure utile : ralentit l’œil quand elle arrive.",
+    "art": 10,
+    "role": "wound"
+  },
+  {
+    "id": "silver_komainu",
+    "name": "Komainu d’argent",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 5,
+    "sigils": [
+      "guardian",
+      "thorns"
+    ],
+    "rarity": "uncommon",
+    "text": "Tient une voie et punit ce qui insiste.",
+    "art": 7
+  },
+  {
+    "id": "scarlet_tengu",
+    "name": "Tengu écarlate",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 2,
+    "sigils": [
+      "airborne",
+      "sprinter"
+    ],
+    "rarity": "uncommon",
+    "text": "Attaque vite, bouge vite, tombe vite.",
+    "art": 8
+  },
+  {
+    "id": "mist_historian",
+    "name": "Historienne de brume",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": [
+      "destiny",
+      "omen_break"
+    ],
+    "rarity": "uncommon",
+    "text": "Son tirage baisse la pression ou accélère votre plan.",
+    "art": 9
+  },
+  {
+    "id": "gearfold_crane",
+    "name": "Grue pliée d’engrenage",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "airborne",
+      "bone_digger"
+    ],
+    "rarity": "uncommon",
+    "text": "Un oiseau mécanique qui prépare le prochain départ.",
+    "art": 10
+  },
+  {
+    "id": "funeral_tiger",
+    "name": "Tigre funéraire",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 4,
+    "attack": 3,
+    "health": 3,
+    "sigils": [
+      "thorns"
+    ],
+    "rarity": "uncommon",
+    "text": "Il ne chasse que ce qui a déjà fui.",
+    "art": 11
+  },
+  {
+    "id": "lantern_mermaid",
+    "name": "Sirène-lanterne",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "reach",
+      "omen_break"
+    ],
+    "rarity": "uncommon",
+    "text": "Chante assez haut pour arrêter les airs.",
+    "art": 12
+  },
+  {
+    "id": "ink_baku",
+    "name": "Baku d’encre",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": [
+      "deathless",
+      "hoard"
+    ],
+    "rarity": "uncommon",
+    "text": "Rêve dans votre main pleine.",
+    "art": 13
+  },
+  {
+    "id": "brass_yuki",
+    "name": "Yuki-onna de laiton",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "guardian",
+      "reach"
+    ],
+    "rarity": "uncommon",
+    "text": "Un arrêt froid au milieu des rails.",
+    "art": 14
+  },
+  {
+    "id": "thorn_kirin",
+    "name": "Kirin de ronces",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "thorns",
+      "sprinter"
+    ],
+    "rarity": "uncommon",
+    "text": "Traverse une voie et laisse des épines.",
+    "art": 15
+  },
+  {
+    "id": "paper_choir",
+    "name": "Chœur de papier",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "fecund",
+      "destiny"
+    ],
+    "rarity": "uncommon",
+    "text": "Un chant qui se copie dans la main.",
+    "art": 16
+  },
+  {
+    "id": "bone_librarian",
+    "name": "Bibliothécaire d’os",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 5,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "bone_digger",
+      "destiny"
+    ],
+    "rarity": "uncommon",
+    "text": "Range les morts par ordre de tirage.",
+    "art": 17
+  },
+  {
+    "id": "moon_komuso",
+    "name": "Komusō lunaire",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "reach",
+      "deathless"
+    ],
+    "rarity": "uncommon",
+    "text": "Sa flûte revient toujours au wagon.",
+    "art": 18
+  },
+  {
+    "id": "cinder_oni",
+    "name": "Oni de cendre",
+    "tribe": "oni",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 3,
+    "sigils": [
+      "pyre"
+    ],
+    "rarity": "uncommon",
+    "text": "Chauffée, elle laisse la voie rouge.",
+    "art": 19
+  },
+  {
+    "id": "mirror_kappa",
+    "name": "Kappa miroir",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "guardian",
+      "hoard"
+    ],
+    "rarity": "uncommon",
+    "text": "Plus la main déborde, plus son reflet insiste.",
+    "art": 0
+  },
+  {
+    "id": "clockwork_baku",
+    "name": "Baku horloger",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "many_lived",
+      "bone_digger"
+    ],
+    "rarity": "uncommon",
+    "text": "Recyclage et Lueur future.",
+    "art": 1
+  },
+  {
+    "id": "white_mandragora",
+    "name": "Mandragore blanche",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 6,
+    "sigils": [
+      "thorns",
+      "omen_break"
+    ],
+    "rarity": "uncommon",
+    "text": "Un cri muet qui ralentit la Poursuite.",
+    "art": 2
+  },
+  {
+    "id": "star_marten",
+    "name": "Martre étoilée",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": [
+      "bifurcated",
+      "sprinter"
+    ],
+    "rarity": "uncommon",
+    "text": "Frappe les côtés puis change de place.",
+    "art": 3
+  },
+  {
+    "id": "ash_courier",
+    "name": "Courrier de cendre",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "pyre",
+      "destiny"
+    ],
+    "rarity": "uncommon",
+    "text": "Son message brûle ou se révèle.",
+    "art": 4
+  },
+  {
+    "id": "hollow_stag",
+    "name": "Cerf creux",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "bifurcated"
+    ],
+    "rarity": "uncommon",
+    "text": "Ses bois indiquent deux voies à la fois.",
+    "art": 5
+  },
+  {
+    "id": "lantern_golem",
+    "name": "Golem lanterne",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 6,
+    "sigils": [
+      "guardian",
+      "bone_digger"
+    ],
+    "rarity": "uncommon",
+    "text": "Mur lumineux pour préparer le prochain tour.",
+    "art": 6
+  },
+  {
+    "id": "red_thread_miko",
+    "name": "Miko au fil rouge",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": [
+      "deathless",
+      "pyre"
+    ],
+    "rarity": "uncommon",
+    "text": "Revient même si son fil brûle.",
+    "art": 7
+  },
+  {
+    "id": "copper_nue",
+    "name": "Nue de cuivre",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 2,
+    "sigils": [
+      "airborne",
+      "hoard"
+    ],
+    "rarity": "uncommon",
+    "text": "L’air devient plus dangereux quand la main est pleine.",
+    "art": 8
+  },
+  {
+    "id": "grave_tanuki",
+    "name": "Tanuki funéraire",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 4,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "fecund"
+    ],
+    "rarity": "uncommon",
+    "text": "Une copie pâle sort parfois de la tombe.",
+    "art": 9
+  },
+  {
+    "id": "oracle_squid",
+    "name": "Calmar oracle",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": [
+      "destiny",
+      "reach"
+    ],
+    "rarity": "uncommon",
+    "text": "Prêvoit les ailes avant qu’elles tombent.",
+    "art": 10
+  },
+  {
+    "id": "iron_lotus",
+    "name": "Lotus de fer",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 7,
+    "sigils": [
+      "guardian",
+      "thorns"
+    ],
+    "rarity": "uncommon",
+    "text": "Un mur qui blesse la main qui le cueille.",
+    "art": 11
+  },
+  {
+    "id": "moonlit_wolf",
+    "name": "Louve clair-de-lune",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 3,
+    "sigils": [
+      "sprinter",
+      "guardian"
+    ],
+    "rarity": "uncommon",
+    "text": "Protège une voie puis change de flanc.",
+    "art": 12
+  },
+  {
+    "id": "paper_dragonet",
+    "name": "Dragonnet de papier",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 2,
+    "sigils": [
+      "airborne",
+      "brittle",
+      "pyre"
+    ],
+    "rarity": "uncommon",
+    "text": "Grand coup, courte vie, bonne chaudière.",
+    "art": 13
+  },
+  {
+    "id": "bell_tsukumogami",
+    "name": "Tsukumogami cloche",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": [
+      "omen_break",
+      "bone_digger"
+    ],
+    "rarity": "uncommon",
+    "text": "Baisse la Poursuite et prépare demain.",
+    "art": 14
+  },
+  {
+    "id": "smoke_centaur",
+    "name": "Centaure fumée",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "bifurcated",
+      "reach"
+    ],
+    "rarity": "uncommon",
+    "text": "Ses deux bras gardent deux rails.",
+    "art": 15
+  },
+  {
+    "id": "blue_flame_cat",
+    "name": "Chat flamme bleue",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": [
+      "deathless",
+      "destiny"
+    ],
+    "rarity": "uncommon",
+    "text": "Revient avec une décision prise ailleurs.",
+    "art": 16
+  },
+  {
+    "id": "boss_controleur_technique",
+    "name": "Édit des Deux Sceaux",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 6,
+    "sigils": [
+      "guardian",
+      "reach",
+      "omen_break"
+    ],
+    "rarity": "rare",
+    "text": "Technique de boss : protège la voie et réduit la Poursuite À l’arrivée.",
+    "art": 13
+  },
+  {
+    "id": "boss_mecano_technique",
+    "name": "Parade des Rouages Faux",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": [
+      "bone_digger",
+      "fecund"
+    ],
+    "rarity": "rare",
+    "text": "Technique de boss : copie mécanique et Lueur future.",
+    "art": 14
+  },
+  {
+    "id": "boss_rinka_technique",
+    "name": "Duel de Braise Rouge",
+    "tribe": "oni",
+    "blood": 3,
+    "bones": 0,
+    "attack": 5,
+    "health": 2,
+    "sigils": [
+      "bifurcated",
+      "pyre",
+      "brittle"
+    ],
+    "rarity": "rare",
+    "text": "Technique de boss : frappe large, brûle fort, ne reste pas longtemps.",
+    "art": 15
+  },
+  {
+    "id": "boss_eir_technique",
+    "name": "Souffle de Brume Retenu",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 6,
+    "sigils": [
+      "deathless",
+      "reach",
+      "omen_break"
+    ],
+    "rarity": "rare",
+    "text": "Technique de boss : ralentit l’œil et refuse de mourir simplement.",
+    "art": 16
+  },
+  {
+    "id": "boss_kaguya_technique",
+    "name": "Comète du Palais Clos",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 5,
+    "sigils": [
+      "airborne",
+      "guardian",
+      "reach"
+    ],
+    "rarity": "rare",
+    "text": "Technique de boss : puissance aérienne mais défensive.",
+    "art": 17
+  },
+  {
+    "id": "boss_vespera_technique",
+    "name": "Reflet de Lune Déchue",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 5,
+    "sigils": [
+      "fecund",
+      "thorns",
+      "hoard"
+    ],
+    "rarity": "rare",
+    "text": "Technique de boss : plus la main déborde, plus les reflets mordent.",
+    "art": 18
+  },
+  {
+    "id": "hundred_moon_tiger",
+    "name": "Tigre aux Cent Lunes",
+    "tribe": "bestial",
+    "blood": 3,
+    "bones": 0,
+    "attack": 5,
+    "health": 4,
+    "sigils": [
+      "bifurcated",
+      "sprinter"
+    ],
+    "rarity": "rare",
+    "text": "Un rare finisher qui met la pression sur deux voies.",
+    "art": 19
+  },
+  {
+    "id": "astral_foundry",
+    "name": "Fonderie astrale",
+    "tribe": "automate",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 8,
+    "sigils": [
+      "guardian",
+      "bone_digger",
+      "thorns"
+    ],
+    "rarity": "rare",
+    "text": "Mur rare pour builds lents et Lueur future.",
+    "art": 0
+  },
+  {
+    "id": "nameless_miko",
+    "name": "Miko sans nom",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "destiny",
+      "deathless",
+      "omen_break"
+    ],
+    "rarity": "rare",
+    "text": "Carte rare de contrôle : revient et révèle le destin.",
+    "art": 1
+  },
+  {
+    "id": "black_sun_moth",
+    "name": "Papillon du soleil noir",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 4,
+    "health": 1,
+    "sigils": [
+      "airborne",
+      "brittle",
+      "pyre"
+    ],
+    "rarity": "rare",
+    "text": "Gros impact aérien, très fragile, excellent à brûler.",
+    "art": 2
+  },
+  {
+    "id": "dragon_sleep_bell",
+    "name": "Cloche du dragon endormi",
+    "tribe": "tsukumogami",
+    "blood": 3,
+    "bones": 0,
+    "attack": 1,
+    "health": 9,
+    "sigils": [
+      "thorns",
+      "reach",
+      "guardian"
+    ],
+    "rarity": "rare",
+    "text": "Défense rare contre boss aériens.",
+    "art": 3
+  },
+  {
+    "id": "mirror_procession",
+    "name": "Procession du miroir",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": [
+      "fecund",
+      "destiny",
+      "hoard"
+    ],
+    "rarity": "rare",
+    "text": "Se copie et profite des mains pleines.",
+    "art": 4
+  },
+  {
+    "id": "bone_star_whale",
+    "name": "Baleine d’os stellaire",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 7,
+    "attack": 4,
+    "health": 7,
+    "sigils": [
+      "airborne",
+      "bone_digger"
+    ],
+    "rarity": "rare",
+    "text": "Rare de Cendres coûteuse qui prépare le prochain départ.",
+    "art": 5
+  },
+  {
+    "id": "eclipse_nue",
+    "name": "Nue de l’éclipse",
+    "tribe": "yōkai",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 4,
+    "sigils": [
+      "airborne",
+      "thorns",
+      "omen_break"
+    ],
+    "rarity": "rare",
+    "text": "Menace volante qui ralentit la Poursuite.",
+    "art": 6
+  },
+  {
+    "id": "oracle_of_unwritten_station",
+    "name": "Oracle de la gare non écrite",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 7,
+    "sigils": [
+      "destiny",
+      "reach",
+      "guardian"
+    ],
+    "rarity": "rare",
+    "text": "Le tirage décide, la carte tient la voie.",
+    "art": 7
+  },
+  {
+    "id": "empty_ofuda",
+    "name": "Ofuda vide",
+    "tribe": "tsukumogami",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "destiny"
+    ],
+    "rarity": "common",
+    "text": "0/0/0. Sert surtout à déclencher Destin, alléger la main ou nourrir la chaudière.",
+    "art": 6
+  },
+  {
+    "id": "blank_station_ticket",
+    "name": "Ticket de station blanche",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "omen_break"
+    ],
+    "rarity": "common",
+    "text": "Gratuit et sans corps : à l’arrivée, réduit la Poursuite de 1 puis disparaît.",
+    "art": 14
+  },
+  {
+    "id": "moon_mote",
+    "name": "Poussière de lune",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [],
+    "rarity": "common",
+    "text": "Carte gratuite minimale : occupe une voie sans consommer de Lueur.",
+    "art": 15
+  },
+  {
+    "id": "cinder_seed",
+    "name": "Graine de cendre",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": [
+      "pyre"
+    ],
+    "rarity": "common",
+    "text": "0 Puissance et coût 0. Chauffée ou sacrifiée, elle pousse le train d’un cran.",
+    "art": 16
+  },
+  {
+    "id": "glass_decoy",
+    "name": "Leurre de verre",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "thorns"
+    ],
+    "rarity": "common",
+    "text": "0 Vie : bloque un instant et punit ce qui le touche, puis vole en éclats.",
+    "art": 17
+  },
+  {
+    "id": "paper_moon_veil",
+    "name": "Voile de lune papier",
+    "tribe": "tsukumogami",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": [
+      "reach"
+    ],
+    "rarity": "common",
+    "text": "Défense gratuite contre les airs : ne frappe pas, mais protège une voie clé.",
+    "art": 18
+  },
+  {
+    "id": "nameless_pebble",
+    "name": "Caillou sans nom",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": [],
+    "rarity": "common",
+    "text": "Mur gratuit très simple. Excellent pour gagner un tour, inutile pour attaquer.",
+    "art": 19
+  },
+  {
+    "id": "borrowed_shadow",
+    "name": "Ombre empruntée",
+    "tribe": "yōkai",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "fecund"
+    ],
+    "rarity": "uncommon",
+    "text": "0/0/0 qui se recopie si la main le permet. Une ressource de combo, pas un combattant.",
+    "art": 2
+  },
+  {
+    "id": "silent_prayer_bell",
+    "name": "Cloche de prière muette",
+    "tribe": "tsukumogami",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "destiny",
+      "omen_break"
+    ],
+    "rarity": "uncommon",
+    "text": "Ne combat pas. Au tirage et à l’arrivée, elle déplace seulement les probabilités.",
+    "art": 3
+  },
+  {
+    "id": "hollow_komainu_mask",
+    "name": "Masque de komainu creux",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "guardian",
+      "deathless"
+    ],
+    "rarity": "uncommon",
+    "text": "0 Vie mais Rappel : sert à absorber une menace, revenir, puis recommencer si la main le permet.",
+    "art": 4
+  },
+  {
+    "id": "free_switch_spirit",
+    "name": "Esprit d’aiguillage libre",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 1,
+    "health": 0,
+    "sigils": [
+      "sprinter"
+    ],
+    "rarity": "uncommon",
+    "text": "Attaque fragile à coût 0 : peut traverser une voie, mais ne survit presque jamais.",
+    "art": 5
+  },
+  {
+    "id": "zero_hour_shrine",
+    "name": "Sanctuaire de l’heure zéro",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": [
+      "destiny",
+      "pyre",
+      "omen_break"
+    ],
+    "rarity": "rare",
+    "text": "0/0/0 rare : la carte ne gagne pas par ses stats, mais par tout ce qu’elle déclenche autour d’elle.",
+    "art": 8
+  },
+  {
+    "id": "moonless_bodyguard",
+    "name": "Garde du corps sans lune",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 6,
+    "sigils": [
+      "guardian",
+      "reach"
+    ],
+    "rarity": "rare",
+    "text": "Défenseur gratuit sans attaque. Un pur outil de tempo contre boss et unités aériennes.",
+    "art": 9
+  },
+  {
+    "id": "echo_ticket",
+    "name": "Ticket réverbérant",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": [
+      "echo",
+      "brittle"
+    ],
+    "rarity": "common",
+    "text": "S'il reste en main et part en défausse au départ, il prépare +1 Lueur au prochain tour.",
+    "art": 10
+  },
+  {
+    "id": "sleeping_platform_spirit",
+    "name": "Esprit du quai dormant",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": [
+      "echo"
+    ],
+    "rarity": "common",
+    "text": "Peut défendre simplement, ou rester en main pour transformer une défausse en Lueur future.",
+    "art": 11
+  },
+  {
+    "id": "night_schedule_moth",
+    "name": "Phalène des horaires nocturnes",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": [
+      "many_lived",
+      "echo"
+    ],
+    "rarity": "common",
+    "text": "Aime circuler entre main, pioche et défausse : faible seule, précieuse pour les decks cycliques.",
+    "art": 12
+  },
+  {
+    "id": "station_dreamer",
+    "name": "Rêveuse de gare",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 6,
+    "sigils": [
+      "echo",
+      "destiny"
+    ],
+    "rarity": "uncommon",
+    "text": "Ne frappe pas, mais son tirage et sa défausse peuvent préparer un tour très lumineux.",
+    "art": 13
+  },
+  {
+    "id": "last_carriage_bell",
+    "name": "Cloche du dernier wagon",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": [
+      "echo",
+      "bone_digger",
+      "omen_break"
+    ],
+    "rarity": "rare",
+    "text": "Carte de tempo pure : protège, ralentit la Poursuite et récompense les mains volontairement défaussées.",
+    "art": 14
+  },
+  {
+    "id": "margin_sparrow",
+    "name": "Moineau de marge",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Coûte 0 : sert surtout à déclencher Destin, occuper une voie ou être sacrifié sans regret.",
+    "art": 15
+  },
+  {
+    "id": "ticket_listener",
+    "name": "Écouteuse de billet",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "Ne frappe pas. Elle bloque pour donner au joueur le temps de lire la règle du boss.",
+    "art": 16
+  },
+  {
+    "id": "white_thread_mouse",
+    "name": "Souris du Fil blanc",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["sprinter", "omen_break"],
+    "rarity": "common",
+    "text": "Petite carte mobile qui aime les routes secrètes et ralentit parfois la Poursuite.",
+    "art": 17
+  },
+  {
+    "id": "bell_beggar",
+    "name": "Mendiante aux clochettes",
+    "tribe": "osseux",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Payée en os, faible en stats, utile pour les mains qui débordent et les decks de sacrifice.",
+    "art": 18
+  },
+  {
+    "id": "chalk_larva",
+    "name": "Larve de craie",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["pyre"],
+    "rarity": "common",
+    "text": "N’attaque pas : elle existe pour être chauffée au bon moment et alimenter les synergies Brasier.",
+    "art": 19
+  },
+  {
+    "id": "archive_tengu",
+    "name": "Tengu archiviste",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["airborne", "destiny"],
+    "rarity": "uncommon",
+    "text": "Survole, prépare un présage et rappelle que chaque duel laisse une trace.",
+    "art": 20
+  },
+  {
+    "id": "soft_verdict_doll",
+    "name": "Poupée du verdict doux",
+    "tribe": "tsukumogami",
+    "blood": 0,
+    "bones": 4,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "deathless"],
+    "rarity": "uncommon",
+    "text": "Un mur récurrent payé en os : protège sans tuer, parfait pour les runs défensives.",
+    "art": 21
+  },
+  {
+    "id": "cross_examiner_kitsune",
+    "name": "Kitsune contre-interrogatrice",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["omen_break", "fecund"],
+    "rarity": "uncommon",
+    "text": "Une carte de pression qui se duplique et ralentit la Poursuite si elle trouve la bonne faille.",
+    "art": 22
+  },
+  {
+    "id": "tribunal_stenographer",
+    "name": "Sténographe du Tribunal",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 7,
+    "sigils": ["destiny", "hoard", "omen_break"],
+    "rarity": "rare",
+    "text": "Enregistre les contradictions : lente, solide, et très forte dans les decks qui gardent une main pleine.",
+    "art": 23
+  },
+  {
+    "id": "amahina_whisper",
+    "name": "Murmure d’Amahina",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": ["destiny", "pyre", "omen_break"],
+    "rarity": "rare",
+    "text": "Carte rare sans stats : elle ne gagne que par timing, sacrifice et compréhension du cycle.",
+    "art": 24
+  },
+  {
+    "id": "ink_station_mouse",
+    "name": "Souris de gare encrée",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Petite carte de cycle : si vous la laissez partir au départ, elle prépare un tour plus lumineux.",
+    "art": 25
+  },
+  {
+    "id": "wrong_name_lantern",
+    "name": "Lanterne du faux nom",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["destiny", "omen_break"],
+    "rarity": "common",
+    "text": "Ne frappe pas, mais aide à stabiliser la Poursuite quand elle est piochée au bon moment.",
+    "art": 26
+  },
+  {
+    "id": "suture_kappa",
+    "name": "Kappa de suture",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "Bloque les airs sans chercher à tuer : une défense simple pour les nouveaux joueurs.",
+    "art": 27
+  },
+  {
+    "id": "rusted_orbit_key",
+    "name": "Clé d’orbite rouillée",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Coûte 0 et n’a aucune stat : elle sert à tester les mains pleines, les sacrifices et les déclencheurs.",
+    "art": 28
+  },
+  {
+    "id": "verdict_snail",
+    "name": "Escargot de verdict",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": ["guardian", "thorns"],
+    "rarity": "uncommon",
+    "text": "Lent, pénible à tuer, excellent pour tenir une voie pendant que le train progresse ailleurs.",
+    "art": 29
+  },
+  {
+    "id": "mirror_attendant",
+    "name": "Préposée du miroir",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": ["fecund", "destiny"],
+    "rarity": "uncommon",
+    "text": "Crée une pression de main et révèle un présage : forte si vous savez gérer le débordement.",
+    "art": 30
+  },
+  {
+    "id": "choir_rail_oni",
+    "name": "Oni du rail-chorale",
+    "tribe": "oni",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 2,
+    "sigils": ["bifurcated", "pyre"],
+    "rarity": "uncommon",
+    "text": "Attaque les côtés et aime être chauffée : une carte agressive qui coûte cher à mal placer.",
+    "art": 31
+  },
+  {
+    "id": "shrine_receipt_imp",
+    "name": "Diablotin du reçu sacré",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Petit corps de départ qui révèle un présage : parfait pour apprendre le tempo sans surcharger la main.",
+    "art": 32
+  },
+  {
+    "id": "pale_signal_frog",
+    "name": "Grenouille du signal pâle",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "Ne fait pas de dégâts, mais ralentit la Poursuite dès son arrivée.",
+    "art": 33
+  },
+  {
+    "id": "paper_cinder_moth",
+    "name": "Phalène de cendre papier",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["pyre", "brittle"],
+    "rarity": "common",
+    "text": "Faible et fragile, mais excellente à chauffer ou à envoyer mourir au bon moment.",
+    "art": 34
+  },
+  {
+    "id": "brass_sleep_spider",
+    "name": "Araignée de sommeil laiton",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": ["thorns"],
+    "rarity": "common",
+    "text": "Bloque simplement et punit les petits ennemis : carte lisible pour stabiliser les débuts.",
+    "art": 35
+  },
+  {
+    "id": "void_platform_coin",
+    "name": "Pièce du quai vide",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Coûte 0, n’a aucune stat, mais donne de la Lueur future si vous acceptez de ne pas la jouer.",
+    "art": 36
+  },
+  {
+    "id": "moon_tuner_mole",
+    "name": "Taupe accordeuse de lune",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["bone_digger"],
+    "rarity": "common",
+    "text": "Prépare le prochain départ avec un peu de Lueur, utile pour les decks lents.",
+    "art": 37
+  },
+  {
+    "id": "oath_cutter_hare",
+    "name": "Lièvre coupe-serment",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["sprinter", "omen_break"],
+    "rarity": "uncommon",
+    "text": "Se déplace, casse un présage adverse et adore les routes où les règles changent.",
+    "art": 38
+  },
+  {
+    "id": "tribunal_inkmaid",
+    "name": "Servante d’encre du Tribunal",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": ["guardian", "destiny"],
+    "rarity": "uncommon",
+    "text": "Défense narrative : elle protège, puis révèle une contradiction quand elle arrive.",
+    "art": 39
+  },
+  {
+    "id": "mirror_midwife",
+    "name": "Sage-femme du miroir",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 6,
+    "sigils": ["fecund", "deathless"],
+    "rarity": "uncommon",
+    "text": "N’attaque pas, mais revient et crée de la matière de main : dangereuse si vous gérez mal la limite de 4.",
+    "art": 40
+  },
+  {
+    "id": "orbit_choir_dove",
+    "name": "Colombe du chœur orbital",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": ["airborne", "echo"],
+    "rarity": "uncommon",
+    "text": "Menace aérienne qui récompense les tours où vous laissez filer des cartes.",
+    "art": 41
+  },
+  {
+    "id": "court_keykeeper",
+    "name": "Porte-clefs de la parenthèse",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 8,
+    "sigils": ["guardian", "reach", "omen_break"],
+    "rarity": "rare",
+    "text": "Gros défenseur anti-air : verrouille une voie et ralentit la Poursuite sans finir la run tout seul.",
+    "art": 42
+  },
+  {
+    "id": "forgotten_driver_glove",
+    "name": "Gant du conducteur oublié",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 3,
+    "attack": 2,
+    "health": 5,
+    "sigils": ["many_lived", "bone_digger", "destiny"],
+    "rarity": "rare",
+    "text": "Relique jouable qui transforme les sacrifices passés en départs plus puissants.",
+    "art": 43
+  },
+  {
+    "id": "white_thread_loom",
+    "name": "Métier du Fil blanc",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["destiny", "echo", "omen_break"],
+    "rarity": "secret",
+    "text": "Secret relationnel : il ne gagne jamais par force brute, mais recoud pioche, Poursuite et timing.",
+    "art": 44
+  },
+  {
+    "id": "amahina_first_refusal",
+    "name": "Amahina, premier refus",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny", "pyre", "deathless", "omen_break"],
+    "rarity": "unique",
+    "text": "Carte unique de métasecret : une aube minuscule qui refuse d’être sauvée de force.",
+    "art": 45
+  },
+  {
+    "id": "constellation_tick",
+    "name": "Tique de constellation",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["destiny", "echo"],
+    "rarity": "common",
+    "text": "Petite carte de cycle : elle marque un fragment de secret sans prendre trop de place.",
+    "art": 46
+  },
+  {
+    "id": "paper_orbit_larva",
+    "name": "Larve d’orbite papier",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "Défense simple anti-air : faible en dégâts, claire en rôle.",
+    "art": 47
+  },
+  {
+    "id": "small_verdict_fox",
+    "name": "Renarde du petit verdict",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "Protège sans complexité : une carte de stabilité pour decks en construction.",
+    "art": 48
+  },
+  {
+    "id": "fog_ticket_newt",
+    "name": "Triton au billet de brume",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "Payé en os, il achète un peu de temps contre la Poursuite.",
+    "art": 49
+  },
+  {
+    "id": "oath_page_doll",
+    "name": "Poupée de page-serment",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["destiny", "deathless"],
+    "rarity": "uncommon",
+    "text": "Revient et révèle un effet au tirage : forte pour les decks de répétition.",
+    "art": 50
+  },
+  {
+    "id": "seat_warm_shadow",
+    "name": "Ombre du siège chaud",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["hoard", "echo"],
+    "rarity": "uncommon",
+    "text": "Plus utile quand votre main est pleine ou volontairement défaussée.",
+    "art": 51
+  },
+  {
+    "id": "moon_bureau_crane",
+    "name": "Grue du bureau lunaire",
+    "tribe": "automate",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["airborne", "omen_break"],
+    "rarity": "uncommon",
+    "text": "Pression aérienne lisible qui ralentit un peu la Poursuite.",
+    "art": 52
+  },
+  {
+    "id": "mercy_revolt_bell",
+    "name": "Cloche de révolte douce",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 6,
+    "sigils": ["guardian", "omen_break", "echo"],
+    "rarity": "uncommon",
+    "text": "Récompense de constellation morale : protège sans tuer et fait avancer les plans patients.",
+    "art": 53
+  },
+  {
+    "id": "constellation_oath_engine",
+    "name": "Moteur des serments reliés",
+    "tribe": "automate",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 7,
+    "sigils": ["guardian", "destiny", "bone_digger"],
+    "rarity": "rare",
+    "text": "Récompense de constellation : transforme les serments découverts en tempo défensif.",
+    "art": 54
+  },
+  {
+    "id": "white_thread_conductor",
+    "name": "Conducteur du Fil blanc",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 7,
+    "sigils": ["destiny", "echo", "omen_break"],
+    "rarity": "rare",
+    "text": "Carte rare de route cachée : faible en force, très forte en contrôle du rythme.",
+    "art": 55
+  },
+  {
+    "id": "seat_that_draws_back",
+    "name": "Siège qui regarde en retour",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny", "deathless", "hoard"],
+    "rarity": "secret",
+    "text": "Secret méta : une carte presque vide qui devient inquiétante quand la main déborde.",
+    "art": 56
+  },
+  {
+    "id": "tribunal_molt_angel",
+    "name": "Ange-mue du Tribunal",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 8,
+    "sigils": ["reach", "guardian", "omen_break", "destiny"],
+    "rarity": "unique",
+    "text": "Unique de constellation : ce n’est pas un dieu, seulement la peau qu’un dieu a laissée au bureau.",
+    "art": 57
+  },
+  {
+    "id": "dawn_shell_oracle",
+    "name": "Oracle de coquille d’aube",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["destiny", "pyre", "deathless", "echo"],
+    "rarity": "unique",
+    "text": "Unique terminale : ne gagne pas par statistiques, mais par répétition, refus et timing.",
+    "art": 58
+  },
+  {
+    "id": "whisper_archive_moth",
+    "name": "Phalène d’archive murmurée",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Petite carte de cycle qui aime rester dans la main jusqu'au départ.",
+    "art": 59
+  },
+  {
+    "id": "receipt_tooth_mouse",
+    "name": "Souris au reçu denté",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Simple, lisible, et utile pour déclencher une petite information au tirage.",
+    "art": 60
+  },
+  {
+    "id": "archive_dust_toad",
+    "name": "Crapaud de poussière d’archive",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "N'attaque pas, mais intercepte les menaces aériennes pour les decks fragiles.",
+    "art": 61
+  },
+  {
+    "id": "small_apology_wisp",
+    "name": "Feu follet d’excuse minuscule",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "Payé en os : il n'efface pas une faute, mais ralentit la Poursuite.",
+    "art": 62
+  },
+  {
+    "id": "brass_phonograph_imp",
+    "name": "Diablotin phonographe de cuivre",
+    "tribe": "automate",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["pyre"],
+    "rarity": "common",
+    "text": "Se chauffe bien : carte de carburant pour decks Brasier.",
+    "art": 63
+  },
+  {
+    "id": "moonlit_index_cat",
+    "name": "Chat d’index lunaire",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["sprinter"],
+    "rarity": "common",
+    "text": "Change de voie après l'action, pratique pour apprendre à manipuler les wagons.",
+    "art": 64
+  },
+  {
+    "id": "half_confession_doll",
+    "name": "Poupée de demi-confession",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "echo"],
+    "rarity": "uncommon",
+    "text": "Protège sans frapper et rembourse parfois le tour suivant si elle n'est pas jouée.",
+    "art": 65
+  },
+  {
+    "id": "rebuke_ink_tengu",
+    "name": "Tengu d’encre réprobatrice",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": ["airborne", "destiny"],
+    "rarity": "uncommon",
+    "text": "Pression aérienne avec présage : forte si le deck assume le tempo.",
+    "art": 66
+  },
+  {
+    "id": "sealed_laugh_kitsune",
+    "name": "Kitsune au rire scellé",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": ["fecund", "omen_break"],
+    "rarity": "uncommon",
+    "text": "Crée des copies et casse un présage : attention à la limite de main.",
+    "art": 67
+  },
+  {
+    "id": "first_rebuke_bell",
+    "name": "Cloche du premier reproche",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["destiny", "omen_break", "echo"],
+    "rarity": "uncommon",
+    "unlockArchive": "first_six_rebukes",
+    "text": "Récompense d'archive : une carte de tempo qui transforme le reproche en information.",
+    "art": 68
+  },
+  {
+    "id": "archive_oath_ticket",
+    "name": "Billet du vœu archivé",
+    "tribe": "artefact",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 7,
+    "sigils": ["guardian", "destiny", "echo"],
+    "rarity": "rare",
+    "unlockArchive": "paper_copper",
+    "text": "Récompense Ayame/Kohana : protège longtemps et transforme les serments en pioche future.",
+    "art": 69
+  },
+  {
+    "id": "diagnostic_ember_vial",
+    "name": "Fiole de braise diagnostiquée",
+    "tribe": "artefact",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["pyre", "deathless", "omen_break"],
+    "rarity": "rare",
+    "unlockArchive": "ember_diagnosis",
+    "text": "Récompense Rinka/Eir : une douleur qui revient, brûle et ralentit l'urgence.",
+    "art": 70
+  },
+  {
+    "id": "moon_tide_shell",
+    "name": "Coquillage de marée lunaire",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 6,
+    "sigils": ["reach", "guardian", "destiny"],
+    "rarity": "rare",
+    "unlockArchive": "orbit_tide",
+    "text": "Récompense Kaguya/Vespera : bloque le ciel et révèle une trajectoire au tirage.",
+    "art": 71
+  },
+  {
+    "id": "witness_carriage_key",
+    "name": "Clef du wagon des témoins",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["destiny", "echo", "deathless", "hoard"],
+    "rarity": "secret",
+    "unlockArchive": "twelve_witnesses",
+    "text": "Secret d'archive : une clef presque inutile seule, inquiétante quand la main déborde.",
+    "art": 72
+  },
+  {
+    "id": "thirtieth_dialogue_mask",
+    "name": "Masque du trentième dialogue",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 9,
+    "sigils": ["guardian", "reach", "destiny", "omen_break"],
+    "rarity": "unique",
+    "unlockArchive": "thirtieth_private_script",
+    "text": "Unique d'archive ultime : quand toutes les versions ont parlé, même un masque devient témoin.",
+    "art": 73
+  },
+  {
+    "id": "ticket_stub_karakasa",
+    "name": "Karakasa de billet déchiré",
+    "tribe": "tsukumogami",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Coût nul : sert à occuper une voie, déclencher Destin ou absorber un mauvais présage.",
+    "art": 74
+  },
+  {
+    "id": "ledger_dust_kodama",
+    "name": "Kodama de poussière comptable",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Une carte simple de tempo : si elle reste en main, elle prépare un meilleur départ.",
+    "art": 75
+  },
+  {
+    "id": "red_pin_beetle",
+    "name": "Scarabée à épingle rouge",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 1,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["thorns"],
+    "rarity": "common",
+    "text": "Zéro attaque, zéro coût : un petit piège défensif pour les mains trop pleines.",
+    "art": 76
+  },
+  {
+    "id": "platform_whisper_crab",
+    "name": "Crabe du quai chuchoté",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "N'avance pas vite, mais stabilise une voie le temps de comprendre le combat.",
+    "art": 77
+  },
+  {
+    "id": "moon_cork_imp",
+    "name": "Diablotin de liège lunaire",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["pyre"],
+    "rarity": "common",
+    "text": "Petit carburant de Brasier : utile dans les decks qui veulent brûler sans se ruiner.",
+    "art": 78
+  },
+  {
+    "id": "folded_alibi_bird",
+    "name": "Oiseau d'alibi plié",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["airborne"],
+    "rarity": "common",
+    "text": "Pression aérienne fragile, lisible, et facile à sacrifier quand la main déborde.",
+    "art": 79
+  },
+  {
+    "id": "candle_stamp_nue",
+    "name": "Nue au sceau de chandelle",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "Réduit légèrement la Poursuite : une soupape claire pour nouveaux joueurs.",
+    "art": 80
+  },
+  {
+    "id": "threadbare_bucket_tanuki",
+    "name": "Tanuki au seau effiloché",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Ne coûte rien et aime les mains pleines : une brique de combo volontairement étrange.",
+    "art": 81
+  },
+  {
+    "id": "sleeping_signal_bell",
+    "name": "Cloche de signal endormie",
+    "tribe": "tsukumogami",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny", "echo"],
+    "rarity": "common",
+    "text": "Zéro attaque : existe surtout pour déclencher des effets de pioche, main et timing.",
+    "art": 82
+  },
+  {
+    "id": "pearl_delay_spider",
+    "name": "Araignée du retard nacré",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "Une Vigie modeste pour rappeler que le ciel n'est jamais un détail.",
+    "art": 83
+  },
+  {
+    "id": "borrowed_name_umbrella",
+    "name": "Ombrelle au nom emprunté",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["guardian", "echo"],
+    "rarity": "uncommon",
+    "text": "Protège une voie et transforme les fins de tour encombrées en ressource différée.",
+    "art": 84
+  },
+  {
+    "id": "mist_burn_messenger",
+    "name": "Messagère de brume brûlée",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": ["deathless", "pyre"],
+    "rarity": "uncommon",
+    "text": "Revient et se chauffe bien : une carte de friction pour Rinka et Eir.",
+    "art": 85
+  },
+  {
+    "id": "alibi_gatekeeper",
+    "name": "Gardienne de l'alibi rouge",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 6,
+    "sigils": ["reach", "guardian"],
+    "rarity": "uncommon",
+    "text": "Mur volontairement sans attaque : achète du temps pour les decks à secrets lents.",
+    "art": 86
+  },
+  {
+    "id": "thread_counter_kappa",
+    "name": "Kappa compteur de fils",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["destiny", "hoard"],
+    "rarity": "uncommon",
+    "text": "Gagne en intérêt quand la main approche de sa limite : bon pont vers les combos futurs.",
+    "art": 87
+  },
+  {
+    "id": "red_thread_snail",
+    "name": "Escargot du fil sans nœud",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["echo", "omen_break"],
+    "rarity": "uncommon",
+    "unlockThread": "red_thread_without_knot",
+    "text": "Récompense de fil secret : lente, défensive, et meilleure quand elle arrive trop tard.",
+    "art": 88
+  },
+  {
+    "id": "fox_clock_inquisitor",
+    "name": "Inquisitrice de l'horloge-renard",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 5,
+    "sigils": ["destiny", "bifurcated"],
+    "rarity": "rare",
+    "unlockThread": "fox_clock_parenthesis",
+    "text": "Récompense de fil secret : une attaque divisée qui interroge deux voies à la fois.",
+    "art": 89
+  },
+  {
+    "id": "black_manifest_conductor",
+    "name": "Conductrice du manifeste noir",
+    "tribe": "artefact",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 7,
+    "sigils": ["guardian", "destiny", "echo"],
+    "rarity": "rare",
+    "unlockThread": "black_ticket_manifest",
+    "text": "Récompense de fil secret : le dossier affirme qu'elle a signé avant d'exister.",
+    "art": 90
+  },
+  {
+    "id": "tide_burn_miko",
+    "name": "Miko de marée brûlante",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 4,
+    "sigils": ["airborne", "pyre", "omen_break"],
+    "rarity": "rare",
+    "unlockThread": "mist_burn_orbit",
+    "text": "Récompense de fil secret : mélange la fièvre de Rinka, le diagnostic d'Eir et l'orbite de Kaguya.",
+    "art": 91
+  },
+  {
+    "id": "silent_thirteenth_seat",
+    "name": "Treizième siège silencieux",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "deathless", "hoard", "echo"],
+    "rarity": "secret",
+    "unlockThread": "silent_carriage_thirteen",
+    "text": "Secret de dossier : il protège, revient, et semble compter une main que personne ne tient.",
+    "art": 92
+  },
+  {
+    "id": "dawn_paradox_yurei",
+    "name": "Yūrei du paradoxe d'aube",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 6,
+    "sigils": ["deathless", "destiny", "omen_break", "bifurcated"],
+    "rarity": "unique",
+    "unlockThread": "contradictory_dawns",
+    "text": "Unique de fil terminal : deux matins opposés l'ont appelée par le même nom.",
+    "art": 93
+  },
+  {
+    "id": "station_pin_moth",
+    "name": "Phalène d'épingle de gare",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Petite carte de découverte : elle pointe vers le prochain choix plutôt que vers la force brute.",
+    "art": 94
+  },
+  {
+    "id": "moon_ink_larva",
+    "name": "Larve d'encre lunaire",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 1,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Zéro coût, zéro attaque : elle existe pour être gardée, jetée ou sacrifiée au bon moment.",
+    "art": 95
+  },
+  {
+    "id": "torn_schedule_kappa",
+    "name": "Kappa à horaire déchiré",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["sprinter"],
+    "rarity": "common",
+    "text": "Se déplace après l'action : une carte claire pour apprendre à jouer les voies.",
+    "art": 96
+  },
+  {
+    "id": "apology_button_mite",
+    "name": "Acarien de bouton d'excuse",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "N'attaque pas : il rachète une erreur de tempo en ralentissant la Poursuite.",
+    "art": 97
+  },
+  {
+    "id": "glass_label_sparrow",
+    "name": "Moineau à étiquette de verre",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["airborne", "brittle"],
+    "rarity": "common",
+    "text": "Fragile et aérien : il sert à franchir une voie au bon instant, pas à tenir le plateau.",
+    "art": 98
+  },
+  {
+    "id": "whisper_cork_mouse",
+    "name": "Souris de liège murmurant",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Devient meilleure quand la main est presque pleine : un rappel doux de la limite de 4 cartes.",
+    "art": 99
+  },
+  {
+    "id": "bell_ink_slug",
+    "name": "Limace d'encre de cloche",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "Mur payé en os, utile quand votre deck a besoin de temporiser sans dépenser sa Lueur.",
+    "art": 100
+  },
+  {
+    "id": "platform_alibi_toad",
+    "name": "Crapaud d'alibi de quai",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "Une Vigie simple pour couvrir les routes où les boss attaquent depuis le ciel.",
+    "art": 101
+  },
+  {
+    "id": "dawn_receipt_hare",
+    "name": "Lièvre au reçu d'aube",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": ["brittle"],
+    "rarity": "common",
+    "text": "Bon sprint fragile : il force à décider si la vitesse vaut la perte.",
+    "art": 102
+  },
+  {
+    "id": "living_dossier_doll",
+    "name": "Poupée de dossier vivant",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["destiny", "echo"],
+    "rarity": "uncommon",
+    "unlockRouteSecret": "red_pin_station",
+    "text": "Récompense de route secrète : garde une preuve en main jusqu'au bon départ.",
+    "art": 103
+  },
+  {
+    "id": "witness_thread_miko",
+    "name": "Miko du fil témoin",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": ["guardian", "omen_break"],
+    "rarity": "uncommon",
+    "unlockRouteSecret": "thirteenth_luggage",
+    "text": "Récompense du treizième wagon : protège et ralentit la Poursuite quand le silence pèse.",
+    "art": 104
+  },
+  {
+    "id": "timetable_grudge_oni",
+    "name": "Oni de rancune horaire",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 3,
+    "health": 2,
+    "sigils": ["pyre"],
+    "rarity": "uncommon",
+    "unlockRouteSecret": "paper_copper_station",
+    "text": "Récompense papier/cuivre : une rancune qui brûle vite, parfaite pour finir une voie.",
+    "art": 105
+  },
+  {
+    "id": "sealed_platform_kitsune",
+    "name": "Kitsune du quai scellé",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["deathless", "destiny"],
+    "rarity": "uncommon",
+    "unlockRouteSecret": "mist_burn_receipt",
+    "text": "Récompense de reçu vivant : revient avec une information que le quai refuse d'écrire.",
+    "art": 106
+  },
+  {
+    "id": "alibi_receipt_dragonfly",
+    "name": "Libellule du reçu d'alibi",
+    "tribe": "esprit",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": ["airborne", "echo", "omen_break"],
+    "rarity": "uncommon",
+    "unlockThread": "receipt_of_three_alibis",
+    "text": "Récompense de second degré : une preuve légère qui vole, revient et contredit la Poursuite.",
+    "art": 107
+  },
+  {
+    "id": "oracle_of_crossed_indices",
+    "name": "Oracle des indices croisés",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 6,
+    "sigils": ["destiny", "guardian", "echo"],
+    "rarity": "rare",
+    "unlockRouteSecret": "fox_clock_margins",
+    "text": "Récompense d'horloge-renard : transforme la contradiction en plan défensif durable.",
+    "art": 108
+  },
+  {
+    "id": "second_knot_komainu",
+    "name": "Komainu du second nœud",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 7,
+    "sigils": ["reach", "guardian", "omen_break"],
+    "rarity": "rare",
+    "unlockThread": "knot_that_refuses_rescue",
+    "text": "Récompense de second degré : garde le ciel sans transformer la protection en laisse.",
+    "art": 109
+  },
+  {
+    "id": "cabinet_that_remembers_you",
+    "name": "Cabinet qui se souvient de vous",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["hoard", "deathless", "destiny", "echo"],
+    "rarity": "secret",
+    "unlockRouteSecret": "black_manifest_lantern",
+    "text": "Secret de route : le meuble ne gagne pas le combat, il rend votre main beaucoup trop signifiante.",
+    "art": 110
+  },
+  {
+    "id": "player_seat_lantern",
+    "name": "Lanterne sous le siège du joueur",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "deathless", "destiny", "hoard"],
+    "rarity": "unique",
+    "unlockThread": "cabinet_under_player_seat",
+    "text": "Secret méta : elle protège comme si une main extérieure tenait encore le dossier ouvert.",
+    "art": 111
+  },
+  {
+    "id": "memory_pin_hare",
+    "name": "Lièvre à épingle de mémoire",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Une petite carte de repérage : faible seule, intéressante quand le deck cherche ses pièces.",
+    "art": 112
+  },
+  {
+    "id": "apology_thread_moth",
+    "name": "Phalène du fil d'excuse",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 1,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Zéro coût, zéro attaque : elle transforme une main encombrée en promesse différée.",
+    "art": 113
+  },
+  {
+    "id": "receipt_lantern_newt",
+    "name": "Triton à lanterne de reçu",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "Un petit amortisseur de Poursuite pour les decks qui jouent lentement les preuves.",
+    "art": 114
+  },
+  {
+    "id": "folded_silence_crane",
+    "name": "Grue de silence plié",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["airborne"],
+    "rarity": "common",
+    "text": "Simple pression aérienne, pensée pour rendre les petites mains plus lisibles.",
+    "art": 115
+  },
+  {
+    "id": "copper_margin_mouse",
+    "name": "Souris de marge cuivrée",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["sprinter"],
+    "rarity": "common",
+    "text": "Change de voie après l'action : une preuve qui refuse de rester classée.",
+    "art": 116
+  },
+  {
+    "id": "afterimage_bucket_kappa",
+    "name": "Kappa au seau d'après-image",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "Une Vigie commune pour que les decks secrets ne meurent pas bêtement au premier vol.",
+    "art": 117
+  },
+  {
+    "id": "warm_ledger_wisp",
+    "name": "Feu follet de registre tiède",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["destiny", "echo"],
+    "rarity": "common",
+    "text": "Une entrée de registre qui sert plus à cycler qu'à combattre.",
+    "art": 118
+  },
+  {
+    "id": "small_vow_toad",
+    "name": "Crapaud du petit vœu",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "Protège sans prétention : exactement le genre de carte qu'un deck de secrets veut tôt.",
+    "art": 119
+  },
+  {
+    "id": "unread_manual_imp",
+    "name": "Diablotin du manuel non lu",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": ["pyre"],
+    "rarity": "common",
+    "text": "Brûle vite et frappe vite : Rinka prétend ne pas l'avoir lu.",
+    "art": 120
+  },
+  {
+    "id": "moonlit_witness_slug",
+    "name": "Limace témoin au clair de lune",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Une carte lente qui aime les mains pleines : mauvaise en vitesse pure, bonne en plan de main.",
+    "art": 121
+  },
+  {
+    "id": "relation_index_cat",
+    "name": "Chat d'index relationnel",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 2,
+    "sigils": ["destiny", "sprinter"],
+    "rarity": "uncommon",
+    "text": "Une carte de transition qui rend les choix de voie plus souples.",
+    "art": 122
+  },
+  {
+    "id": "half_pardon_umbrella",
+    "name": "Ombrelle de demi-pardon",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "echo"],
+    "rarity": "uncommon",
+    "text": "Ne frappe pas, mais protège et garde le tempo pour les runs lentes.",
+    "art": 123
+  },
+  {
+    "id": "platform_talisman_fox",
+    "name": "Renarde au talisman de quai",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": ["destiny", "guardian"],
+    "rarity": "uncommon",
+    "unlockMemory": "paper_copper_afterplatform",
+    "text": "Souvenir Ayame/Kohana : protéger n'est plus confisquer, réparer n'est plus fuir.",
+    "art": 124
+  },
+  {
+    "id": "afterfever_mist_oni",
+    "name": "Oni de brume après-fièvre",
+    "tribe": "yōkai",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["deathless", "pyre"],
+    "rarity": "uncommon",
+    "unlockMemory": "afterfever_diagnosis",
+    "text": "Souvenir Rinka/Eir : une douleur qui revient, mais moins seule.",
+    "art": 125
+  },
+  {
+    "id": "manual_fire_tanuki",
+    "name": "Tanuki de la clause du feu",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 5,
+    "sigils": ["pyre", "guardian"],
+    "rarity": "uncommon",
+    "unlockMemory": "manual_fire_clause",
+    "text": "Souvenir Rinka/Kohana : le manuel peut brûler sans mentir.",
+    "art": 126
+  },
+  {
+    "id": "orbit_apology_dragon",
+    "name": "Dragonne de l'excuse orbitale",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 7,
+    "sigils": ["reach", "guardian", "destiny"],
+    "rarity": "rare",
+    "unlockMemory": "orbit_apology",
+    "text": "Souvenir Kaguya/Vespera : une orbite qui protège sans enfermer complètement.",
+    "art": 127
+  },
+  {
+    "id": "clean_knife_moon",
+    "name": "Lune au couteau propre",
+    "tribe": "artefact",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 6,
+    "sigils": ["omen_break", "deathless", "destiny"],
+    "rarity": "rare",
+    "unlockMemory": "clean_knife_mercy",
+    "text": "Souvenir Ayame/Vespera : une lame peut couper une corde au lieu d'une gorge.",
+    "art": 128
+  },
+  {
+    "id": "astrolabe_gear_kitsune",
+    "name": "Kitsune à astrolabe d'engrenages",
+    "tribe": "artefact",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 5,
+    "sigils": ["bifurcated", "destiny", "echo"],
+    "rarity": "rare",
+    "unlockMemory": "gear_orbit_blueprint",
+    "text": "Souvenir Kohana/Kaguya : les rails et les orbites ont enfin accepté de se contredire utilement.",
+    "art": 129
+  },
+  {
+    "id": "sealwax_minnow",
+    "name": "Vairon de cire scellée",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Zéro coût et presque aucune force : utile pour absorber, cycler ou nourrir une stratégie de main.",
+    "art": 130
+  },
+  {
+    "id": "testimony_firefly",
+    "name": "Luciole de témoignage",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Ne blesse pas, mais aide à trouver la bonne pièce au bon moment.",
+    "art": 131
+  },
+  {
+    "id": "paper_juror_mouse",
+    "name": "Souris jurée de papier",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "Petite garde commune : elle tient une voie pendant que le procès se prépare.",
+    "art": 132
+  },
+  {
+    "id": "gavel_chip_sparrow",
+    "name": "Moineau d'éclat de maillet",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 1,
+    "sigils": ["airborne", "brittle"],
+    "rarity": "common",
+    "text": "Un impact aérien bref : parfait pour grignoter une voie ouverte.",
+    "art": 133
+  },
+  {
+    "id": "inkless_summons_slug",
+    "name": "Limace de convocation sans encre",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Défense lente qui aime les mains chargées et les decks qui veulent respirer.",
+    "art": 134
+  },
+  {
+    "id": "witness_candle_newt",
+    "name": "Triton à chandelle témoin",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": ["reach"],
+    "rarity": "common",
+    "text": "Une Vigie simple : il éclaire surtout les menaces venues du ciel.",
+    "art": 135
+  },
+  {
+    "id": "clock_margin_crab",
+    "name": "Crabe de marge d'horloge",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["sprinter"],
+    "rarity": "common",
+    "text": "Se déplace après l'action : un petit témoin qui refuse la ligne droite.",
+    "art": 136
+  },
+  {
+    "id": "verdict_lint_imp",
+    "name": "Diablotin de poussière de verdict",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": ["pyre"],
+    "rarity": "common",
+    "text": "Frappe vite et brûle bien : parfois le procès a besoin d'une mauvaise idée immédiate.",
+    "art": 137
+  },
+  {
+    "id": "false_acquittal_umbrella",
+    "name": "Ombrelle d'acquittement faux",
+    "tribe": "tsukumogami",
+    "blood": 2,
+    "bones": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "omen_break"],
+    "rarity": "uncommon",
+    "text": "Ne gagne pas la voie seule, mais ralentit l'accusation et protège longtemps.",
+    "art": 138
+  },
+  {
+    "id": "jury_knot_tanuki",
+    "name": "Tanuki du nœud de jury",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["echo", "hoard"],
+    "rarity": "uncommon",
+    "text": "Garde une trace en main et profite des mains serrées autour de quatre cartes.",
+    "art": 139
+  },
+  {
+    "id": "cross_exam_kitsune",
+    "name": "Kitsune du contre-interrogatoire",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 3,
+    "sigils": ["destiny", "sprinter"],
+    "rarity": "uncommon",
+    "text": "Cherche une pièce et change de voie : utile quand le plateau ment.",
+    "art": 140
+  },
+  {
+    "id": "silent_bailiff_crane",
+    "name": "Grue huissière silencieuse",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 2,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["airborne", "guardian"],
+    "rarity": "uncommon",
+    "text": "Une défense étrange : elle ne frappe pas, mais elle occupe une voie que le ciel croyait libre.",
+    "art": 141
+  },
+  {
+    "id": "verdict_witness_miko",
+    "name": "Miko du verdict des témoins",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 2,
+    "health": 6,
+    "sigils": ["guardian", "destiny", "echo"],
+    "rarity": "rare",
+    "unlockVerdict": "verdict_witness_network",
+    "text": "Jugement secret : elle protège la version de l'histoire qui a besoin de plusieurs voix.",
+    "art": 142
+  },
+  {
+    "id": "verdict_player_seat_lantern",
+    "name": "Lanterne du siège juge",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 5,
+    "sigils": ["guardian", "deathless", "destiny", "hoard"],
+    "rarity": "secret",
+    "unlockVerdict": "verdict_player_seat",
+    "text": "Jugement méta : la lanterne protège la place qui vous regarde relancer une nuit de plus.",
+    "art": 143
+  },
+  {
+    "id": "verdict_broken_morning_shell",
+    "name": "Coquille du matin jugé",
+    "tribe": "divin",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 6,
+    "sigils": ["omen_break", "deathless", "bifurcated"],
+    "rarity": "rare",
+    "unlockVerdict": "verdict_broken_morning",
+    "text": "Jugement terminal : elle fend deux voies et ralentit l'aube quand elle prétend être unique.",
+    "art": 144
+  },
+  {
+    "id": "verdict_unread_trial_gavel",
+    "name": "Maillet du procès non lu",
+    "tribe": "artefact",
+    "blood": 3,
+    "bones": 0,
+    "attack": 4,
+    "health": 4,
+    "sigils": ["destiny", "pyre", "reach"],
+    "rarity": "rare",
+    "unlockVerdict": "verdict_unread_trial",
+    "text": "Jugement administratif : il frappe avant que la page vide puisse inventer un coupable.",
+    "art": 145
+  },
+  {
+    "id": "murmur_platform_mouse",
+    "name": "Souris du quai murmuré",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny"],
+    "rarity": "common",
+    "text": "Une carte minuscule et gratuite : elle existe surtout pour déclencher un destin au bon moment.",
+    "art": 146
+  },
+  {
+    "id": "archive_sparrow",
+    "name": "Moineau d'archive froissée",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Petite carte de cycle : si elle quitte la main sans être jouée, elle aide le tour suivant.",
+    "art": 147
+  },
+  {
+    "id": "ticket_slug",
+    "name": "Limace au billet tiède",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 1,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["hoard"],
+    "rarity": "common",
+    "text": "Ne frappe presque jamais seule : elle prend du sens quand la main reste volontairement pleine.",
+    "art": 148
+  },
+  {
+    "id": "platform_imp",
+    "name": "Diablotin de plateforme",
+    "tribe": "demon",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": ["brittle"],
+    "rarity": "common",
+    "text": "Attaque vite, disparaît vite : parfait pour convertir une fenêtre courte en progression.",
+    "art": 149
+  },
+  {
+    "id": "soot_lantern_newt",
+    "name": "Triton à lanterne de suie",
+    "tribe": "esprit",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["guardian"],
+    "rarity": "common",
+    "text": "Défenseur simple pour apprendre à bloquer une voie sans forcément chercher les dégâts.",
+    "art": 150
+  },
+  {
+    "id": "quiet_bell_crab",
+    "name": "Crabe de cloche muette",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["omen_break"],
+    "rarity": "common",
+    "text": "Une ancre de bas niveau : elle ralentit la Poursuite sans gagner la run toute seule.",
+    "art": 151
+  },
+  {
+    "id": "oath_komainu",
+    "name": "Komainu du serment rangé",
+    "tribe": "divin",
+    "blood": 2,
+    "bones": 0,
+    "attack": 2,
+    "health": 4,
+    "sigils": ["guardian", "echo"],
+    "rarity": "uncommon",
+    "text": "Protège une voie puis laisse de la Lueur au prochain départ si le joueur accepte de patienter.",
+    "art": 152
+  },
+  {
+    "id": "marginalia_kitsune",
+    "name": "Kitsune des marges corrigées",
+    "tribe": "bestial",
+    "blood": 2,
+    "bones": 0,
+    "attack": 1,
+    "health": 3,
+    "sigils": ["destiny", "bifurcated"],
+    "rarity": "uncommon",
+    "text": "Faible en stats brutes, mais elle transforme une bonne pioche en deux petites pressions.",
+    "art": 153
+  },
+  {
+    "id": "moonrail_index_miko",
+    "name": "Miko de l'index Moonrail",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 3,
+    "attack": 1,
+    "health": 4,
+    "sigils": ["reach", "hoard"],
+    "rarity": "uncommon",
+    "text": "Défense anti-vol qui devient utile quand la main refuse de se vider complètement.",
+    "art": 154
+  },
+  {
+    "id": "stoke_jury_tanuki",
+    "name": "Tanuki du jury chauffé",
+    "tribe": "bestial",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["pyre", "deathless"],
+    "rarity": "uncommon",
+    "text": "Une petite boucle de chauffe : mourir ou être sacrifié peut encore avancer le train.",
+    "art": 155
+  },
+  {
+    "id": "archive_engine_oni",
+    "name": "Oni du moteur d'archives",
+    "tribe": "demon",
+    "blood": 3,
+    "bones": 0,
+    "attack": 3,
+    "health": 5,
+    "sigils": ["pyre", "hoard", "omen_break"],
+    "rarity": "rare",
+    "text": "Un moteur rare pour les runs épaisses : il récompense la main pleine et la chauffe sans oublier la Poursuite.",
+    "art": 156
+  },
+  {
+    "id": "unread_station_dragon",
+    "name": "Dragon de la station non lue",
+    "tribe": "divin",
+    "blood": 0,
+    "bones": 4,
+    "attack": 2,
+    "health": 5,
+    "sigils": ["airborne", "guardian", "destiny"],
+    "rarity": "rare",
+    "text": "Une rare défensive bizarre : elle protège, vole, et commence parfois son histoire dès la pioche.",
+    "art": 157
+  },
+  {
+    "id": "ash_prayer_crane",
+    "name": "Grue de prière sous la cendre",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["guardian", "brittle"],
+    "rarity": "uncommon",
+    "unlockMemory": "ash_prayer_truce",
+    "text": "Souvenir Ayame/Rinka : protection gratuite et brève, utile pour absorber exactement une menace.",
+    "art": 158
+  },
+  {
+    "id": "prayer_diagnosis_moth",
+    "name": "Papillon du diagnostic prié",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["destiny", "echo"],
+    "rarity": "uncommon",
+    "unlockMemory": "diagnosis_of_prayer",
+    "text": "Souvenir Ayame/Eir : faible sur la voie, mais précis pour préparer le tour où la pioche doit respirer.",
+    "art": 159
+  },
+  {
+    "id": "orbit_margin_ofuda",
+    "name": "Ofuda de la marge orbitale",
+    "tribe": "tsukumogami",
+    "blood": 1,
+    "bones": 0,
+    "attack": 0,
+    "health": 4,
+    "sigils": ["reach"],
+    "rarity": "uncommon",
+    "unlockMemory": "margin_orbit_liturgy",
+    "text": "Souvenir Ayame/Kaguya : une défense sans attaque qui garde le ciel sans refermer sa trajectoire.",
+    "art": 160
+  },
+  {
+    "id": "consent_valve_kappa",
+    "name": "Kappa de la valve consentie",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": ["bone_digger", "brittle"],
+    "rarity": "uncommon",
+    "unlockMemory": "engine_heart_chart",
+    "text": "Souvenir Kohana/Eir : se pose gratuitement, tient peu, puis rend de la Lueur au départ suivant.",
+    "art": 161
+  },
+  {
+    "id": "royal_fuse_wisp",
+    "name": "Feu follet du fusible royal",
+    "tribe": "esprit",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 1,
+    "health": 0,
+    "sigils": ["omen_break", "brittle"],
+    "rarity": "rare",
+    "unlockMemory": "royal_fuse_test",
+    "text": "Souvenir Kohana/Vespera : réduit la Poursuite et frappe une fois, mais ne peut pas tenir une voie.",
+    "art": 162
+  },
+  {
+    "id": "ceiling_breach_tengu",
+    "name": "Tengu de la brèche au plafond",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 2,
+    "health": 1,
+    "sigils": ["airborne", "brittle"],
+    "rarity": "rare",
+    "unlockMemory": "ceiling_sun_compact",
+    "text": "Souvenir Rinka/Kaguya : une attaque précise et aérienne qui ouvre un passage sans prétendre l’occuper.",
+    "art": 163
+  },
+  {
+    "id": "late_banner_oni",
+    "name": "Oni à la bannière trop tardive",
+    "tribe": "oni",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["pyre", "echo"],
+    "rarity": "uncommon",
+    "unlockMemory": "late_rebellion_banner",
+    "text": "Souvenir Rinka/Vespera : carte de combo gratuite, rentable brûlée ou laissée en main, médiocre au combat.",
+    "art": 164
+  },
+  {
+    "id": "scarred_sky_slug",
+    "name": "Limace du ciel cicatrisé",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 3,
+    "sigils": ["reach"],
+    "rarity": "uncommon",
+    "unlockMemory": "scarred_sky_protocol",
+    "text": "Souvenir Eir/Kaguya : mur anti-aérien gratuit, lent et volontairement incapable de gagner seul.",
+    "art": 165
+  },
+  {
+    "id": "living_reflection_leech",
+    "name": "Sangsue du reflet vivant",
+    "tribe": "yōkai",
+    "blood": 1,
+    "bones": 0,
+    "attack": 1,
+    "health": 2,
+    "sigils": ["deathless", "destiny"],
+    "rarity": "rare",
+    "unlockMemory": "living_reflection_sample",
+    "text": "Souvenir Eir/Vespera : un petit témoin récurrent qui revient contredire les diagnostics trop définitifs.",
+    "art": 166
+  },
+  {
+    "id": "brake_light_frog",
+    "name": "Grenouille du feu de freinage",
+    "tribe": "bestial",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 2,
+    "sigils": [],
+    "rarity": "common",
+    "text": "Un bloqueur gratuit sans autre promesse : excellent pour gagner un départ, mauvais pour finir un combat.",
+    "art": 167
+  },
+  {
+    "id": "return_spark_ticket",
+    "name": "Ticket de l’étincelle rendue",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 1,
+    "sigils": ["echo"],
+    "rarity": "common",
+    "text": "Gratuit à poser ; encore meilleur s’il reste en main pour préparer la Lueur du prochain départ.",
+    "art": 168
+  },
+  {
+    "id": "cinder_route_pin",
+    "name": "Épingle de route en cendre",
+    "tribe": "artefact",
+    "blood": 0,
+    "bones": 0,
+    "lumen": 0,
+    "attack": 0,
+    "health": 0,
+    "sigils": ["pyre"],
+    "rarity": "common",
+    "text": "0/0/0 : ne sert qu’à être chauffée ou sacrifiée pour convertir une carte en un point de Progression.",
+    "art": 169
+  }
+]

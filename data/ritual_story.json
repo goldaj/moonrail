@@ -1,0 +1,668 @@
+{
+  "premise": "Au Festival des Cent Reflets, l'aube n'est jamais venue. Une étoile enfant s'est éveillée dans la chaudière du Moonrail et a supplié Ayame de ne pas être rendue au ciel. Depuis, le train fuit sous une nuit immobile tandis que les conductrices du Tribunal réclament leur matin.",
+  "surface_goal": "Transporter l'Étincelle jusqu'au Terminus de l'Est avant que les dieux n'arrêtent le train.",
+  "hidden_truth": "L'Étincelle est la Déesse de l'Aube elle-même. Elle s'est brisée en cent reflets pour échapper au Tribunal Céleste, qui efface puis recommence le monde à chaque centième lever de soleil.",
+  "hunters": [
+    {"id":"controleur","name":"Ayame, Sceau du Tribunal","rule":"Le premier passager affecté à chaque départ coûte +1 Lueur.","ruleKey":"seal_tax","advice":"Des cartes à faible coût ou une chaudière bien planifiée","portrait":0,"startPursuit":0},
+    {"id":"mecano","name":"Kohana, Renarde des Rouages","rule":"Après le premier départ, elle peut ajouter un automate à l'horaire.","ruleKey":"gear_summon","advice":"Nettoyer vite les wagons et intercepter les machines","portrait":1,"startPursuit":0},
+    {"id":"rinka","name":"Rinka, Duel au Soleil Rouge","rule":"Chaque carte chauffée nourrit sa braise : une ennemie gagne +1 Puissance.","ruleKey":"ember_duel","advice":"Chauffer moins souvent ou tuer avant que la braise grandisse","portrait":2,"startPursuit":0},
+    {"id":"eir","name":"Eir, Brume du Dernier Souffle","rule":"La première créature ennemie vaincue revient une fois en brume.","ruleKey":"mist_return","advice":"Prévoir un deuxième coup ou progresser autour d'elle","portrait":3,"startPursuit":0},
+    {"id":"kaguya","name":"Kaguya, Dragonne de l'Orbite","rule":"Ses unités aériennes peuvent entrer sans passer par la rangée d'annonce.","ruleKey":"sky_drop","advice":"Des passagers avec Vigie et des wagons flexibles","portrait":4,"startPursuit":1},
+    {"id":"vespera","name":"Vespera, Lune Déchue","rule":"Au deuxième départ, elle annonce une copie de votre passager le plus fort.","ruleKey":"mirror_copy","advice":"Répartir la puissance entre les wagons","portrait":5,"startPursuit":1}
+  ],
+  "truths": [
+    {"id":"mirror","title":"Le reflet qui respire","hint":"Mourez une fois, puis touchez le miroir de l'observatoire."},
+    {"id":"clock","title":"La treizième heure","hint":"Revenez trois fois à la même nuit."},
+    {"id":"cage","title":"L'oiseau qui refuse l'aube","hint":"Battez votre premier dieu chasseur."},
+    {"id":"boiler","title":"Une voix dans la chaudière","hint":"Chauffez dix cartes au fil de vos tentatives."},
+    {"id":"white_route","title":"La voie blanche","hint":"Revenez à l'aiguillage impossible, puis suivez le Fil blanc."},
+    {"id":"no_blood","title":"L'horaire parfait","hint":"Gagnez un incident sans chauffer de carte."},
+    {"id":"five_teeth","title":"La voie entre les secondes","hint":"Gagnez avec au moins 3 Progression excédentaire."},
+    {"id":"false_dawn","title":"La première fausse aube","hint":"Atteignez le terminus une première fois."},
+    {"id":"name","title":"Le nom avant le matin","hint":"Atteignez le terminus après avoir découvert six vérités."},
+    {"id":"ticket_zero","tier":"curiosité","title":"Le billet numéro zéro","hint":"Commencez deux tentatives.","condition":{"kind":"attempts","value":2},"lore":"Le billet précède la création de la ligne. Au verso, votre signature est déjà sèche."},
+    {"id":"window_guest","tier":"curiosité","title":"La passagère dans la vitre","hint":"Observez dix créatures.","condition":{"kind":"discovered","value":10},"lore":"Elle n'apparaît que dans les reflets et change de siège lorsque vous fermez l'observatoire."},
+    {"id":"third_whistle","tier":"curiosité","title":"Le troisième sifflet","hint":"Chauffez trois cartes.","condition":{"kind":"stokes","value":3},"lore":"Deux sifflets viennent de la locomotive. Le troisième répond depuis un tunnel absent de la carte."},
+    {"id":"crew_manifest","tier":"combinaison","title":"Le manifeste impossible","hint":"Commencez quatre tentatives.","condition":{"kind":"attempts","value":4},"lore":"La liste contient vingt-quatre conductrices. Dix-huit noms sont encore barrés d'encre fraîche."},
+    {"id":"hunter_mercy","tier":"combinaison","title":"La miséricorde du contrôleur","hint":"Vainquez deux contrôleurs célestes.","condition":{"kind":"hunters","value":2},"lore":"Les contrôleurs ralentissent parfois exprès. Quelqu'un, au Tribunal, souhaite que le train continue."},
+    {"id":"cold_boiler","tier":"combinaison","title":"La chaudière froide","hint":"Chauffez vingt cartes au total.","condition":{"kind":"stokes","value":20},"lore":"Sous les cendres se trouve une seconde chambre de combustion qui n'a jamais reçu de feu."},
+    {"id":"paper_constellation","tier":"chaîne","title":"La constellation de papier","hint":"Observez vingt créatures.","condition":{"kind":"discovered","value":20},"lore":"Leurs silhouettes assemblées dessinent une carte du ciel où la lune occupe la place du soleil."},
+    {"id":"returning_station","tier":"chaîne","title":"La gare qui revient","hint":"Commencez six tentatives.","condition":{"kind":"attempts","value":6},"lore":"Ce quai ne se répète pas : ce sont les autres gares qui se déplacent autour de lui."},
+    {"id":"two_mornings","tier":"chaîne","title":"Deux matins contradictoires","hint":"Atteignez deux fois le terminus.","condition":{"kind":"clears","value":2},"lore":"Les deux levers de soleil sont authentiques, mais ne peuvent pas appartenir au même monde."},
+    {"id":"complete_bestiary","tier":"route cachée","title":"Le zoologue du dernier wagon","hint":"Observez les vingt-sept créatures.","condition":{"kind":"discovered","value":27},"lore":"Le zoologue ferme son album et révèle un aiguillage réservé aux espèces qui n'existent plus."},
+    {"id":"four_hunters","tier":"route cachée","title":"Le siège vide du Tribunal","hint":"Vainquez quatre contrôleurs.","condition":{"kind":"hunters","value":4},"lore":"Un dixième siège porte le symbole du Moonrail. Le Tribunal attendait votre arrivée."},
+    {"id":"twelve_truths","tier":"route cachée","title":"La carte sous la carte","hint":"Découvrez douze vérités.","condition":{"kind":"truths","value":12},"lore":"En superposant les indices, une seconde ligne apparaît sous chaque route connue."},
+    {"id":"third_dawn","tier":"métasecret","title":"Le matin qui se souvient","hint":"Atteignez trois fois le terminus.","condition":{"kind":"clears","value":3},"lore":"Cette fois, le soleil vous reconnaît. Ce n'est pas vous qui recommencez : c'est lui."},
+    {"id":"eighteen_truths","tier":"métasecret","title":"Le conducteur absent","hint":"Découvrez dix-huit vérités.","condition":{"kind":"truths","value":18},"lore":"Chaque tentative était conduite depuis l'observatoire par une version de vous restée hors du train."},
+    {"id":"sealed_signature","tier":"métasecret","title":"La phrase sous le billet","hint":"Atteignez une aube avec une conductrice.","condition":{"kind":"clears","value":1},"lore":"Chaque conductrice possède une phrase que le train refuse d'imprimer avant qu'elle survive à sa propre fin."},
+    {"id":"second_name","tier":"métasecret","title":"Le nom qui ne tient pas sur la carte","hint":"Découvrez douze vérités, puis observez les prismes rares.","condition":{"kind":"truths","value":12},"lore":"Un nom peut avoir une ombre. Les prismes profonds ne créent pas cette ombre : ils révèlent seulement qu'elle conduisait déjà."},
+    {"id":"dialogue_scars","tier":"relation","title":"Les cicatrices qui parlent","hint":"Vainquez six contrôleurs célestes.","condition":{"kind":"hunters","value":6},"lore":"Chaque conductrice change la phrase du boss qu'elle affronte. Le Tribunal ne répète pas ses sermons : il adapte ses mensonges à la personne qui peut les briser."},
+    {"id":"white_thread_oath","tier":"relation","title":"Le serment cousu dans la marge","hint":"Découvrez la voie blanche puis revenez écouter les contrôleurs.","condition":{"kind":"has_truth","value":"white_route"},"lore":"Le Fil blanc n'est pas une route secrète. C'est une promesse cousue par les conductrices qui ont déjà refusé l'aube, puis oublié qu'elles avaient osé le faire."},
+    {"id":"moonrail_witness","tier":"relation","title":"La locomotive témoin","hint":"Atteignez deux aubes contradictoires.","condition":{"kind":"clears","value":2},"lore":"Le Moonrail n'est pas neutre. Il archive les duels, compare les voix et pousse les ennemies à révéler ce qu'elles taisent à d'autres conductrices."},
+    {"id":"last_bell_family","tier":"métasecret","title":"La famille de la dernière cloche","hint":"Découvrez vingt-deux vérités.","condition":{"kind":"truths","value":22},"lore":"Ayame, Kohana, Rinka, Eir, Kaguya et Vespera n'ont pas été choisies au hasard. Elles sont les six réponses survivantes à une même question posée par l'aube avant de se briser."},
+    {"id":"ayame_kohana_oath","tier":"relation","title":"Le vœu de papier et de cuivre","hint":"Découvrez les cicatrices qui parlent.","condition":{"kind":"has_truth","value":"dialogue_scars"},"lore":"Ayame a béni la première réparation de Kohana. Kohana a ensuite retiré trois clous sacrés du Tribunal pour empêcher la bénédiction de devenir une laisse."},
+    {"id":"rinka_eir_wound","tier":"relation","title":"La brûlure diagnostiquée","hint":"Vainquez dix contrôleurs célestes.","condition":{"kind":"hunters","value":10},"lore":"Eir sait que Rinka ne cherche pas le combat : elle cherche la seule douleur assez bruyante pour couvrir le nom qu'elle a entendu dans le feu."},
+    {"id":"kaguya_vespera_tide","tier":"relation","title":"La marée sans lune","hint":"Découvrez la locomotive témoin.","condition":{"kind":"has_truth","value":"moonrail_witness"},"lore":"Kaguya n'a pas trahi Vespera par cruauté. Elle a stabilisé une orbite qu'on lui avait présentée comme une protection. Vespera appelle encore cela une prison."},
+    {"id":"six_answers","tier":"métasecret","title":"Les six réponses survivantes","hint":"Découvrez vingt-quatre vérités.","condition":{"kind":"truths","value":24},"lore":"Le Tribunal n'a pas créé six conductrices. Il a posé la même question à cent reflets, puis n'a gardé que les six réponses capables de conduire malgré la peur."},
+    {"id":"hundred_reflects","tier":"métasecret","title":"Les cent reflets refusés","hint":"Commencez vingt tentatives.","condition":{"kind":"attempts","value":20},"lore":"Les reflets qui n'ont pas survécu ne sont pas morts. Ils sont devenus des règles, des cartes, des malus, et parfois ces petites phrases qui apparaissent trop vite pour être lues."},
+    {"id":"three_private_oaths","tier":"métasecret relationnel","title":"Les trois serments privés","hint":"Réunissez les trois vérités de relation des paires cachées.","condition":{"kind":"all_truths","value":["ayame_kohana_oath","rinka_eir_wound","kaguya_vespera_tide"]},"lore":"Les trois paires ne racontent pas trois histoires. Elles forment une seule phrase que le Tribunal a coupée en morceaux : « personne ne sauve l'aube seule »."},
+    {"id":"moonrail_first_lie","tier":"métasecret","title":"Le premier mensonge du Moonrail","hint":"Découvrez les cent reflets refusés.","condition":{"kind":"has_truth","value":"hundred_reflects"},"lore":"Le Moonrail prétend transporter l'Étincelle. En vérité, il la retarde. Il cherche la conductrice qui saura lui dire quand arrêter de protéger."},
+    {"id":"tribunal_parenthesis","tier":"métasecret","title":"La parenthèse du Tribunal","hint":"Découvrez vingt-huit vérités.","condition":{"kind":"truths","value":28},"lore":"Le Tribunal Céleste n'est pas l'ennemi final. Il est la parenthèse bureaucratique laissée par des dieux qui ont fui avant de lire leur propre verdict."},
+    {"id":"player_seat","tier":"métasecret","title":"Le siège du joueur","hint":"Revenez vingt-cinq fois dans l'observatoire.","condition":{"kind":"attempts","value":25},"lore":"Un siège de l'observatoire ne correspond à aucune conductrice. Il n'apparaît que quand personne ne le regarde, mais son coussin est toujours chaud."},
+    {"id":"dawn_refusal","tier":"métasecret","title":"La première désobéissance de l'aube","hint":"Découvrez le premier mensonge du Moonrail et les trois serments privés.","condition":{"kind":"all_truths","value":["moonrail_first_lie","three_private_oaths"]},"lore":"Amahina n'a pas demandé à être sauvée. Elle a demandé à être contredite. La vraie fin ne sera pas de rendre l'aube, mais de lui refuser son plus beau sacrifice."},
+    {"id":"first_dialogue_echo","tier":"archive de dialogue","title":"La première réplique qui reste","hint":"Vivez un dialogue complet entre une conductrice et un boss.","condition":{"kind":"dialogues","value":1},"lore":"Le premier duel archivé prouve que les boss ne récitent pas des scripts. Ils répondent à la blessure exacte de celle qui conduit."},
+    {"id":"six_dialogue_echoes","tier":"archive de dialogue","title":"Six regards qui ne pardonnent pas","hint":"Archivez six dialogues complets différents.","condition":{"kind":"dialogues","value":6},"lore":"À six relations archivées, le Moonrail cesse de ranger les conversations par date. Il les range par regret."},
+    {"id":"twelve_dialogue_echoes","tier":"archive de dialogue","title":"Douze phrases sous le rail","hint":"Archivez douze dialogues complets différents.","condition":{"kind":"dialogues","value":12},"lore":"Douze dialogues forment un horaire caché : chaque boss révèle une vérité différente selon la main qui tient les commandes."},
+    {"id":"paper_copper_archive","tier":"archive de dialogue","title":"Papier et cuivre, enfin recousus","hint":"Résolvez l'archive relationnelle d'Ayame et Kohana.","condition":{"kind":"has_archive","value":"paper_copper"},"lore":"Ayame n'a jamais su que Kohana avait volé trois clous sacrés pour l'empêcher de devenir un instrument du Tribunal. Kohana n'a jamais su qu'Ayame l'avait bénie en connaissance de cause."},
+    {"id":"archive_room_unlocked","tier":"métasecret relationnel","title":"La salle qui classe les excuses","hint":"Réclamez trois archives de dialogue.","condition":{"kind":"archives","value":3},"lore":"La salle d'archives ne conserve pas les victoires. Elle conserve les excuses jamais prononcées, les menaces qui étaient des peurs, et les silences qui ont coûté des mondes."},
+    {"id":"first_false_thread","tier":"fil contradictoire","title":"La première fausse piste utile","hint":"Résolvez un fil contradictoire dans l'observatoire.","condition":{"kind":"threads","value":1},"lore":"Les fausses pistes ne mentent pas toujours. Certaines protègent une vérité trop fragile pour être regardée directement."},
+    {"id":"three_false_threads","tier":"fil contradictoire","title":"Trois mensonges qui s'accordent","hint":"Résolvez trois fils contradictoires.","condition":{"kind":"threads","value":3},"lore":"Trois dossiers incompatibles dessinent pourtant la même silhouette : le Tribunal a modifié ses archives après chaque aube ratée."},
+    {"id":"red_thread_without_knot_truth","tier":"fil contradictoire","title":"Le fil rouge sans nœud","hint":"Résolvez le dossier du fil rouge sans nœud.","condition":{"kind":"has_thread","value":"red_thread_without_knot"},"lore":"Un fil sans nœud ne relie rien ; il indique seulement où quelqu'un a refusé d'attacher une personne à son rôle."},
+    {"id":"fox_clock_parenthesis_truth","tier":"fil contradictoire","title":"La parenthèse de l'horloge-renard","hint":"Résolvez le dossier de l'horloge-renard.","condition":{"kind":"has_thread","value":"fox_clock_parenthesis"},"lore":"L'horloge-renard ne mesure pas le temps. Elle mesure combien de fois le Tribunal a réécrit une accusation pour qu'elle tombe sur la bonne conductrice."},
+    {"id":"black_ticket_manifest_truth","tier":"fil contradictoire","title":"Le manifeste noir des billets","hint":"Résolvez le dossier du manifeste noir.","condition":{"kind":"has_thread","value":"black_ticket_manifest"},"lore":"Le manifeste noir contient des billets non vendus, des noms non nés, et une place réservée à la personne qui clique sur l'observatoire trop souvent."},
+    {"id":"first_living_dossier","tier":"dossier vivant","title":"La première preuve qui monte à bord","hint":"Croisez un dossier vivant pendant une run.","condition":{"kind":"route_secrets","value":1},"lore":"Un secret observé depuis le wagon n'a pas le même goût qu'un secret rangé dans l'observatoire. Celui-ci tremble encore de mouvement."},
+    {"id":"three_living_dossiers","tier":"dossier vivant","title":"Trois dossiers qui se poursuivent","hint":"Croisez trois dossiers vivants différents.","condition":{"kind":"route_secrets","value":3},"lore":"Les dossiers vivants ne se contredisent pas : ils se poursuivent. Chaque run en attrape une phrase avant qu'elle change de quai."},
+    {"id":"red_pin_station_truth","tier":"dossier vivant","title":"La gare de l'épingle rouge","hint":"Trouvez la gare de l'épingle rouge pendant une run.","condition":{"kind":"has_route_secret","value":"red_pin_station"},"lore":"La gare n'est pas sur la carte parce qu'elle n'est pas une destination. C'est l'endroit où le Tribunal épingle les relations qu'il n'a jamais osé couper."},
+    {"id":"thirteenth_luggage_truth","tier":"dossier vivant","title":"La valise du treizième wagon","hint":"Trouvez la valise du treizième wagon.","condition":{"kind":"has_route_secret","value":"thirteenth_luggage"},"lore":"La valise est vide lorsqu'on l'ouvre, mais toujours plus lourde après. Elle transporte ce que les dialogues retirent au lieu d'ajouter."},
+    {"id":"black_lantern_manifest_truth","tier":"dossier vivant","title":"La lanterne du manifeste noir","hint":"Trouvez la lanterne du manifeste noir.","condition":{"kind":"has_route_secret","value":"black_manifest_lantern"},"lore":"La lanterne éclaire uniquement les noms non nés. Plus vous jouez, plus elle hésite avant de passer sur le vôtre."},
+    {"id":"first_relationship_memory","tier":"souvenir relationnel","title":"La première relation qui se souvient","hint":"Réclamez un souvenir relationnel.","condition":{"kind":"relationship_memories","value":1},"lore":"Les dialogues ne sont plus seulement archivés : une relation précise commence à changer ce que le train accepte de montrer."},
+    {"id":"three_relationship_memories","tier":"souvenir relationnel","title":"Trois relations qui refusent la version officielle","hint":"Réclamez trois souvenirs relationnels.","condition":{"kind":"relationship_memories","value":3},"lore":"Trois relations suffisent à ruiner l'idée d'une histoire unique. Le Tribunal n'avait pas peur d'une héroïne, mais d'un réseau de témoins."},
+    {"id":"paper_copper_afterplatform_truth","tier":"souvenir relationnel","title":"Le quai après le papier et le cuivre","hint":"Réclamez le souvenir relationnel d'Ayame et Kohana.","condition":{"kind":"has_memory","value":"paper_copper_afterplatform"},"lore":"Après la station du papier et du cuivre, Ayame cesse de demander qui a volé les clous sacrés. Elle demande enfin pourquoi elle avait laissé Kohana seule devant la serrure."},
+    {"id":"afterfever_vow_truth","tier":"souvenir relationnel","title":"Le vœu après la fièvre","hint":"Réclamez le souvenir relationnel de Rinka et Eir.","condition":{"kind":"has_memory","value":"afterfever_diagnosis"},"lore":"Rinka ne promet pas d'arrêter de brûler. Eir ne promet pas de la réparer. Pour elles, c'est déjà une paix scandaleuse."},
+    {"id":"orbit_apology_truth","tier":"souvenir relationnel","title":"L'excuse qui change d'orbite","hint":"Réclamez le souvenir relationnel de Kaguya et Vespera.","condition":{"kind":"has_memory","value":"orbit_apology"},"lore":"Kaguya comprend qu'une excuse n'annule pas une prison. Vespera comprend qu'une prison peut avoir été bâtie par une peur qui portait son nom."},
+    {"id":"first_secret_verdict","tier":"jugement secret","title":"Le premier verdict qui ne condamne personne","hint":"Résolvez un jugement secret du Tribunal.","condition":{"kind":"secret_verdicts","value":1},"lore":"Un verdict sans coupable est plus dangereux qu'un acquittement : il force le Tribunal à admettre que son procès avait peut-être été écrit avant la faute."},
+    {"id":"three_secret_verdicts","tier":"jugement secret","title":"Trois verdicts incompatibles","hint":"Résolvez trois jugements secrets.","condition":{"kind":"secret_verdicts","value":3},"lore":"Les trois verdicts se contredisent parfaitement. C'est leur seule honnêteté : si tout était vrai, alors le ciel n'a jamais jugé le bon crime."},
+    {"id":"player_seat_verdict_truth","tier":"jugement secret","title":"Le siège du joueur rend son avis","hint":"Résolvez le jugement du siège du joueur.","condition":{"kind":"has_verdict","value":"verdict_player_seat"},"lore":"Le siège du joueur ne tranche pas entre victoire et défaite. Il juge la répétition elle-même, puis demande pourquoi vous continuez à appeler cela une simple run."},
+    {"id":"broken_morning_verdict_truth","tier":"jugement secret","title":"Le matin cassé refuse le témoin unique","hint":"Résolvez le jugement du matin brisé.","condition":{"kind":"has_verdict","value":"verdict_broken_morning"},"lore":"Le matin cassé n'a jamais demandé une héroïne parfaite. Il demandait plusieurs témoins assez désaccordés pour empêcher l'aube de devenir une loi."},
+    {"id":"all_truths","tier":"métasecret","title":"La soixante-quatrième vérité","hint":"Découvrez toutes les autres vérités.","condition":{"kind":"truths","value":63},"lore":"Amahina n'a pas fui le cycle : elle l'a construit pour trouver un joueur capable de lui désobéir. Le plus grand secret n'est pas qu'elle soit l'aube, mais qu'elle espère être contredite."}
+  ],
+  "constellations": [
+    {
+      "id": "oath_triangle",
+      "title": "Triangle des serments privés",
+      "tier": "constellation relationnelle",
+      "truths": ["ayame_kohana_oath", "rinka_eir_wound", "kaguya_vespera_tide"],
+      "reward": "constellation_oath_engine",
+      "art": 0,
+      "hint": "Réunissez les trois serments relationnels des conductrices.",
+      "lore": "Les trois serments ne sont pas des souvenirs séparés : ils forment le moteur moral que le Tribunal a tenté de démonter."
+    },
+    {
+      "id": "empty_player_seat",
+      "title": "Le siège qui regarde en retour",
+      "tier": "constellation méta",
+      "truths": ["player_seat", "moonrail_first_lie", "dawn_refusal"],
+      "reward": "seat_that_draws_back",
+      "art": 4,
+      "hint": "Comprenez le siège du joueur, le mensonge du train et le refus de l'aube.",
+      "lore": "Quand le siège vide devient chaud, le jeu cesse de parler seulement aux conductrices. Il commence à vous répondre."
+    },
+    {
+      "id": "tribunal_parenthesis",
+      "title": "Parenthèse administrative du ciel",
+      "tier": "constellation du Tribunal",
+      "truths": ["tribunal_parenthesis", "six_answers", "hundred_reflects"],
+      "reward": "tribunal_molt_angel",
+      "art": 5,
+      "hint": "Trouvez ce que le Tribunal cache derrière sa bureaucratie.",
+      "lore": "Le Tribunal n'est pas un mur. C'est une mue abandonnée par des dieux qui ont confondu jugement et conservation."
+    },
+    {
+      "id": "white_thread_deep",
+      "title": "La couture derrière la voie blanche",
+      "tier": "constellation de route cachée",
+      "truths": ["white_route", "white_thread_oath", "three_private_oaths"],
+      "reward": "white_thread_conductor",
+      "art": 3,
+      "hint": "Suivez la voie blanche jusqu'à comprendre les serments cousus dessous.",
+      "lore": "Le Fil blanc ne mène pas à une destination. Il recoud les personnes qui avaient été séparées pour éviter qu'elles comprennent ensemble."
+    },
+    {
+      "id": "gentle_revolt",
+      "title": "Révolte sans offrande",
+      "tier": "constellation morale",
+      "truths": ["no_blood", "five_teeth", "dawn_refusal"],
+      "reward": "mercy_revolt_bell",
+      "art": 15,
+      "hint": "Prouvez que le train peut avancer vite sans brûler ce qu'il transporte.",
+      "lore": "La révolte la plus dangereuse pour le Tribunal n'est pas violente : c'est une victoire qui retire au sacrifice son prestige."
+    },
+    {
+      "id": "broken_dawn_shell",
+      "title": "Coquille de l'aube brisée",
+      "tier": "constellation terminale",
+      "truths": ["name", "dawn_refusal", "all_truths"],
+      "reward": "dawn_shell_oracle",
+      "art": 6,
+      "hint": "Découvrez le nom, le refus et toutes les vérités avant de toucher la coquille.",
+      "lore": "Ce qui reste de l'aube n'est pas un cœur à protéger. C'est une coquille qui attend que quelqu'un ose ne pas la refermer."
+    }
+  ],
+  "dialogueArchives": [
+    {
+      "id": "paper_copper",
+      "title": "Papier sacré, cuivre volé",
+      "tier": "duo relationnel",
+      "pairs": ["controleur:mecano", "mecano:controleur"],
+      "reward": "archive_oath_ticket",
+      "art": 0,
+      "hint": "Vivez les deux confrontations Ayame ↔ Kohana jusqu'au butin.",
+      "lore": "Leur dispute n'est pas théologique. Ayame a béni une réparation qui devait rester interdite ; Kohana a volé une pièce sacrée pour que cette bénédiction ne devienne jamais une laisse."
+    },
+    {
+      "id": "ember_diagnosis",
+      "title": "La fièvre et le diagnostic",
+      "tier": "duo relationnel",
+      "pairs": ["rinka:eir", "eir:rinka"],
+      "reward": "diagnostic_ember_vial",
+      "art": 5,
+      "hint": "Vivez les deux confrontations Rinka ↔ Eir jusqu'au butin.",
+      "lore": "Rinka appelle sa douleur un duel. Eir l'appelle une fièvre. Elles ont toutes les deux raison, ce qui est précisément le problème."
+    },
+    {
+      "id": "orbit_tide",
+      "title": "Orbite et marée sans lune",
+      "tier": "duo relationnel",
+      "pairs": ["kaguya:vespera", "vespera:kaguya"],
+      "reward": "moon_tide_shell",
+      "art": 6,
+      "hint": "Vivez les deux confrontations Kaguya ↔ Vespera jusqu'au butin.",
+      "lore": "Kaguya a cru stabiliser le ciel. Vespera a vécu cette stabilité comme une cellule. L'archive refuse de décider laquelle mentait."
+    },
+    {
+      "id": "first_six_rebukes",
+      "title": "Les six premiers reproches",
+      "tier": "archive large",
+      "minPairs": 6,
+      "reward": "first_rebuke_bell",
+      "art": 8,
+      "hint": "Vivez six dialogues complets conductrice/boss différents.",
+      "lore": "Six reproches suffisent à comprendre que chaque boss accuse la conductrice d'une faute différente, même quand il prétend servir la même loi."
+    },
+    {
+      "id": "twelve_witnesses",
+      "title": "Douze témoins autour de la table",
+      "tier": "archive large",
+      "minPairs": 12,
+      "reward": "witness_carriage_key",
+      "art": 9,
+      "hint": "Vivez douze dialogues complets conductrice/boss différents.",
+      "lore": "Douze duels remplissent la table d'archives. Une treizième chaise apparaît, mais elle n'appartient à aucune conductrice."
+    },
+    {
+      "id": "thirtieth_private_script",
+      "title": "Le trentième script privé",
+      "tier": "archive ultime",
+      "minPairs": 30,
+      "reward": "thirtieth_dialogue_mask",
+      "art": 15,
+      "hint": "Archivez les trente confrontations dirigées possibles entre conductrices et boss.",
+      "lore": "Quand tous les couples possibles ont parlé, le Tribunal ne peut plus prétendre qu'il existe une version officielle de l'histoire."
+    }
+  ],
+  "relationshipMemories": [
+    {
+      "id": "paper_copper_afterplatform",
+      "title": "Après le quai du papier et du cuivre",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"controleur:mecano"},
+        {"kind":"pair","id":"mecano:controleur"},
+        {"kind":"route_secret","id":"paper_copper_station"}
+      ],
+      "reward": "platform_talisman_fox",
+      "art": 0,
+      "hint": "Vivez les deux confrontations Ayame/Kohana, puis trouvez la Station du papier et du cuivre.",
+      "lore": "Ayame et Kohana ne se pardonnent pas encore. Elles cessent seulement de traiter l'autre comme une preuve à classer."
+    },
+    {
+      "id": "afterfever_diagnosis",
+      "title": "Le diagnostic après la fièvre",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"rinka:eir"},
+        {"kind":"pair","id":"eir:rinka"},
+        {"kind":"route_secret","id":"mist_burn_receipt"}
+      ],
+      "reward": "afterfever_mist_oni",
+      "art": 1,
+      "hint": "Vivez les deux confrontations Rinka/Eir, puis trouvez le Reçu de brume brûlée.",
+      "lore": "Rinka garde une braise dans sa paume. Eir ne l'éteint pas. Elle apprend seulement à reconnaître quand elle devient une alarme."
+    },
+    {
+      "id": "orbit_apology",
+      "title": "L'excuse qui change d'orbite",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"kaguya:vespera"},
+        {"kind":"pair","id":"vespera:kaguya"},
+        {"kind":"archive","id":"orbit_tide"}
+      ],
+      "reward": "orbit_apology_dragon",
+      "art": 2,
+      "hint": "Vivez les deux confrontations Kaguya/Vespera, puis réclamez leur archive relationnelle.",
+      "lore": "Vespera n'accepte pas l'excuse. Kaguya n'essaie plus de la rendre acceptable. L'orbite se décale d'un degré."
+    },
+    {
+      "id": "clean_knife_mercy",
+      "title": "Le couteau propre apprend la pitié",
+      "tier": "souvenir croisé",
+      "requirements": [
+        {"kind":"pair","id":"controleur:vespera"},
+        {"kind":"pair","id":"vespera:controleur"},
+        {"kind":"truth","id":"dawn_refusal"}
+      ],
+      "reward": "clean_knife_moon",
+      "art": 4,
+      "hint": "Faites parler Ayame et Vespera dans les deux sens, puis comprenez le refus de l'aube.",
+      "lore": "Ayame comprend que la pureté peut servir de lame. Vespera comprend que toutes les lames ne rêvent pas de gorge."
+    },
+    {
+      "id": "gear_orbit_blueprint",
+      "title": "Plan d'orbite à engrenages",
+      "tier": "souvenir croisé",
+      "requirements": [
+        {"kind":"pair","id":"mecano:kaguya"},
+        {"kind":"pair","id":"kaguya:mecano"},
+        {"kind":"route_secret","id":"fox_clock_margins"}
+      ],
+      "reward": "astrolabe_gear_kitsune",
+      "art": 5,
+      "hint": "Faites parler Kohana et Kaguya dans les deux sens, puis trouvez les Marges de l'horloge-renard.",
+      "lore": "Kohana cesse d'appeler les orbites des rails prétentieux. Kaguya cesse d'appeler les rouages des astres mal élevés."
+    },
+    {
+      "id": "manual_fire_clause",
+      "title": "La clause du feu dans le manuel",
+      "tier": "souvenir croisé",
+      "requirements": [
+        {"kind":"pair","id":"rinka:mecano"},
+        {"kind":"pair","id":"mecano:rinka"},
+        {"kind":"truth","id":"cold_boiler"}
+      ],
+      "reward": "manual_fire_tanuki",
+      "art": 8,
+      "hint": "Faites parler Rinka et Kohana dans les deux sens, puis découvrez la chaudière froide.",
+      "lore": "Kohana ajoute au manuel une clause que Rinka refuse de lire, puis respecte exactement : ne jamais frapper un moteur qui supplie."
+    },
+    {
+      "id": "ash_prayer_truce",
+      "title": "La trêve de la prière et de la cendre",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"controleur:rinka"},
+        {"kind":"pair","id":"rinka:controleur"},
+        {"kind":"truth","id":"no_blood"}
+      ],
+      "reward": "ash_prayer_crane",
+      "art": 3,
+      "hint": "Faites parler Ayame et Rinka dans les deux sens, puis prouvez qu'une victoire peut éviter le sang.",
+      "lore": "Ayame cesse de traiter la colère comme une impureté. Rinka cesse de traiter toute protection comme une cage en attente."
+    },
+    {
+      "id": "diagnosis_of_prayer",
+      "title": "Le diagnostic d'une prière",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"controleur:eir"},
+        {"kind":"pair","id":"eir:controleur"},
+        {"kind":"truth","id":"cold_boiler"}
+      ],
+      "reward": "prayer_diagnosis_moth",
+      "art": 6,
+      "hint": "Croisez Ayame et Eir dans les deux sens, puis écoutez la chaudière lorsqu'elle devient froide.",
+      "lore": "Eir inscrit le mot peur dans la marge du rituel. Ayame ne le barre pas ; elle comprend enfin qu'un devoir peut être un symptôme."
+    },
+    {
+      "id": "margin_orbit_liturgy",
+      "title": "Liturgie de la marge orbitale",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"controleur:kaguya"},
+        {"kind":"pair","id":"kaguya:controleur"},
+        {"kind":"truth","id":"paper_constellation"}
+      ],
+      "reward": "orbit_margin_ofuda",
+      "art": 7,
+      "hint": "Faites dialoguer Ayame et Kaguya dans les deux sens, puis lisez la constellation de papier.",
+      "lore": "Une marge non scellée devient une orbite de fuite. Kaguya accepte qu'un ciel puisse protéger précisément ce qu'il refuse d'enregistrer."
+    },
+    {
+      "id": "engine_heart_chart",
+      "title": "Le cardiogramme du moteur",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"mecano:eir"},
+        {"kind":"pair","id":"eir:mecano"},
+        {"kind":"truth","id":"boiler"}
+      ],
+      "reward": "consent_valve_kappa",
+      "art": 9,
+      "hint": "Confrontez Kohana et Eir dans les deux sens, puis découvrez ce qui est né avant le train.",
+      "lore": "Kohana dessine enfin une valve que la chaudière peut fermer elle-même. Eir appelle cela le premier battement volontaire de la machine."
+    },
+    {
+      "id": "royal_fuse_test",
+      "title": "L'épreuve du fusible royal",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"mecano:vespera"},
+        {"kind":"pair","id":"vespera:mecano"},
+        {"kind":"truth","id":"black_ticket_manifest_truth"}
+      ],
+      "reward": "royal_fuse_wisp",
+      "art": 10,
+      "hint": "Faites parler Kohana et Vespera dans les deux sens, puis lisez le manifeste des billets noirs.",
+      "lore": "Vespera n'était pas seulement une reine arrachée au circuit. Elle était le fusible qui empêchait le Tribunal d'alimenter une nuit éternellement rentable."
+    },
+    {
+      "id": "ceiling_sun_compact",
+      "title": "Le pacte du soleil et du plafond",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"rinka:kaguya"},
+        {"kind":"pair","id":"kaguya:rinka"},
+        {"kind":"truth","id":"five_teeth"}
+      ],
+      "reward": "ceiling_breach_tengu",
+      "art": 11,
+      "hint": "Croisez Rinka et Kaguya dans les deux sens, puis trouvez les rails entre deux secondes.",
+      "lore": "Rinka promet de ne briser que le plafond qui porte le poids. Kaguya promet de ne plus appeler ciel tout ce qui se trouve au-dessus d'elles."
+    },
+    {
+      "id": "late_rebellion_banner",
+      "title": "La bannière de la rébellion tardive",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"rinka:vespera"},
+        {"kind":"pair","id":"vespera:rinka"},
+        {"kind":"truth","id":"hunter_mercy"}
+      ],
+      "reward": "late_banner_oni",
+      "art": 12,
+      "hint": "Faites parler Rinka et Vespera dans les deux sens, puis épargnez un contrôle que vous pouviez humilier.",
+      "lore": "Rinka refuse de combattre sous la bannière de Vespera. La lune déchue découvre qu'une rébellion partagée n'a pas besoin de nouvelle reine."
+    },
+    {
+      "id": "scarred_sky_protocol",
+      "title": "Protocole du ciel cicatrisé",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"eir:kaguya"},
+        {"kind":"pair","id":"kaguya:eir"},
+        {"kind":"truth","id":"two_mornings"}
+      ],
+      "reward": "scarred_sky_slug",
+      "art": 13,
+      "hint": "Confrontez Eir et Kaguya dans les deux sens, puis observez deux matins incompatibles.",
+      "lore": "Le nouveau protocole interdit de lisser une cicatrice céleste sans demander au ciel s'il souhaite encore ressembler à l'ancien."
+    },
+    {
+      "id": "living_reflection_sample",
+      "title": "L'échantillon qui refuse le flacon",
+      "tier": "souvenir relationnel",
+      "requirements": [
+        {"kind":"pair","id":"eir:vespera"},
+        {"kind":"pair","id":"vespera:eir"},
+        {"kind":"truth","id":"name"}
+      ],
+      "reward": "living_reflection_leech",
+      "art": 14,
+      "hint": "Faites parler Eir et Vespera dans les deux sens, puis découvrez le vrai nom de l'Étincelle.",
+      "lore": "Eir renonce à conserver le reflet de Vespera comme une preuve morte. Le reflet quitte le flacon et revient témoigner quand il le décide."
+    }
+  ],
+  "secretThreads": [
+    {
+      "id": "red_thread_without_knot",
+      "title": "Le fil rouge sans nœud",
+      "tier": "fausse piste utile",
+      "requirements": [
+        {"kind":"truth","id":"white_route"},
+        {"kind":"truth","id":"white_thread_oath"},
+        {"kind":"archive","id":"first_six_rebukes"}
+      ],
+      "reward": "red_thread_snail",
+      "art": 0,
+      "hint": "La voie blanche, son serment cousu et six reproches forment un fil qui ne relie personne.",
+      "lore": "Le fil rouge n'a jamais été rompu : il n'a volontairement jamais été noué. Les conductrices n'ont pas été séparées par accident, mais par précaution."
+    },
+    {
+      "id": "fox_clock_parenthesis",
+      "title": "La parenthèse de l'horloge-renard",
+      "tier": "dossier impossible",
+      "requirements": [
+        {"kind":"truth","id":"clock"},
+        {"kind":"truth","id":"tribunal_parenthesis"},
+        {"kind":"constellation","id":"tribunal_parenthesis"}
+      ],
+      "reward": "fox_clock_inquisitor",
+      "art": 1,
+      "hint": "Reliez la treizième heure à la parenthèse administrative du ciel.",
+      "lore": "Chaque fois que l'horloge sonne treize, le Tribunal corrige un procès-verbal. Le renard dans l'engrenage n'est pas un saboteur : c'est le greffier original."
+    },
+    {
+      "id": "black_ticket_manifest",
+      "title": "Le manifeste noir des billets",
+      "tier": "dossier joueur",
+      "requirements": [
+        {"kind":"truth","id":"ticket_zero"},
+        {"kind":"truth","id":"crew_manifest"},
+        {"kind":"truth","id":"player_seat"}
+      ],
+      "reward": "black_manifest_conductor",
+      "art": 2,
+      "hint": "Le billet zéro, le manifeste impossible et le siège du joueur parlent d'une même absence.",
+      "lore": "Le manifeste noir ne liste pas les passagers. Il liste les personnes que le jeu espère attirer assez longtemps pour qu'elles deviennent une cause dans son monde."
+    },
+    {
+      "id": "mist_burn_orbit",
+      "title": "La brûlure, la brume et l'orbite",
+      "tier": "relation croisée",
+      "requirements": [
+        {"kind":"archive","id":"ember_diagnosis"},
+        {"kind":"archive","id":"orbit_tide"},
+        {"kind":"truth","id":"kaguya_vespera_tide"}
+      ],
+      "reward": "tide_burn_miko",
+      "art": 5,
+      "hint": "Deux archives relationnelles et une marée sans lune expliquent pourquoi le feu et l'orbite se ressemblent.",
+      "lore": "Rinka brûle pour ne pas entendre, Eir diagnostique pour ne pas trembler, Kaguya stabilise pour ne pas tomber. Le même geste porte trois noms."
+    },
+    {
+      "id": "silent_carriage_thirteen",
+      "title": "Le wagon treize qui se tait",
+      "tier": "archive profonde",
+      "requirements": [
+        {"kind":"dialogues","value":13},
+        {"kind":"truth","id":"twelve_dialogue_echoes"},
+        {"kind":"archive","id":"twelve_witnesses"}
+      ],
+      "reward": "silent_thirteenth_seat",
+      "art": 9,
+      "hint": "Quand douze témoins parlent, trouvez ce que le treizième refuse de dire.",
+      "lore": "Le treizième wagon n'ajoute aucun dialogue. Il retire une phrase à chaque boss, jusqu'à ce que le silence dessine le vrai coupable."
+    },
+    {
+      "id": "contradictory_dawns",
+      "title": "Deux aubes qui se contredisent",
+      "tier": "fil terminal",
+      "requirements": [
+        {"kind":"clears","value":2},
+        {"kind":"truth","id":"two_mornings"},
+        {"kind":"truth","id":"dawn_refusal"},
+        {"kind":"constellation","id":"broken_dawn_shell"}
+      ],
+      "reward": "dawn_paradox_yurei",
+      "art": 12,
+      "hint": "Deux victoires, deux matins et une coquille brisée ouvrent une contradiction jouable.",
+      "lore": "Les deux aubes sont vraies. Le paradoxe n'est pas dans le ciel : il est dans l'idée qu'une seule fin devrait suffire."
+    },
+    {
+      "id": "knot_that_refuses_rescue",
+      "title": "Le nœud qui refuse le sauvetage",
+      "tier": "second degré",
+      "requirements": [
+        {"kind":"thread","id":"red_thread_without_knot"},
+        {"kind":"route_secret","id":"red_pin_station"},
+        {"kind":"truth","id":"red_pin_station_truth"}
+      ],
+      "reward": "second_knot_komainu",
+      "art": 13,
+      "hint": "Résolvez le fil sans nœud, puis trouvez la gare de l'épingle rouge.",
+      "lore": "Ce nœud ne demande pas à être sauvé. Il demande qu'on arrête de confondre protection et propriété."
+    },
+    {
+      "id": "cabinet_under_player_seat",
+      "title": "Le cabinet sous le siège du joueur",
+      "tier": "méta second degré",
+      "requirements": [
+        {"kind":"thread","id":"black_ticket_manifest"},
+        {"kind":"route_secret","id":"black_manifest_lantern"},
+        {"kind":"dialogues","value":18}
+      ],
+      "reward": "player_seat_lantern",
+      "art": 14,
+      "hint": "Le manifeste noir, sa lanterne de route et dix-huit dialogues ouvrent un meuble sous votre siège.",
+      "lore": "Le cabinet ne contient pas un objet de jeu. Il contient la preuve que le jeu a commencé à vous ranger parmi ses personnages possibles."
+    },
+    {
+      "id": "receipt_of_three_alibis",
+      "title": "Le reçu des trois alibis",
+      "tier": "second degré relationnel",
+      "requirements": [
+        {"kind":"route_secret","id":"mist_burn_receipt"},
+        {"kind":"route_secret","id":"paper_copper_station"},
+        {"kind":"truth","id":"three_living_dossiers"}
+      ],
+      "reward": "alibi_receipt_dragonfly",
+      "art": 15,
+      "hint": "Deux dossiers vivants relationnels et trois haltes impossibles transforment l'alibi en preuve.",
+      "lore": "Un alibi protège une personne. Trois alibis coordonnés protègent une époque entière, et accusent donc quelqu'un."
+    }
+  ],
+  "routeSecrets": [
+    {
+      "id": "red_pin_station",
+      "title": "Gare de l'épingle rouge",
+      "tier": "dossier vivant",
+      "thread": "red_thread_without_knot",
+      "reward": "living_dossier_doll",
+      "art": 0,
+      "hint": "Une gare minuscule apparaît quand le Fil blanc a commencé à vous reconnaître.",
+      "lore": "La gare de l'épingle rouge ne mène nulle part : elle fixe sur la carte les relations que le Tribunal préférait laisser flottantes."
+    },
+    {
+      "id": "thirteenth_luggage",
+      "title": "Valise du treizième wagon",
+      "tier": "dossier vivant",
+      "thread": "silent_carriage_thirteen",
+      "reward": "witness_thread_miko",
+      "art": 1,
+      "hint": "Un bagage sans propriétaire apparaît quand les dialogues commencent à compter plus que les combats.",
+      "lore": "La valise contient des silences numérotés. Le treizième ne parle pas, mais il pèse sur chaque conversation."
+    },
+    {
+      "id": "fox_clock_margins",
+      "title": "Marges de l'horloge-renard",
+      "tier": "dossier vivant",
+      "thread": "fox_clock_parenthesis",
+      "reward": "oracle_of_crossed_indices",
+      "art": 2,
+      "hint": "Des marges griffonnées apparaissent sur l'horloge lorsque le Tribunal commence à se contredire.",
+      "lore": "Le renard-greffier a laissé des corrections dans les marges, non pour aider le train, mais pour accuser la version finale du verdict."
+    },
+    {
+      "id": "black_manifest_lantern",
+      "title": "Lanterne du manifeste noir",
+      "tier": "dossier joueur",
+      "thread": "black_ticket_manifest",
+      "reward": "cabinet_that_remembers_you",
+      "art": 3,
+      "hint": "Une lanterne cherche les noms qui n'auraient pas dû monter dans ce jeu.",
+      "lore": "La lanterne éclaire les billets qui ne sont jamais vendus. Elle s'attarde sur le vôtre avec une politesse inquiétante."
+    },
+    {
+      "id": "mist_burn_receipt",
+      "title": "Reçu de brume brûlée",
+      "tier": "relation croisée",
+      "thread": "mist_burn_orbit",
+      "reward": "sealed_platform_kitsune",
+      "art": 4,
+      "hint": "Un reçu noirci apparaît quand la douleur, le soin et l'orbite commencent à raconter le même geste.",
+      "lore": "Le reçu prouve qu'une même faute a été payée trois fois : en feu, en brume, puis en stabilité."
+    },
+    {
+      "id": "paper_copper_station",
+      "title": "Station du papier et du cuivre",
+      "tier": "relation croisée",
+      "thread": "red_thread_without_knot",
+      "reward": "timetable_grudge_oni",
+      "art": 5,
+      "hint": "Une station dépliée comme un talisman attend les runs où Ayame et Kohana ont laissé trop d'indices.",
+      "lore": "Le papier bénit et le cuivre volé ne se contredisent pas. Ils signent deux moitiés d'une même désobéissance."
+    }
+  ],
+  "secretVerdicts": [
+    {
+      "id": "verdict_witness_network",
+      "title": "Verdict du réseau de témoins",
+      "tier": "jugement secret",
+      "requirements": [
+        {"kind":"truth","id":"three_relationship_memories"},
+        {"kind":"archive","id":"first_six_rebukes"},
+        {"kind":"thread","id":"red_thread_without_knot"},
+        {"kind":"relationship_memories","value":3}
+      ],
+      "reward": "verdict_witness_miko",
+      "art": 0,
+      "hint": "Trois souvenirs, six reproches et le fil sans nœud forment un procès où personne ne peut témoigner seule.",
+      "lore": "Le Tribunal découvre une horreur administrative : quand plusieurs conductrices se souviennent ensemble, aucun formulaire ne peut isoler la faute."
+    },
+    {
+      "id": "verdict_player_seat",
+      "title": "Verdict du siège du joueur",
+      "tier": "jugement méta",
+      "requirements": [
+        {"kind":"truth","id":"player_seat"},
+        {"kind":"thread","id":"black_ticket_manifest"},
+        {"kind":"route_secret","id":"black_manifest_lantern"},
+        {"kind":"constellation","id":"tribunal_parenthesis"}
+      ],
+      "reward": "verdict_player_seat_lantern",
+      "art": 3,
+      "hint": "Le manifeste noir, sa lanterne et la parenthèse du Tribunal pointent vers le siège que personne ne nomme.",
+      "lore": "Le siège ne vous accuse pas de jouer. Il accuse le monde d'avoir besoin de vous pour se souvenir de ses propres témoins."
+    },
+    {
+      "id": "verdict_broken_morning",
+      "title": "Verdict du matin brisé",
+      "tier": "jugement terminal",
+      "requirements": [
+        {"kind":"truth","id":"dawn_refusal"},
+        {"kind":"thread","id":"contradictory_dawns"},
+        {"kind":"constellation","id":"broken_dawn_shell"},
+        {"kind":"memory","id":"orbit_apology"}
+      ],
+      "reward": "verdict_broken_morning_shell",
+      "art": 9,
+      "hint": "Deux aubes contradictoires, une coquille brisée et une excuse orbitale obligent le matin à changer de témoin.",
+      "lore": "Le matin brisé ne veut plus être sauvé par une seule voix. Il préfère une chorale imparfaite à une vérité impeccable."
+    },
+    {
+      "id": "verdict_unread_trial",
+      "title": "Verdict du procès non lu",
+      "tier": "jugement administratif",
+      "requirements": [
+        {"kind":"thread","id":"fox_clock_parenthesis"},
+        {"kind":"thread","id":"silent_carriage_thirteen"},
+        {"kind":"route_secret","id":"fox_clock_margins"},
+        {"kind":"dialogues","value":24}
+      ],
+      "reward": "verdict_unread_trial_gavel",
+      "art": 14,
+      "hint": "Quand l'horloge-renard, le treizième wagon et vingt-quatre dialogues se recoupent, le procès révèle ce qu'il n'a jamais lu.",
+      "lore": "Le greffier original avait laissé le jugement vide. Tous les sermons des boss n'étaient que des tentatives pour remplir la page après coup."
+    }
+  ]
+}

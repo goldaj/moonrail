@@ -1,0 +1,38 @@
+# Moonrail source is versioned: app, assets, data, docs, tests and tools.
+
+# Local IDE / Codex working metadata
+.idea/
+.vscode/
+.agents/
+
+# Generated QA artifacts
+qa-ui/
+*.log
+*.err
+
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node / browser automation dependencies and reports
+node_modules/
+playwright-report/
+test-results/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.bak
+*.swp
