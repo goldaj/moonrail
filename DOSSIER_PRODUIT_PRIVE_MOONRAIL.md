@@ -155,6 +155,10 @@ Après le reveal du prisme, toute run ouvre un récapitulatif durable avant la f
 
 L’Album de la nuit est la destination principale de complétion des cartes. Dans l’Observatoire, il apparaît comme un bouton dédié sous « Où manque encore la nuit ? » et ouvre une interface large de type registre/Pokédex ; l’Observatoire ne garde plus la grille complète en bas de page.
 
+Les tutoriels de rareté, de type technique et de sigil se déclenchent uniquement lorsqu’une carte possédant cette propriété est effectivement présente dans le deck de run courant. Un déblocage permanent hors deck, un défi de maîtrise ou une carte ajoutée au profil par le gacha ne doit jamais afficher un tutoriel tant que la carte n’entre pas dans le deck joué. Les sigils du deck de départ sont expliqués dès la première run, regroupés dans un briefing unique si plusieurs mécaniques apparaissent ensemble.
+
+Les récompenses de défis de maîtrise qui sont des cartes sont ajoutées aux cartes découvertes, visibles dans l’Album de la nuit et cliquables depuis l’Observatoire ou le récapitulatif de run. Le joueur conserve toujours la condition exacte qui a débloqué le défi.
+
 Les Présages stellaires ne sont pas des cartes. Ils sont visibles dans le pied de carte de run, améliorent le score du prisme par groupes de trois et servent de récompense aux haltes d’enquête et aux murmures.
 
 ## 7. Histoire : lecture de surface et profondeur

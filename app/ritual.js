@@ -196,7 +196,7 @@
   const DEFAULT_PROFILE = {
     attempts: 0, clears: 0, hunterWins: 0, truths: [], endings: [], memories: [], constellations: [], dialogueArchive: [], dialogueRewards: [], relationshipMemories: [], secretThreads: [], routeSecrets: [], secretVerdicts: [], secretThreadHints: [], resolvedMurmurs: [],
     unlockedGuardians: ['controleur','mecano'], unlockedSpellCards: [], unlockedAwakenings: [], characterClears: {}, starterOverrides: {}, ritualGachaHistory: [], ritualPity: 0, gachaUnlockedCards: [],
-    seenCardTypeTutorials: [], pendingCardTypeTutorials: [],
+    seenCardTypeTutorials: [], pendingCardTypeTutorials: [], cardTutorialScopeVersion: 'deck-v2',
     unlockedCards: ['moon_hare','paper_crane','shrine_fox','bell_toad','lantern_moth','ink_tanuki','clock_harpy','cloud_oni','porcelain_golem','star_kappa','wisp_scribe','rail_cat','thorn_oracle','bone_sparrow','skull_mochi','ember_ticket','mirror_mouse','omen_lantern'],
     lifetimeSacrifices: 0, lifetimeStokes: 0, lifetimeHandSacrifices: 0, secretVisits: 0, tutorialSeen: false, nextRunMurmur: null,
     discoveredCards: [], milestones: [], lessons: [], bestStreak: 0, lifetimeTeeth: 0, maxRunDepth: 0, metaRewrites: 0
@@ -222,6 +222,7 @@
     bones: { icon:'✹', title:'Cartes de Cendres', text:'Les cartes de Cendres ne dépensent pas de Lueur. Chauffez ou perdez des passagers pour produire des Cendres, puis payez leur coût ✹.' },
     signature: { icon:'☾', title:'Spell Cards personnelles', text:'Une Spell Card est liée à une conductrice. Elle raconte son style de jeu et pousse son deck vers une stratégie plus identifiable.' },
     last_word: { icon:'✺', title:'Last Words', text:'Un Last Word est une seconde Spell Card très rare. Son effet visible est écrit, mais un effet secret reste caché jusqu’à ce que vous le déclenchiez.' },
+    uncommon: { icon:'◇', title:'Cartes peu communes', text:'Les cartes peu communes commencent à orienter un deck. Elles restent simples à jouer, mais annoncent déjà un plan plus marqué que les cartes ordinaires.' },
     rare: { icon:'◆', title:'Cartes rares', text:'Les rares changent le plan d’une run. Elles sont plus puissantes, mais demandent souvent un deck déjà orienté.' },
     secret: { icon:'?', title:'Cartes secrètes', text:'Les cartes secrètes ne sont pas de simples upgrades : elles ouvrent des stratégies, indices ou fins que le jeu ne dévoile pas tout de suite.' },
     unique: { icon:'◇', title:'Cartes uniques', text:'Une carte unique ne se collectionne pas en doublon. Si vous la trouvez, c’est un nouveau morceau permanent du jeu qui s’ouvre.' }
@@ -594,6 +595,11 @@
       const match = String(item.reward || '').match(/^card:(.+)$/);
       if (match && result.unlockedCards.includes(match[1]) && !result.gachaUnlockedCards.includes(match[1])) result.gachaUnlockedCards.push(match[1]);
     }
+    if (result.cardTutorialScopeVersion !== 'deck-v2') {
+      result.seenCardTypeTutorials = [];
+      result.pendingCardTypeTutorials = [];
+      result.cardTutorialScopeVersion = 'deck-v2';
+    }
     if (result.nextRunMurmur && !RUN_MURMURS.some(murmur => murmur.id === result.nextRunMurmur)) result.nextRunMurmur = null;
     return result;
   }
@@ -636,6 +642,7 @@
       profile.milestones.push(milestone.id);
       if (milestone.reward && !profile.unlockedCards.includes(milestone.reward)) {
         profile.unlockedCards.push(milestone.reward);
+        if (!profile.discoveredCards.includes(milestone.reward)) profile.discoveredCards.push(milestone.reward);
         queueCardTypeTutorial(milestone.reward);
       }
     }
@@ -994,6 +1001,8 @@
       text:'Le Moonrail s’arrache à la gare avant que la carte ne consente à se dessiner.'
     });
     startBattle(false, false, true);
+    queueCurrentDeckTutorials();
+    showPendingCardTypeTutorial();
   }
 
   function availableHunters() {
@@ -1547,6 +1556,7 @@
     run.cardStates ||= [];
     const state = createRunCardState(cardId);
     run.cardStates.push(state);
+    queueCardTypeTutorial(cardId);
     return state;
   }
 
@@ -1560,6 +1570,7 @@
     state.dead = false;
     state.returnsNextCombat = false;
     run.deck = run.cardStates.filter(item => !item.dead).map(item => item.cardId);
+    queueCardTypeTutorial(nextId);
     return state;
   }
 
@@ -1840,42 +1851,75 @@
     if (cost === 0 && cardAshCost(card) === 0 && Number(card.attack || 0) === 0 && Number(card.health || 0) === 0) keys.push('zero_trinity');
     if (Number(card.bones || 0) > 0) keys.push('bones');
     if (card.tribe === 'signature') keys.push(String(card.name || '').startsWith('Last Word') ? 'last_word' : 'signature');
+    if (card.rarity === 'uncommon') keys.push('uncommon');
     if (card.rarity === 'rare') keys.push('rare');
     if (card.rarity === 'secret') keys.push('secret');
     if (card.rarity === 'unique') keys.push('unique');
-    return [...new Set(keys)].filter(key => CARD_TYPE_TUTORIALS[key]);
+    for (const sigil of card.sigils || []) if (SIGILS[sigil]) keys.push(`sigil_${sigil}`);
+    return [...new Set(keys)].filter(key => cardTutorialInfo(key));
+  }
+
+  function cardTutorialInfo(key) {
+    if (CARD_TYPE_TUTORIALS[key]) return CARD_TYPE_TUTORIALS[key];
+    if (String(key || '').startsWith('sigil_')) {
+      const sigilId = key.slice(6);
+      const sigil = SIGILS[sigilId];
+      if (sigil) return { icon:sigil[0], title:`Sigil — ${sigil[1]}`, text:sigil[2] };
+    }
+    return null;
+  }
+
+  function currentRunTutorialKeys() {
+    if (!run?.deck?.length) return [];
+    return [...new Set(run.deck.flatMap(id => cardTypeTutorialKeys(effectiveCard(id) || getCard(id))))];
+  }
+
+  function queueTutorialKeys(keys) {
+    profile.seenCardTypeTutorials ||= [];
+    profile.pendingCardTypeTutorials ||= [];
+    for (const key of keys.filter(key => cardTutorialInfo(key))) {
+      if (profile.seenCardTypeTutorials.includes(key) || profile.pendingCardTypeTutorials.includes(key)) continue;
+      profile.pendingCardTypeTutorials.push(key);
+    }
+  }
+
+  function queueCurrentDeckTutorials() {
+    profile.pendingCardTypeTutorials ||= [];
+    const available = currentRunTutorialKeys();
+    if (!available.length) {
+      profile.pendingCardTypeTutorials = [];
+      return;
+    }
+    profile.pendingCardTypeTutorials = profile.pendingCardTypeTutorials.filter(key => available.includes(key));
+    queueTutorialKeys(available);
   }
 
   function queueCardTypeTutorial(cardOrId) {
     const card = typeof cardOrId === 'string' ? getCard(cardOrId) : cardOrId;
-    if (!card) return;
-    profile.seenCardTypeTutorials ||= [];
-    profile.pendingCardTypeTutorials ||= [];
-    for (const key of cardTypeTutorialKeys(card)) {
-      if (profile.seenCardTypeTutorials.includes(key) || profile.pendingCardTypeTutorials.includes(key)) continue;
-      profile.seenCardTypeTutorials.push(key);
-      profile.pendingCardTypeTutorials.push(key);
-    }
+    if (!card || !run?.deck?.includes(card.id)) return;
+    queueCurrentDeckTutorials();
   }
 
   function showPendingCardTypeTutorial() {
     if ($('#modal-layer')?.classList.contains('open')) return false;
     profile.pendingCardTypeTutorials ||= [];
-    const keys = [...new Set(profile.pendingCardTypeTutorials.filter(key => CARD_TYPE_TUTORIALS[key]))];
+    queueCurrentDeckTutorials();
+    const keys = [...new Set(profile.pendingCardTypeTutorials.filter(key => cardTutorialInfo(key)))];
     if (!keys.length) {
       profile.pendingCardTypeTutorials = [];
       persist();
       return false;
     }
     profile.pendingCardTypeTutorials = profile.pendingCardTypeTutorials.filter(key => !keys.includes(key));
+    profile.seenCardTypeTutorials = [...new Set([...(profile.seenCardTypeTutorials || []), ...keys])];
     persist();
     if (keys.length === 1) {
-      const tutorial = CARD_TYPE_TUTORIALS[keys[0]];
+      const tutorial = cardTutorialInfo(keys[0]);
       openRitualModal(`<span class="kicker">NOUVEAU TYPE DE CARTE</span><h2><i class="tutorial-type-icon">${esc(tutorial.icon)}</i>${esc(tutorial.title)}</h2><p>${esc(tutorial.text)}</p><div class="modal-actions"><button class="primary-button" data-action="ritual-card-type-tutorial-close">Compris</button></div>`, 'card-type-tutorial-modal tutorial-modal');
       return true;
     }
     const tutorials = keys.map(key => {
-      const tutorial = CARD_TYPE_TUTORIALS[key];
+      const tutorial = cardTutorialInfo(key);
       return `<article><i>${esc(tutorial.icon)}</i><div><strong>${esc(tutorial.title)}</strong><span>${esc(tutorial.text)}</span></div></article>`;
     }).join('');
     openRitualModal(`<span class="kicker">NOUVEAUX TYPES DE CARTES</span><h2>Briefing rapide avant de jouer</h2><p>Plusieurs mécaniques viennent d’entrer dans votre collection. Elles sont regroupées ici pour éviter de couper la partie par une série de popups.</p><div class="card-type-briefing-grid">${tutorials}</div><div class="modal-actions"><button class="primary-button" data-action="ritual-card-type-tutorial-close">Compris, reprendre la run</button></div>`, 'card-type-tutorial-modal tutorial-modal card-type-briefing-modal');
@@ -3729,6 +3773,16 @@
     return [...new Set(ids.filter(id => getCard(id)))];
   }
 
+  function progressionItemExtraMarkup(item) {
+    if (item.bucket !== 'milestones') return '';
+    const milestone = MILESTONES.find(entry => entry.id === item.id);
+    const reward = getCard(milestone?.reward);
+    const rewardMarkup = reward
+      ? `<button class="progression-card-link" data-ritual-album-card="${esc(reward.id)}">Carte débloquée · ${esc(reward.name)}</button>`
+      : '';
+    return `<div class="progression-news-extra"><span>Condition : ${esc(milestone?.text || 'défi accompli')}</span>${rewardMarkup}</div>`;
+  }
+
   function progressionNewsMarkup(diff) {
     const config = {
       unlockedGuardians:['♙','Nouvelle conductrice'],
@@ -3747,7 +3801,7 @@
     };
     const items = Object.entries(config).flatMap(([bucket, [icon, label]]) => (diff[bucket] || []).map(id => ({ bucket, id, icon, label })));
     if (!items.length) return `<div class="run-recap-empty"><i>○</i><div><strong>Aucune autre archive durable</strong><span>Le prisme reste votre gain permanent de cette tentative.</span></div></div>`;
-    return `<div class="run-recap-news">${items.map((item, index) => `<article style="--news-index:${index}"><i>${item.icon}</i><div><small>${esc(item.label)}</small><strong>${esc(progressionItemTitle(item.bucket, item.id))}</strong></div><b>NOUVEAU</b></article>`).join('')}</div>`;
+    return `<div class="run-recap-news">${items.map((item, index) => `<article style="--news-index:${index}"><i>${item.icon}</i><div><small>${esc(item.label)}</small><strong>${esc(progressionItemTitle(item.bucket, item.id))}</strong>${progressionItemExtraMarkup(item)}</div><b>NOUVEAU</b></article>`).join('')}</div>`;
   }
 
   function previewProgressionDiff() {
@@ -4422,7 +4476,7 @@
       if (['secret','unique'].includes(rarity) && !seen) return '';
       const entries = group.map(card => {
         const seen = profile.discoveredCards.includes(card.id);
-        const body = `<i style="${seen ? cardArtStyle(card) : ''}"></i><div><small>${seen ? `${esc(card.tribe)} · ${esc(card.rarity)}` : 'Entrée scellée'}</small><strong>${seen ? esc(card.name) : 'Carte inconnue'}</strong><span>${seen ? esc(card.text) : 'Son image et son rôle apparaîtront après une rencontre.'}</span>${seen ? '<em>Cliquer pour lire en grand</em>' : ''}</div>`;
+        const body = `<i style="${seen ? cardArtStyle(card) : ''}"></i><div><small>${seen ? `${esc(card.tribe)} · ${esc(card.rarity)}` : 'Entrée scellée'}</small><strong>${seen ? esc(card.name) : 'Carte inconnue'}</strong><span>${seen ? esc(card.text) : 'Son image et son rôle apparaîtront après une rencontre.'}</span></div>`;
         return seen
           ? `<button class="catalogue-card night-album-card seen" data-rarity="${esc(card.rarity)}" data-ritual-album-card="${esc(card.id)}" aria-label="Lire ${esc(card.name)} en grand">${body}</button>`
           : `<article class="catalogue-card night-album-card unknown" data-rarity="${esc(card.rarity)}">${body}</article>`;
@@ -4444,7 +4498,7 @@
     if (!ritualReady) return;
     const collectible = cards.filter(card => card.rarity !== 'offering');
     const seenCount = collectible.filter(card => profile.discoveredCards.includes(card.id)).length;
-    openRitualModal(`<span class="kicker">ALBUM DE LA NUIT</span><h2>${seenCount}/${collectible.length} cartes aperçues</h2><div class="night-album-hero"><i>◇</i><div><strong>Le registre des rencontres</strong><span>Chaque entrée garde la trace de ce que vous avez vraiment croisé. Les inconnues restent muettes jusqu’à leur première apparition.</span></div></div>${nightAlbumCatalogueMarkup(collectible)}<div class="modal-actions"><button class="secondary-button" data-action="ritual-observatory">Retour à l’observatoire</button><button class="primary-button" data-action="ritual-modal-close">Refermer</button></div>`, 'observatory-modal night-album-modal');
+    openRitualModal(`<span class="kicker">ALBUM DE LA NUIT</span><div class="night-album-top-actions"><h2>${seenCount}/${collectible.length} cartes aperçues</h2><button class="secondary-button" data-action="ritual-observatory">Retour</button></div><div class="night-album-hero"><i>◇</i><div><strong>Le registre des rencontres</strong><span>Chaque entrée garde la trace de ce que vous avez vraiment croisé. Les inconnues restent muettes jusqu’à leur première apparition.</span></div></div>${nightAlbumCatalogueMarkup(collectible)}<div class="modal-actions"><button class="secondary-button" data-action="ritual-observatory">Retour à l’observatoire</button><button class="primary-button" data-action="ritual-modal-close">Refermer</button></div>`, 'observatory-modal night-album-modal');
   }
 
   function observatoryShelf(title, explanation, className, gridClass, content) {
@@ -4483,14 +4537,21 @@
       return `<button class="observatory-object ${found ? 'found' : 'available'}" data-ritual-truth="${truth.id}"><i>${found ? '✦' : '◉'}</i><small>${found ? 'VÉRITÉ DÉCOUVERTE · RELIRE' : 'NOUVEL OBJET À EXAMINER'}</small><strong>${found ? esc(truth.title) : 'Examiner la trace'}</strong><span>${found ? esc(truth.hint) : 'Une action de votre dernière run a rendu cette trace lisible.'}</span></button>`;
     }).join('');
     const collectible = cards.filter(card => card.rarity !== 'offering');
-    const milestones = MILESTONES.map(item => { const done = profile.milestones.includes(item.id); return `<article class="milestone ${done ? 'done' : ''}"><i>${done ? '✓' : '○'}</i><div><strong>${esc(item.name)}</strong><small>${esc(item.text)}</small></div><span>${done ? `Débloqué · ${esc(getCard(item.reward)?.name || 'récompense')}` : 'À accomplir'}</span></article>`; }).join('');
+    const milestones = MILESTONES.map(item => {
+      const done = profile.milestones.includes(item.id);
+      const reward = getCard(item.reward);
+      const rewardMarkup = done && reward
+        ? `<button class="milestone-reward-card" data-ritual-album-card="${esc(reward.id)}">Carte débloquée · ${esc(reward.name)}</button>`
+        : `<span>${done ? 'Débloqué' : 'À accomplir'}</span>`;
+      return `<article class="milestone ${done ? 'done' : ''}"><i>${done ? '✓' : '○'}</i><div><strong>${esc(item.name)}</strong><small>Condition : ${esc(item.text)}</small></div>${rewardMarkup}</article>`;
+    }).join('');
     const lessons = SALVAGE_LESSONS.filter(lesson => profile.lessons.includes(lesson.id));
     const guidance = observatoryGuidanceMarkup();
     const raritySummary = collectionRaritySummaryMarkup(collectible);
     const hasFirstTruth = profile.truths.length > 0;
     const truthSection = objects
-      ? `<section class="truth-shelf"><h3>${hasFirstTruth ? 'Vérités découvertes' : 'Première trace lisible'}</h3><p>${hasFirstTruth ? 'Relisez une vérité pour comprendre ce qu’elle révèle et les systèmes qu’elle peut ouvrir.' : 'L’observatoire restera masqué tant que cette première trace n’aura pas été examinée.'}</p><div class="observatory-grid">${objects}</div></section>`
-      : `<section class="observatory-dormant"><i>◐</i><div><small>OBSERVATOIRE MASQUÉ</small><h3>Aucune vérité n’a encore laissé de forme</h3><p>Terminez une tentative, défiez un contrôle céleste ou suivez une voie anormale. Une seule trace apparaîtra ici lorsqu’elle sera réellement déverrouillée.</p></div></section>`;
+      ? `<section class="truth-shelf"><h3>${hasFirstTruth ? 'Vérités découvertes' : 'Première trace lisible'}</h3><p>${hasFirstTruth ? 'Relisez une vérité pour comprendre ce qu’elle révèle et les systèmes qu’elle peut ouvrir.' : 'Une trace est devenue lisible. Examinez-la pour comprendre ce qu’elle ouvre.'}</p><div class="observatory-grid">${objects}</div></section>`
+      : '';
     const unlockedShelves = hasFirstTruth ? [
       observatoryShelf('Murmures de run','Uniquement les murmures déjà accomplis. Cliquez pour relire leur rôle.','murmur-archive-shelf','murmur-archive-grid',murmurArchiveMarkup()),
       observatoryShelf('Dialogues vécus','Uniquement les face-à-face déjà terminés. Cliquez pour relire les deux temps de la conversation.','dialogue-history-shelf','dialogue-archive-grid',completedDialogueMarkup()),
@@ -4844,6 +4905,10 @@
       event.preventDefault();
       return closeCardZoom();
     }
+    if (document.querySelector('#modal-layer.open .night-album-modal') && event.key === 'Escape') {
+      event.preventDefault();
+      return closeRitualModal();
+    }
     if (!run?.battle || $('#modal-layer')?.classList.contains('open')) return;
     if (event.key.toLowerCase() === 'q') drawRitualCard('deck');
     if (event.key.toLowerCase() === 'w') stokeSelectedCard();
@@ -4866,6 +4931,7 @@
       cards = await cardsResponse.json(); story = await storyResponse.json();
       cardMap = Object.fromEntries(cards.map(card => [card.id, card]));
       if (run?.battle) migrateBattle(run.battle);
+      if (run?.deck?.length) queueCurrentDeckTutorials(); else profile.pendingCardTypeTutorials = [];
       ritualReady = true; renderRitualProfile();
       document.addEventListener('click', handleClick);
       document.addEventListener('dragstart', handleDragStart);
@@ -4876,6 +4942,7 @@
       document.addEventListener('pointerup', event => finishRitualPointerDrag(event));
       document.addEventListener('pointercancel', event => finishRitualPointerDrag(event, true));
       document.addEventListener('keydown', handleKey);
+      if (run?.deck?.length) setTimeout(() => showPendingCardTypeTutorial(), 320);
     } catch (error) {
       console.error('Ritual boot failed', error);
       ritualToast('La Centième Nuit n’a pas pu charger ses cartes.');

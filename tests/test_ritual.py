@@ -446,8 +446,9 @@ class RitualProductTests(unittest.TestCase):
     def test_card_type_tutorials_and_utf8_text_are_protected(self):
         for token in (
             "seenCardTypeTutorials", "pendingCardTypeTutorials", "CARD_TYPE_TUTORIALS",
-            "function queueCardTypeTutorial", "function showPendingCardTypeTutorial",
-            "ritual-card-type-tutorial-close", "card-type-tutorial-modal",
+            "function cardTutorialInfo", "function currentRunTutorialKeys",
+            "function queueCurrentDeckTutorials", "function queueCardTypeTutorial", "function showPendingCardTypeTutorial",
+            "ritual-card-type-tutorial-close", "card-type-tutorial-modal", "cardTutorialScopeVersion",
         ):
             self.assertIn(token, self.source + self.css)
         for token in (
@@ -457,7 +458,17 @@ class RitualProductTests(unittest.TestCase):
             "profile.pendingCardTypeTutorials = profile.pendingCardTypeTutorials.filter",
         ):
             self.assertIn(token, self.source + self.css)
-        for token in ("zero_cost", "zero_attack", "zero_health", "zero_trinity", "last_word"):
+        for token in ("zero_cost", "zero_attack", "zero_health", "zero_trinity", "uncommon", "last_word"):
+            self.assertIn(token, self.source)
+        for token in (
+            "for (const sigil of card.sigils || [])",
+            "sigil_",
+            "Sigil —",
+            "!run?.deck?.includes(card.id)",
+            "result.cardTutorialScopeVersion !== 'deck-v2'",
+            "queueCurrentDeckTutorials();",
+            "profile.seenCardTypeTutorials = [...new Set",
+        ):
             self.assertIn(token, self.source)
         visible_files = [
             self.source,
@@ -506,8 +517,15 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn('data-action="ritual-night-album"', self.source)
         self.assertIn("data-ritual-album-card", self.source)
         self.assertIn("night-album-modal", self.source + self.css)
+        self.assertIn("night-album-top-actions", self.source + self.css)
+        self.assertIn("document.querySelector('#modal-layer.open .night-album-modal')", self.source)
+        self.assertNotIn("Cliquer pour lire en grand", self.source)
         self.assertIn("['secret','unique'].includes(rarity) && !seen", self.source)
         self.assertIn("['secret','unique'].includes(item.rarity) || item.seen > 0", self.source)
+        self.assertIn("milestone-reward-card", self.source + self.css)
+        self.assertIn("progression-card-link", self.source + self.css)
+        self.assertIn("Condition : ${esc(item.text)}", self.source)
+        self.assertIn("if (!profile.discoveredCards.includes(milestone.reward)) profile.discoveredCards.push(milestone.reward)", self.source)
         self.assertIn("function observatoryGuidanceItems", self.source)
         self.assertIn("function observatoryGuidanceMarkup", self.source)
         self.assertIn("function collectionRaritySummaryMarkup", self.source)
@@ -869,7 +887,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("Uniquement les face-à-face déjà terminés", self.source)
         self.assertIn("if (!claimed) return ''", self.source)
         self.assertIn("if (!found) return ''", self.source)
-        self.assertIn("OBSERVATOIRE MASQUÉ", self.source)
+        self.assertNotIn("OBSERVATOIRE MASQUÉ", self.source)
         self.assertIn("codex-daily-life-sheet-v1.png", self.source)
         self.assertIn("Garde narrative 8.6", self.css)
         self.assertIn("Garde zoom 8.8", self.css)

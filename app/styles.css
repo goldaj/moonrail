@@ -1159,6 +1159,8 @@ button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--teal);outl
 .milestone.done{border-color:rgba(255,208,120,.3);background:rgba(255,208,120,.04)}
 .milestone>i{font-style:normal;color:#776d7c}.milestone.done>i{color:#ffd078}
 .milestone strong,.milestone small{display:block}.milestone small{margin-top:2px;color:#978e9f;font-size:7px}.milestone>span{color:#a89bad;font-size:6px}.milestone.done>span{color:#ddbd7d}
+.milestone-reward-card{justify-self:end;max-width:160px;padding:7px 9px;border:1px solid rgba(255,208,120,.28);border-radius:999px;background:rgba(255,208,120,.075);color:#ffe0a0;font-size:9px;font-weight:850;line-height:1.2;text-align:left;cursor:zoom-in}
+.milestone-reward-card:hover,.milestone-reward-card:focus-visible{border-color:rgba(255,208,120,.55);box-shadow:0 0 0 2px rgba(255,208,120,.1)}
 .ritual-catalogue{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:210px;overflow:auto}
 .catalogue-card{display:flex;align-items:center;gap:8px;padding:6px;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.02);text-align:left}
 .catalogue-card>i{flex:0 0 42px;height:42px;border-radius:6px;background-repeat:no-repeat;background-color:#0b0911}
@@ -4211,6 +4213,12 @@ button:focus-visible,
   line-height:1.35!important;
 }
 
+#modal-layer .observatory-modal .milestone-reward-card{
+  max-width:210px!important;
+  font-size:10.5px!important;
+  line-height:1.25!important;
+}
+
 #modal-layer .observatory-modal .catalogue-card{
   min-height:64px!important;
   padding:10px!important;
@@ -4316,6 +4324,23 @@ button:focus-visible,
 #modal-layer .night-album-modal{
   width:min(1220px,calc(100vw - 34px))!important;
   max-width:calc(100vw - 34px)!important;
+}
+
+#modal-layer .night-album-top-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  margin:2px 0 8px!important;
+}
+
+#modal-layer .night-album-top-actions h2{
+  margin:0!important;
+}
+
+#modal-layer .night-album-top-actions .secondary-button{
+  min-width:0!important;
+  padding:10px 15px!important;
 }
 
 #modal-layer .night-album-modal>.night-album-hero{
@@ -5902,6 +5927,10 @@ button:focus-visible,
 .run-recap-news article small{color:#bcb1c7;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .run-recap-news article strong{margin-top:3px;color:#fff1ce;font-size:13px;line-height:1.25}
 .run-recap-news article>b{padding:4px 6px;border-radius:6px;background:rgba(255,205,112,.12);color:#ffd98d;font-size:8px;letter-spacing:.1em}
+.progression-news-extra{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:7px}
+.progression-news-extra span{color:#cfc3d8;font-size:10.5px;line-height:1.3}
+.progression-card-link{padding:5px 8px;border:1px solid rgba(255,208,120,.3);border-radius:999px;background:rgba(255,208,120,.08);color:#ffe0a0;font-size:9px;font-weight:850;line-height:1.15;cursor:zoom-in}
+.progression-card-link:hover,.progression-card-link:focus-visible{border-color:rgba(255,208,120,.58);box-shadow:0 0 0 2px rgba(255,208,120,.1)}
 .run-recap-empty{display:flex;align-items:center;justify-content:center;gap:12px;min-height:72px;padding:12px;border:1px dashed rgba(255,255,255,.15);border-radius:12px;color:#d9cfdf}
 .run-recap-empty>i{color:#8edbd6;font-size:26px;font-style:normal}.run-recap-empty strong,.run-recap-empty span{display:block}.run-recap-empty strong{color:#fff0ca;font-size:13px}.run-recap-empty span{margin-top:3px;font-size:11px}
 .collection-new-cards>.collection-empty{flex:1;min-width:260px}
