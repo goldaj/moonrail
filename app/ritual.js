@@ -4600,7 +4600,7 @@
       const spellUnlocked = profile.unlockedSpellCards.includes(id);
       const awakened = profile.unlockedAwakenings.includes(id);
       const progress = guardianStoryProgress(id);
-      const signature = spellUnlocked ? ` Signature gravée : ${esc(GUARDIAN_SIGNATURES[id].label)}.` : ' Une technique personnelle dort encore dans sa fin.';
+      const signature = spellUnlocked ? ` Signature gravée : ${esc(GUARDIAN_SIGNATURES[id].label)}.` : '';
       const second = awakened ? ` Second nom éveillé : ${esc(getCard(GUARDIAN_SIGNATURES[id].awakening)?.name || 'révélé')}.` : '';
       return `<section class="codex-character-entry">${codexDailyPortraitMarkup(id)}<div class="codex-character-heading"><b>☾</b><small>${esc(guardian.title)} · SCÈNE QUOTIDIENNE</small><h3>${esc(guardian.name)}</h3><mark>${progress.pairs}/5 relations archivées · ${progress.clears} fin${progress.clears > 1 ? 's' : ''}</mark></div><p>${esc(guardian.voice)}${signature}${second}</p>${guardianArcMarkup(id)}</section>`;
     }).join('');

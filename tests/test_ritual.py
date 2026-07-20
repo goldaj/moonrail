@@ -552,6 +552,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("portrait-zoom-layer", self.source + self.css)
         self.assertNotIn("DÉSIR VISIBLE", self.source)
         self.assertNotIn("FAUTE ANCIENNE", self.source)
+        self.assertNotIn("Une technique personnelle dort encore dans sa fin", self.source)
         self.assertIn("secretThreads", self.story)
         self.assertGreaterEqual(len(self.story["secretThreads"]), 6)
         for thread in self.story["secretThreads"]:
