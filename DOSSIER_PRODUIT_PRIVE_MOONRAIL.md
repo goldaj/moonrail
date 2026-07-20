@@ -378,7 +378,7 @@ Le bouton Test gacha du dashboard ouvre :
 - les six murmures de run ;
 - les six conductrices avec leur portrait.
 - une prévisualisation non destructive du récapitulatif complet de fin de run et de son insertion dans la collection.
-- un bouton QA discret pour réinitialiser le profil au tout début après confirmation, afin de retester les mécaniques de début de jeu.
+- un bouton QA discret pour réinitialiser durablement tout stockage local Moonrail au tout début après confirmation, afin de retester les mécaniques de début de jeu sans devoir répéter l’opération.
 
 Les scénarios QA ignorent volontairement les prérequis et appliquent réellement le gain au profil et au deck actif. Ils servent à vérifier le combat, pas seulement l’animation.
 
@@ -393,6 +393,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - L’ancien écran « Repères de conduite » est supprimé. Les raccourcis d’aide en haut de l’écran ouvrent directement le Manuel.
 - Dans le prologue avant le choix de conductrice, l’objectif annoncé s’appelle « Votre but » et ne sous-entend pas qu’un autre but invisible existe.
 - Le premier écran de run après le combat-prologue affiche le prochain contrôleur céleste sur toute la largeur, la carte au centre en grand, les cartes/Présages/éclats en haut, et un Murmure compact en bas. Le Murmure compact ne montre que son nom, son titre et son avancement ; le lore, la citation et la récompense sont réservés à sa popup détaillée.
+- L’écran de combat doit tenir à 100 % de zoom navigateur sur 1366×768 sans chevauchement : la table utilise toute la hauteur disponible, les voies restent compactes, le journal de combat se réduit avant la main, et les cartes de main restent au moins à leur gabarit lisible.
 - Toute modification, perte, fusion, réglage, déblocage ou remplacement de carte montre la carte concernée et explique l’effet durable.
 - En combat, le nom d’une carte dispose de trois lignes avant troncature et son texte court reste lisible sans zoom ; les cartes de la main conservent au moins 122 px de large, 170 px de haut, un effet à 9,2 px minimum et 25 px de hauteur visible. L’aperçu détaillé conserve toujours le nom et l’effet complets.
 - Les statistiques, sigils et micro-libellés utiles des cartes restent à 9 px minimum, y compris dans le centre de test, le Grimoire, les cartes posées et le récapitulatif de run.
@@ -425,12 +426,15 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - Tests produit : [tests/test_ritual.py](./tests/test_ritual.py)
 - Audit d’équilibrage : [tools/balance_ritual.py](./tools/balance_ritual.py)
 - Audit UI automatisé : [tools/ui_smoke.cjs](./tools/ui_smoke.cjs)
+- Audit ciblé combat : [tools/combat_fit_smoke.cjs](./tools/combat_fit_smoke.cjs)
 
 ## 15. Discipline de maintenance
 
 Cette bible est un contrat vivant. Toute modification de règle, contenu, progression, interface structurante, équilibrage ou condition de déblocage doit être reportée ici dans la même passe de développement, sans attendre une demande supplémentaire. Une mécanique non documentée ou un paragraphe qui ne décrit plus le comportement réel est considéré comme un défaut produit.
 
 Le smoke test UI considère désormais comme bloquants tout texte visible sous 8,8 px, tout bouton ou titre dont le contenu dépasse son cadre, et toute carte de main en combat qui retombe sous le gabarit lisible défini ci-dessus. Cette règle complète le contrôle visuel manuel aux résolutions 1366×768 et 1920×1080.
+
+Le smoke ciblé combat démarre une partie neuve à 1366×768, atteint le combat-prologue d’Ayame et vérifie que la table reste dans le viewport, que les cartes de main gardent leur gabarit lisible et qu’aucun élément tactique ne déborde.
 
 Le démarrage du smoke attend le chargement de la page puis la présence visible du CTA principal `[data-action="ritual-new"]` ; il ne dépend pas d’un état `networkidle`, trop fragile pour une application riche en assets et animations.
 

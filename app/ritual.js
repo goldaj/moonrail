@@ -628,6 +628,15 @@
     renderRitualProfile();
   }
 
+  function clearMoonrailStorage() {
+    const keys = [];
+    for (let index = 0; index < localStorage.length; index++) {
+      const key = localStorage.key(index);
+      if (key && key.startsWith('moonrail.')) keys.push(key);
+    }
+    for (const key of keys) localStorage.removeItem(key);
+  }
+
   function refreshGuardianUnlocks() {
     const unlock = id => { if (!profile.unlockedGuardians.includes(id)) profile.unlockedGuardians.push(id); };
     unlock('controleur'); unlock('mecano');
@@ -3932,12 +3941,11 @@
     suppressNextClick = false;
     run = null;
     profile = normalizeProfile(structuredClone(DEFAULT_PROFILE));
-    localStorage.removeItem(PROFILE_KEY);
-    localStorage.removeItem(RUN_KEY);
+    clearMoonrailStorage();
     persist();
     closeRitualModal();
     showRitualScreen('menu');
-    ritualToast('Progression réinitialisée : nouveau départ prêt.');
+    ritualToast('Progression réinitialisée durablement : nouveau départ prêt.');
   }
 
   async function openRitualLabRoll(tier) {
