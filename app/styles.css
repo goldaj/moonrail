@@ -4400,6 +4400,22 @@ button:focus-visible,
   min-height:118px!important;
   padding:13px!important;
   border-radius:15px!important;
+  color:inherit!important;
+}
+
+#modal-layer button.night-album-card{
+  width:100%!important;
+  border:1px solid rgba(255,224,163,.18)!important;
+  background:linear-gradient(145deg,rgba(255,224,163,.055),rgba(126,219,213,.035))!important;
+  cursor:zoom-in!important;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease!important;
+}
+
+#modal-layer button.night-album-card:hover,
+#modal-layer button.night-album-card:focus-visible{
+  transform:translateY(-3px)!important;
+  border-color:rgba(255,224,163,.48)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.34),0 0 24px rgba(255,224,163,.09)!important;
 }
 
 #modal-layer .night-album-card>i{
@@ -4423,6 +4439,17 @@ button:focus-visible,
 #modal-layer .night-album-card span{
   margin-top:6px!important;
   color:#ddd3e2!important;
+}
+
+#modal-layer .night-album-card em{
+  display:inline-block!important;
+  margin-top:9px!important;
+  color:#9ff0eb!important;
+  font-size:10px!important;
+  font-style:normal!important;
+  font-weight:900!important;
+  letter-spacing:.08em!important;
+  text-transform:uppercase!important;
 }
 
 @media(max-width:760px){

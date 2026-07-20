@@ -4344,7 +4344,7 @@
       const total = collectible.filter(card => card.rarity === rarity).length;
       const seen = collectible.filter(card => card.rarity === rarity && profile.discoveredCards.includes(card.id)).length;
       return { rarity, total, seen, ratio:total ? seen / total : 0 };
-    }).filter(item => item.total > 0);
+    }).filter(item => item.total > 0 && (!['secret','unique'].includes(item.rarity) || item.seen > 0));
     return `<section class="collection-rarity-summary"><header><small>COMPLÉTION DES CARTES</small><h3>Où manque encore la nuit ?</h3></header><div>${byRarity.map(item => `<article data-rarity="${esc(item.rarity)}"><b>${esc(item.rarity)}</b><strong>${item.seen}/${item.total}</strong><i><em style="width:${Math.round(item.ratio * 100)}%"></em></i></article>`).join('')}</div><button class="night-album-entry" data-action="ritual-night-album"><span><small>ALBUM DE LA NUIT</small><strong>${seenCount}/${collectible.length} cartes aperçues</strong></span><b>◇</b></button></section>`;
   }
 
@@ -4353,13 +4353,26 @@
     return order.map(rarity => {
       const group = collectible.filter(card => card.rarity === rarity);
       if (!group.length) return '';
+      const seen = group.filter(card => profile.discoveredCards.includes(card.id)).length;
+      if (['secret','unique'].includes(rarity) && !seen) return '';
       const entries = group.map(card => {
         const seen = profile.discoveredCards.includes(card.id);
-        return `<article class="catalogue-card night-album-card ${seen ? 'seen' : 'unknown'}" data-rarity="${esc(card.rarity)}"><i style="${seen ? cardArtStyle(card) : ''}"></i><div><small>${seen ? `${esc(card.tribe)} · ${esc(card.rarity)}` : 'Entrée scellée'}</small><strong>${seen ? esc(card.name) : 'Carte inconnue'}</strong><span>${seen ? esc(card.text) : 'Son image et son rôle apparaîtront après une rencontre.'}</span></div></article>`;
+        const body = `<i style="${seen ? cardArtStyle(card) : ''}"></i><div><small>${seen ? `${esc(card.tribe)} · ${esc(card.rarity)}` : 'Entrée scellée'}</small><strong>${seen ? esc(card.name) : 'Carte inconnue'}</strong><span>${seen ? esc(card.text) : 'Son image et son rôle apparaîtront après une rencontre.'}</span>${seen ? '<em>Cliquer pour lire en grand</em>' : ''}</div>`;
+        return seen
+          ? `<button class="catalogue-card night-album-card seen" data-rarity="${esc(card.rarity)}" data-ritual-album-card="${esc(card.id)}" aria-label="Lire ${esc(card.name)} en grand">${body}</button>`
+          : `<article class="catalogue-card night-album-card unknown" data-rarity="${esc(card.rarity)}">${body}</article>`;
       }).join('');
-      const seen = group.filter(card => profile.discoveredCards.includes(card.id)).length;
       return `<section class="night-album-rarity" data-rarity="${esc(rarity)}"><header><small>${esc(rarity)}</small><b>${seen}/${group.length}</b></header><div class="night-album-grid">${entries}</div></section>`;
     }).join('');
+  }
+
+  function showAlbumCardZoom(id) {
+    const card = getCard(id);
+    if (!card || !profile.discoveredCards.includes(card.id)) return;
+    const proxy = document.createElement('div');
+    proxy.className = 'ritual-card';
+    proxy.dataset.cardId = card.id;
+    showCardZoom(proxy);
   }
 
   function showNightAlbum() {
@@ -4610,6 +4623,7 @@
       if (button.dataset.ritualRelationshipMemory) return claimRelationshipMemory(button.dataset.ritualRelationshipMemory);
       if (button.dataset.ritualSecretThread) return claimSecretThread(button.dataset.ritualSecretThread);
       if (button.dataset.ritualSecretVerdict) return claimSecretVerdict(button.dataset.ritualSecretVerdict);
+      if (button.dataset.ritualAlbumCard) return showAlbumCardZoom(button.dataset.ritualAlbumCard);
       if (button.dataset.ritualLabRoll) return openRitualLabRoll(button.dataset.ritualLabRoll);
       if (button.dataset.ritualLabUnlock) return applyRitualLabUnlock(button.dataset.ritualLabUnlock);
       if (button.dataset.ritualLabMurmur) return forceRunMurmur(button.dataset.ritualLabMurmur);
