@@ -7778,71 +7778,31 @@ button:focus-visible,
   #screen-ritual-battle .ritual-battle-controls{min-width:0!important;grid-template-columns:98px 82px minmax(0,1fr) 88px!important;gap:7px!important}
 }
 
-/* Garde combat 11.2 : densité desktop à 100 % et jauges réellement remplies. */
+/* Garde combat 11.2 : jauges réellement remplies. */
 #screen-ritual-battle .combat-life-bar .health-fill{
   display:block!important;
   min-width:0;
   will-change:width;
 }
 
-@media(min-width:1500px) and (min-height:850px){
-  #screen-ritual-battle .ritual-table{
-    width:min(1240px,calc(100vw - 48px))!important;
-  }
-  #screen-ritual-battle .ritual-row{
-    width:min(560px,calc(100vw - 260px))!important;
-  }
-  #screen-ritual-battle .lane-readout-shell{
-    width:min(600px,calc(100vw - 240px))!important;
-  }
-  #screen-ritual-battle .combat-action-feed{
-    width:min(680px,calc(100vw - 250px))!important;
-  }
-  #screen-ritual-battle .ritual-row .ritual-slot{
-    width:108px!important;
-    max-width:108px!important;
-  }
-  #screen-ritual-battle .ritual-slot .ritual-card,
-  #screen-ritual-battle .ritual-slot .ritual-card:hover,
-  #screen-ritual-battle .ritual-slot .ritual-card:focus-visible{
-    width:100px!important;
-    height:min(132px,calc(100% - 2px))!important;
-  }
-  #screen-ritual-battle .ritual-battle-controls{
-    grid-template-columns:100px 84px minmax(0,1fr) 96px!important;
-    gap:9px!important;
-  }
-  #screen-ritual-battle .ritual-piles{
-    width:100px!important;
-    grid-template-columns:repeat(2,46px)!important;
-    gap:7px!important;
-  }
-  #screen-ritual-battle .ritual-piles button{
-    width:46px!important;
-    flex-basis:46px!important;
-  }
-  #screen-ritual-battle .ritual-resource-orbs{
-    width:84px!important;
-  }
-  #screen-ritual-battle .ritual-resource-orbs>span{
-    width:82px!important;
-    min-width:82px!important;
-  }
-  #screen-ritual-battle .ritual-hand .ritual-card,
-  #screen-ritual-battle .ritual-hand .ritual-card:hover,
-  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible{
-    flex-basis:112px!important;
-    width:112px!important;
-    height:156px!important;
-  }
-  #screen-ritual-battle .ritual-hand .ritual-card-art,
-  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-art,
-  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-art{
-    height:52px!important;
-  }
-  #screen-ritual-battle .ritual-bell{
-    width:88px!important;
-    height:88px!important;
+/* Garde combat 11.3 : le 100 % navigateur reprend la densité homogène du 80 %. */
+#screen-ritual-battle.ritual-battle-screen{
+  padding:78px 6px 6px!important;
+}
+#screen-ritual-battle .ritual-table{
+  width:min(1480px,calc((100vw - 12px) * 1.25))!important;
+  height:calc((100dvh - 84px) * 1.25)!important;
+  max-height:none!important;
+  zoom:.8;
+}
+
+/* Un écran bas ne doit jamais rendre une récompense plus haute qu'un écran normal. */
+@media(max-height:760px){
+  #modal-layer .reward-modal .reward-card-option>.ritual-card,
+  #modal-layer .reward-modal .reward-card-option>.ritual-card:hover,
+  #modal-layer .reward-modal .reward-card-option>.ritual-card:focus-visible{
+    width:132px!important;
+    height:183px!important;
   }
 }
 

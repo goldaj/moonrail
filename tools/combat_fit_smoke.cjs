@@ -28,6 +28,7 @@ const chromeCandidates = [
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
 ].filter(candidate => candidate && fs.existsSync(candidate));
 const viewports = [
+  { label:'1280x600', width:1280, height:600 },
   { label:'1280x720', width:1280, height:720 },
   { label:'1366x768', width:1366, height:768 },
   { label:'1024x768', width:1024, height:768 },
@@ -101,6 +102,7 @@ async function measureCombat(page, viewport) {
         bottom:Math.round(rect.bottom),
         width:Math.round(rect.width),
         height:Math.round(rect.height),
+        aspectRatio:rect.height ? rect.width / rect.height : 0,
       };
     };
     const overflowOf = element => element
@@ -127,6 +129,7 @@ async function measureCombat(page, viewport) {
         id:card.dataset.cardId || card.textContent.trim().slice(0, 42),
         width:Math.round(rect.width),
         height:Math.round(rect.height),
+        aspectRatio:rect.height ? rect.width / rect.height : 0,
         titleSize:Number.parseFloat(getComputedStyle(title).fontSize),
         copySize:Number.parseFloat(getComputedStyle(copy).fontSize),
         copyHeight:Math.round(copy.getBoundingClientRect().height),
@@ -201,6 +204,30 @@ async function measureCombat(page, viewport) {
   }, viewport.label);
 }
 
+async function measureRewardCardProbe(page) {
+  await page.setViewportSize({ width:1280, height:600 });
+  return page.evaluate(() => {
+    const layer = document.querySelector('#modal-layer');
+    const previousClass = layer.className;
+    const previousStyle = layer.getAttribute('style');
+    layer.classList.add('open');
+    layer.style.visibility = 'hidden';
+    const modal = document.createElement('section');
+    modal.className = 'reward-modal';
+    modal.style.cssText = 'position:fixed;left:-4000px;top:0;visibility:hidden';
+    modal.innerHTML = '<div class="ritual-reward-grid"><button class="reward-card-option"><article class="ritual-card"></article><div class="reward-card-insight"></div></button></div>';
+    layer.appendChild(modal);
+    const card = modal.querySelector('.ritual-card');
+    const rect = card.getBoundingClientRect();
+    const result = { width:rect.width, height:rect.height, aspectRatio:rect.height ? rect.width / rect.height : 0 };
+    modal.remove();
+    layer.className = previousClass;
+    if (previousStyle === null) layer.removeAttribute('style');
+    else layer.setAttribute('style', previousStyle);
+    return result;
+  });
+}
+
 function validateCombat(metrics) {
   const failures = [];
   const prefix = `[${metrics.label}]`;
@@ -219,26 +246,26 @@ function validateCombat(metrics) {
     if (bar.rect.top < (metrics.topbar?.rect?.bottom || 0) + 2) fail(`${bar.label}: jauge sous la barre haute`);
     if (bar.pointsSize < 18 || bar.labelSize < 9) fail(`${bar.label}: typographie trop petite ${bar.pointsSize}/${bar.labelSize}`);
     if (bar.labelOverflow) fail(`${bar.label}: libellé tronqué`);
-    if (!bar.track || bar.track.width < 120 || bar.track.height < 12) fail(`${bar.label}: barre de progression trop compacte`);
+    if (!bar.track || bar.track.width < 120 || bar.track.height < 10) fail(`${bar.label}: barre de progression trop compacte`);
     const expectedRatio = Number.parseInt(bar.points, 10) / 10;
     if (!bar.fill || Math.abs(bar.fillRatio - expectedRatio) > .025) fail(`${bar.label}: remplissage désynchronisé (${bar.fillRatio.toFixed(3)} au lieu de ${expectedRatio.toFixed(3)})`);
   }
-  const compactDesktop = metrics.viewport.width >= 1500 && metrics.viewport.height >= 850;
-  const minCardWidth = metrics.viewport.width <= 1100 ? 116 : compactDesktop ? 110 : 122;
-  const minCardHeight = metrics.viewport.height <= 740 ? 150 : metrics.viewport.height < 860 ? 154 : compactDesktop ? 154 : 170;
+  const minCardWidth = metrics.viewport.height >= 850 ? 104 : 97;
+  const minCardHeight = metrics.viewport.height >= 850 ? 140 : 123;
   for (const card of metrics.cards) {
     if (card.width < minCardWidth || card.height < minCardHeight) fail(`${card.id}: carte trop compacte ${card.width}x${card.height}`);
-    if (card.titleSize < 11.6 || card.copySize < 9.2 || card.copyHeight < 25) fail(`${card.id}: texte trop petit ${card.titleSize}/${card.copySize}/${card.copyHeight}`);
+    if (card.aspectRatio < .70 || card.aspectRatio > .82) fail(`${card.id}: proportions écrasées (${card.aspectRatio.toFixed(3)})`);
+    if (card.titleSize < 11.6 || card.copySize < 9.2 || card.copyHeight < 19) fail(`${card.id}: texte trop petit ${card.titleSize}/${card.copySize}/${card.copyHeight}`);
     if (card.overlap) fail(`${card.id}: texte chevauche les stats`);
   }
   for (const card of metrics.forecastCards) {
-    if (card.rect.height > 50 || card.rect.height < 34) fail(`aperçu annoncé mal dimensionné (${card.rect.width}x${card.rect.height})`);
+    if (card.rect.height > 42 || card.rect.height < 26) fail(`aperçu annoncé mal dimensionné (${card.rect.width}x${card.rect.height})`);
     if (card.titleSize < 9.5 || card.overflow) fail('aperçu annoncé tronqué ou illisible');
   }
   if (!metrics.guide?.visible || metrics.guide.overflow) fail('repères rapides absents ou tronqués');
   if (!metrics.hint?.visible) fail('aide basse absente');
   else {
-    if (metrics.hint.fontSize < 10 || metrics.hint.rect.height < 24) fail(`aide basse trop petite ${metrics.hint.fontSize}/${metrics.hint.rect.height}`);
+    if (metrics.hint.fontSize < 10 || metrics.hint.rect.height < 19) fail(`aide basse trop petite ${metrics.hint.fontSize}/${metrics.hint.rect.height}`);
     if (metrics.hint.overflow) fail('aide basse tronquée');
   }
   for (const item of metrics.feedItems) if (item.overflow) fail('entrée du journal de combat tronquée');
@@ -250,7 +277,7 @@ function validateCombat(metrics) {
     if (ordered[index].rect.top < ordered[index - 1].rect.bottom - 2) fail('deux zones verticales du combat se chevauchent');
   }
   for (const item of metrics.overflow) fail(`débordement viewport: ${item}`);
-  if (compactDesktop && metrics.table.rect.width > 1260) fail(`densité desktop trop zoomée (${metrics.table.rect.width}px)`);
+  if (metrics.viewport.width >= 1280 && metrics.table.rect.width > 1200) fail(`densité de combat trop zoomée (${metrics.table.rect.width}px)`);
   return failures;
 }
 
@@ -285,6 +312,10 @@ async function main() {
       reports.push(metrics);
       failures.push(...validateCombat(metrics));
     }
+    const rewardProbe = await measureRewardCardProbe(page);
+    if (rewardProbe.height > 200 || rewardProbe.aspectRatio < .70 || rewardProbe.aspectRatio > .74) {
+      failures.push(`[récompense 1280x600] carte allongée ${Math.round(rewardProbe.width)}x${Math.round(rewardProbe.height)} (${rewardProbe.aspectRatio.toFixed(3)})`);
+    }
     console.log(JSON.stringify(reports.map(report => ({
       viewport:report.label,
       table:report.table.rect,
@@ -294,7 +325,7 @@ async function main() {
       feed:report.feed.rect,
       controls:report.controls.rect,
       hint:report.hint.rect,
-    })), null, 2));
+    })).concat([{ rewardCardProbe:{ width:Math.round(rewardProbe.width), height:Math.round(rewardProbe.height), aspectRatio:Number(rewardProbe.aspectRatio.toFixed(3)) } }]), null, 2));
     if (failures.length) {
       console.log(`Combat fit smoke: ${failures.length} alerte(s)`);
       for (const failure of failures) console.log(`- ${failure}`);
