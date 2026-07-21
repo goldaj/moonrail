@@ -449,6 +449,8 @@ Le démarrage du smoke attend le chargement de la page puis la présence visible
 
 Le lien stylesheet de l’app porte une version de passe UI afin que le navigateur local et le smoke ne conservent pas une ancienne feuille pendant les itérations rapides.
 
+Le lanceur Windows fonctionne en instance unique : avant de créer un serveur local, il vérifie les ports Moonrail et réutilise immédiatement une instance saine déjà active. Des double-clics répétés sur `Lancer Moonrail.vbs` rouvrent donc le même jeu sans empiler des processus Python cachés ni épuiser la plage de ports locale.
+
 Le garde UTF-8 ignore les attributs techniques `href` et `src` lorsqu’il cherche des points d’interrogation de remplacement ; il reste strict sur les textes joueurs, les données et les styles visibles.
 
 Les actions synthétiques du smoke dans le centre de test et la pose de carte en combat ciblent le contrôle visible du DOM par attribut stable afin de tester le comportement produit, sans dépendre d’une position de scroll ou d’un recouvrement transitoire.
