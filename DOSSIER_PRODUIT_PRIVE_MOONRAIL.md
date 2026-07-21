@@ -110,18 +110,20 @@ Le pool contient des murs gratuits, des effets instantanés à 0 Vie, des cartes
 - L’abandon volontaire reste accessible depuis la carte et discrètement depuis le combat ; il demande confirmation puis suit le même gacha et le même récapitulatif qu’une défaite.
 - Après validation de la conductrice, la run démarre par une animation de départ du Moonrail puis un combat-prologue obligatoire. La carte de route n’apparaît qu’après la réussite de ce premier combat et sa récompense éventuelle ; ce combat ne consomme pas encore d’embranchement.
 
-Longueur cible actuelle : cinq haltes entre chaque contrôle divin, avec des combats nettement plus fréquents et une chance de miniboss après les premières étapes. Une run complète doit demander plusieurs cycles de combat, pas seulement une succession de cadeaux.
+Longueur cible actuelle : cinq haltes entre chaque contrôle divin. Chaque tronçon contient une bifurcation de contraintes évitable en amont, au moins deux propositions de combat normal et un Prévôt obligatoire avant le boss. Une run complète demande donc plusieurs cycles de combat, pas seulement une succession de cadeaux.
 
 ## 5. Carte et familles de routes
 
 Le joueur ne planifie pas toute la route. La carte montre les embranchements futurs comme information, mais seules les étapes reliées à la position actuelle sont cliquables. À chaque arrêt, le train avance visuellement puis un nouvel embranchement devient disponible. Aucun arrêt n’est présélectionné sur la carte : cliquer sur un nœud ouvre une fenêtre de détail, puis le joueur confirme ou revient à la carte.
 
+La structure et le contenu de chaque ligne sont tirés avec le générateur propre à la run. Les combats changent de position et de variante, la bifurcation de contraintes peut apparaître à deux profondeurs différentes et deux cartes d’ouverture successives ne peuvent pas conserver exactement la même signature. Une halte d’entrée est désignée comme corridor négatif : une fois cette branche choisie, toutes ses sorties mènent vers deux malus explicitement nommés et aucun nœud positif. Les autres branches restent hors de ce corridor. Le joueur choisit donc son prix directement sur la carte, sans second menu, mais il avait encore la possibilité d’éviter cette famille de risque au choix précédent. Plus loin, toutes les branches convergent vers un unique Prévôt du Tribunal obligatoire, puis peuvent se séparer de nouveau avant le contrôle céleste.
+
 La ligne est un rouleau vertical indépendant du reste de l’écran. À chaque affichage et après tout redimensionnement de la fenêtre, elle se recadre automatiquement sur le train courant en gardant davantage de route future visible au-dessus. Le joueur peut ensuite la faire défiler vers le boss ou revenir vers les haltes passées à la molette, au toucher, avec la barre latérale ou au clavier. Le contrôleur céleste et son échéance restent sur une même ligne compacte au-dessus des rails ; le Murmure reste ancré au-dessous. Les ressources, le deck et l’abandon appartiennent uniquement au HUD global et ne dupliquent plus la carte. La fenêtre de confirmation d’un arrêt est un composant dédié, indépendant des mini-cartes de route : elle affiche sans troncature le nom, la description, la famille, les effets annoncés et l’éventuel lien avec le Murmure avant de proposer retour ou confirmation.
 
 | Famille | Rôle |
 |---|---|
-| Incident de voie | Combat normal, carte après victoire. |
-| Prévôt du Tribunal | Miniboss renforcé, 3 éclats, butin de meilleure qualité. |
+| Incident de voie, Patrouille des cloches, Escarmouche du miroir | Variantes de combat normal, carte après victoire. Chaque tronçon en propose au moins deux. |
+| Prévôt du Tribunal | Miniboss renforcé obligatoire où toutes les branches convergent, 3 éclats, butin de meilleure qualité. |
 | Bosquet des noms | Choix d’une carte parmi trois, avec refus possible. |
 | Atelier de l’Aiguille | Réglage unique d’un exemplaire : +1 Puissance ou +2 Vie. |
 | Atelier des doublons | Le joueur choisit une paire précise parmi ses doublons. Un exemplaire est consommé ; le survivant conserve ses réglages et gagne +1 Puissance et +2 Vie. Sans paire, conversion en éclats. |
@@ -134,7 +136,7 @@ La ligne est un rouleau vertical indépendant du reste de l’écran. À chaque 
 | Pacte à double sceau | Gain fort et prix explicite, appliqués ensemble. |
 | Météo lunaire | Règle temporaire visible pendant deux combats. |
 | Bureau du Billet Zéro | Très rare : remplace définitivement un seul emplacement du deck de départ, jamais tous les doublons portant le même nom. |
-| Tribunal endormi | Exactement trois malus purs ; aucun bonus dans la sélection. |
+| Bifurcation de contraintes | Deux malus visibles directement sur la carte. La branche d’entrée dédiée mène exclusivement vers les deux ; une autre branche reste extérieure au corridor négatif. |
 | Comptoir des éclats | Prix en éclats proportionnel à la puissance de la carte. |
 | Aiguillage impossible | Détour risqué, Présage, ressources ou piste secrète. |
 
@@ -418,7 +420,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - En combat, les toasts se placent dans l’espace libre entre les ressources et la main : ils ne peuvent recouvrir ni les jauges, ni les cartes, ni les ressources, ni le bouton de départ.
 - Le smoke test force un toast de ressource sur un écran dédié afin que cette règle soit contrôlée indépendamment du tirage aléatoire de la main.
 - Les compteurs du HUD, notamment celui du Grimoire, restent contenus dans leur bouton et ne doivent jamais recouvrir le plateau.
-- Un choix de malus contient toujours trois malus ; un choix de bonus contient trois bonus. Aucun mélange.
+- Une bifurcation de contraintes montre deux malus directement sur la carte. La branche qui s’y engage mène exclusivement vers ces deux contraintes ; aucun menu supplémentaire ni bonus mélangé n’apparaît après le clic. Les autres branches ne peuvent pas entrer accidentellement dans ce corridor.
 - Les conductrices et autres récompenses uniques ne produisent jamais de doublons au gacha.
 - Une victoire comme une défaite se termine par un gacha aléatoire animé.
 - Après le gacha, le joueur voit tout ce que la run a réellement débloqué avant de quitter la tentative.

@@ -14,6 +14,7 @@
     stopsPerControl: 5,
     rewardChoices: 3
   });
+  const ROUTE_GRAPH_VERSION = 2;
   const STARTER_POOLS = {
     controleur: ['moon_hare','moon_hare','paper_crane','shrine_fox','shrine_fox','bell_toad','wisp_scribe','bone_sparrow','cloud_oni','thorn_oracle'],
     mecano: ['paper_crane','paper_crane','clock_harpy','porcelain_golem','wisp_scribe','bone_sparrow','bone_sparrow','ink_tanuki','star_kappa','rail_cat'],
@@ -98,6 +99,12 @@
     { id:'heavy_hand', icon:'▤', name:'Main encombrée', text:'Votre limite de main baisse de 1 pour deux combats.', apply:r => r.maluses.push({ id:'heavy_hand', value:2 }) },
     { id:'toll_gate', icon:'♢', name:'Péage divin', text:'Perdez 2 jetons de voie ou subissez +1 Poursuite.', apply:r => { if (r.teeth >= 2) r.teeth -= 2; else r.maluses.push({ id:'watching_eye', value:1 }); } }
   ];
+  const MALUS_ROUTE_IDS = Object.freeze({
+    short_fuse:'omen_tax',
+    watching_eye:'glass_toll',
+    heavy_hand:'silent_carriage',
+    toll_gate:'sleeping_court'
+  });
   const SWITCH_CHOICES = [
     { id:'white_thread', icon:'?', name:'Fil blanc', text:'Gagnez +1 Présage stellaire et allumez une piste de secret. Aucun butin immédiat.', apply:r => { r.omens++; markTruthReady(r.secretVisits >= 2 ? 'white_route' : 'window_guest'); } },
     { id:'shard_siding', icon:'♢', name:'Quai des éclats', text:'Gagnez 3 éclats, mais le prochain combat commence avec +1 Poursuite.', apply:r => { gainTeeth(3, 'aiguillage des éclats'); r.maluses.push({ id:'watching_eye', value:1 }); } },
@@ -199,7 +206,8 @@
     seenCardTypeTutorials: [], pendingCardTypeTutorials: [], cardTutorialScopeVersion: 'deck-v2',
     unlockedCards: ['moon_hare','paper_crane','shrine_fox','bell_toad','lantern_moth','ink_tanuki','clock_harpy','cloud_oni','porcelain_golem','star_kappa','wisp_scribe','rail_cat','thorn_oracle','bone_sparrow','skull_mochi','ember_ticket','mirror_mouse','omen_lantern'],
     lifetimeSacrifices: 0, lifetimeStokes: 0, lifetimeHandSacrifices: 0, secretVisits: 0, tutorialSeen: false, nextRunMurmur: null,
-    discoveredCards: [], milestones: [], lessons: [], bestStreak: 0, lifetimeTeeth: 0, maxRunDepth: 0, metaRewrites: 0
+    discoveredCards: [], milestones: [], lessons: [], bestStreak: 0, lifetimeTeeth: 0, maxRunDepth: 0, metaRewrites: 0,
+    lastOpeningRouteSignature: null
   };
   const SIGILS = {
     airborne: ['↑','Aérien','Ignore un obstacle sans Vigie.'], reach: ['⌁','Vigie','Intercepte les unités aériennes.'],
@@ -229,6 +237,8 @@
   };
   const PATH_NODES = [
     { id:'battle', icon:'⚔', name:'Incident de voie', type:'combat', desc:'Affrontez un cortège mineur. La victoire donne une carte et un présage.' },
+    { id:'bell_patrol', icon:'♬', name:'Patrouille des cloches', type:'combat', desc:'Une patrouille rapide verrouille les wagons. La victoire donne une carte et un présage.' },
+    { id:'mirror_skirmish', icon:'◇', name:'Escarmouche du miroir', type:'combat', desc:'Des reflets hostiles copient les gestes du convoi. La victoire donne une carte et un présage.' },
     { id:'miniboss', icon:'♜', name:'Prévôt du Tribunal', type:'miniboss', desc:'Affrontez un officier renforcé. Combat difficile, 3 éclats et butin de meilleure qualité.' },
     { id:'grove', icon:'♧', name:'Bosquet des noms', type:'reward', desc:'Ajoutez une carte parmi trois propositions adaptées à votre collection.' },
     { id:'altar', icon:'☾', name:'Atelier de l’Aiguille', type:'upgrade', desc:'Réglez un exemplaire une fois : +1 Puissance ou +2 Vie.' },
@@ -242,7 +252,6 @@
     { id:'double_pact', icon:'☍', name:'Pacte à double sceau', type:'pact', desc:'Choisissez un gain puissant et son prix clairement annoncé. Les deux s’appliquent.' },
     { id:'lunar_weather', icon:'☄', name:'Météo lunaire', type:'weather', desc:'Choisissez une règle climatique active pendant les deux prochains combats.' },
     { id:'starter_rewrite', icon:'∞', name:'Bureau du Billet Zéro', type:'meta', desc:'Rare : remplacez définitivement une carte de départ de cette conductrice.' },
-    { id:'omen_tax', icon:'◉', name:'Tribunal endormi', type:'malus', desc:'Choisissez une contrainte parmi trois. Cette halte ne cache aucun bonus.' },
     { id:'trader', icon:'♢', name:'Comptoir des éclats', type:'shop', desc:'Dépensez vos éclats ; chaque prix dépend de la puissance réelle de la carte.' },
     { id:'secret', icon:'?', name:'Aiguillage impossible', type:'secret', desc:'Manipulez la route, les ressources ou une piste secrète contre un risque explicite.' }
   ];
@@ -259,7 +268,7 @@
     pact:{ label:'PACTE', verb:'Signer', tone:'risk', summary:'gain fort + prix explicite' },
     weather:{ label:'CLIMAT', verb:'Préparer', tone:'weather', summary:'règle visible · 2 combats' },
     meta:{ label:'MÉTA RARE', verb:'Graver', tone:'secret', summary:'deck de départ permanent' },
-    malus:{ label:'CONTRAINTE', verb:'Accepter', tone:'danger', summary:'3 malus purs · aucun bonus' },
+    malus:{ label:'CONTRAINTE', verb:'Accepter', tone:'danger', summary:'malus visible · aucun bonus caché' },
     shop:{ label:'BOUTIQUE', verb:'Acheter', tone:'reward', summary:'prix en éclats selon puissance' },
     secret:{ label:'AIGUILLAGE', verb:'Actionner', tone:'secret', summary:'trajectoire modifiée · risque' },
     hunt:{ label:'BOSS', verb:'Affronter', tone:'boss', summary:'règle spéciale · progression majeure' }
@@ -1026,16 +1035,17 @@
     return hunters[Math.min(run?.act || 0, Math.max(0, hunters.length - 1))] || story.hunters[0];
   }
 
-  function buildPathChoices({ step = run?.step || 0, daysLeft = run?.daysLeft || BALANCE.stopsPerControl, pathBias = null } = {}) {
+  function buildPathChoices({ step = run?.step || 0, daysLeft = run?.daysLeft || BALANCE.stopsPerControl, pathBias = null, forceCombat = false } = {}) {
     if (!run) return [];
     const visible = PATH_NODES.filter(node => {
+      if (node.type === 'miniboss') return false;
       if (node.id === 'secret') return profile.attempts >= 2;
       if (node.type === 'meta') return profile.attempts >= 3 && step >= 2 && ritualRandom() < .12;
       if (node.type === 'thread') return profile.truths.length >= 6 && step >= 1 && routeSecretCandidates().length;
       return true;
     });
     const byType = type => visible.filter(node => node.type === type);
-    const nonCombatTypes = ['reward','upgrade','forge','shop','cleanse','transform','scout','thread','weather','pact','malus','secret','meta'];
+    const nonCombatTypes = ['reward','upgrade','forge','shop','cleanse','transform','scout','thread','weather','pact','secret','meta'];
     const pickOne = (pool, used) => shuffle(pool).find(node => node && !used.has(node.id));
     const choices = [];
     const used = new Set();
@@ -1043,11 +1053,10 @@
       if (!node || used.has(node.id) || choices.length >= BALANCE.rewardChoices) return false;
       choices.push(node); used.add(node.id); return true;
     };
-    const mustOfferCombat = pathBias === 'noncombat' ? false : step === 0 || daysLeft <= 1;
-    const shouldOfferCombat = pathBias === 'noncombat' ? false : mustOfferCombat || ritualRandom() < .46;
+    const mustOfferCombat = pathBias === 'noncombat' ? false : forceCombat || step === 0 || daysLeft <= 1;
+    const shouldOfferCombat = pathBias === 'noncombat' ? false : mustOfferCombat || ritualRandom() < .7;
     if (shouldOfferCombat) addNode(pickOne(byType('combat'), used));
-    const shouldOfferMiniboss = pathBias !== 'noncombat' && step > 1 && daysLeft > 1 && byType('miniboss').length && ritualRandom() < .22;
-    if (shouldOfferMiniboss) addNode(pickOne(byType('miniboss'), used));
+    if (forceCombat && pathBias !== 'noncombat' && ritualRandom() < .34) addNode(pickOne(byType('combat'), used));
     const shouldOfferSecretSwitch = step > 0 && byType('secret').length && ritualRandom() < (pathBias === 'noncombat' ? .28 : .18);
     if (shouldOfferSecretSwitch) addNode(pickOne(byType('secret'), used));
     const murmurRouteTypes = murmurPreferredRouteTypes().filter(type => pathBias === 'noncombat' ? type !== 'combat' : true);
@@ -1056,9 +1065,9 @@
     }
     const roll = ritualRandom();
     const priorityTypes = pathBias === 'noncombat'
-      ? shuffle(['scout','upgrade','reward','shop','cleanse','transform','weather','pact','malus','secret'])
+      ? shuffle(['scout','upgrade','reward','shop','cleanse','transform','weather','pact','secret'])
       : roll < .18
-      ? ['malus','pact','scout','thread','weather','cleanse']
+      ? ['pact','scout','thread','weather','cleanse','transform']
       : roll < .36
         ? ['pact','weather','shop','transform','scout','thread']
         : roll < .62
@@ -1070,7 +1079,7 @@
       if (!addNode(pickOne(byType(type), used))) break;
     }
     while (choices.length < BALANCE.rewardChoices) addNode(pickOne(visible, used) || pickOne(byType('combat'), used));
-    return choices.slice(0, BALANCE.rewardChoices);
+    return shuffle(choices).slice(0, BALANCE.rewardChoices);
   }
 
   function generatePathChoices() {
@@ -1085,46 +1094,142 @@
     return `ligne-${act + 1}-etape-${row + 1}-voie-${col + 1}`;
   }
 
-  function routeConnectionColumns(col, row) {
-    if (col === 0) return [0, 1];
-    if (col === 2) return [1, 2];
-    return row % 2 ? [0, 1] : [1, 2];
+  function constraintRouteNodes() {
+    return shuffle(MALUS_CHOICES).slice(0, 2).map(option => ({
+      id:MALUS_ROUTE_IDS[option.id] || `constraint-${option.id}`,
+      icon:option.icon,
+      name:option.name,
+      type:'malus',
+      desc:option.text,
+      constraintId:option.id
+    }));
+  }
+
+  function connectRouteRows(current, next, { constraintGate = false, constraintEntryCol = null } = {}) {
+    if (!current.length || !next.length) return;
+    if (next.length === 1) {
+      for (const node of current) node.connections = [next[0].uid];
+      return;
+    }
+    if (current.length === 1) {
+      current[0].connections = next.map(node => node.uid);
+      return;
+    }
+    if (constraintGate) {
+      const constraints = next.filter(node => node.type === 'malus');
+      const safeRoutes = next.filter(node => node.type !== 'malus');
+      for (const node of current) {
+        node.connections = (node.col === constraintEntryCol ? constraints : safeRoutes).map(target => target.uid);
+      }
+      return;
+    }
+    const mirrored = ritualRandom() < .5;
+    for (const node of current) {
+      const col = mirrored ? current.length - 1 - node.col : node.col;
+      const columns = col === 0 ? [0, 1] : col === current.length - 1 ? [1, 2] : ritualRandom() < .5 ? [0, 1] : [1, 2];
+      const targets = columns.map(index => next[index]).filter(Boolean);
+      node.connections = targets.map(target => target.uid);
+    }
+  }
+
+  function routeGraphSignature(rows) {
+    return rows.map(row => row.map(node => node.id).join(',')).join('|');
+  }
+
+  function routeGraphInvariantErrors(graph) {
+    const errors = [];
+    const rows = graph?.rows || [];
+    const minibossRows = rows.filter(row => row.length === 1 && row[0]?.type === 'miniboss');
+    if (minibossRows.length !== 1) errors.push('un unique miniboss obligatoire est requis');
+    const constraintRow = rows[graph?.constraintRow] || [];
+    const constraintNodes = constraintRow.filter(node => node.type === 'malus');
+    const safeNodes = constraintRow.filter(node => node.type !== 'malus');
+    if (constraintNodes.length < 2 || safeNodes.length !== 1) errors.push('la bifurcation de contraintes doit contenir deux malus et une voie extérieure');
+    const previousRow = rows[(graph?.constraintRow ?? 0) - 1] || [];
+    const constraintUids = new Set(constraintNodes.map(node => node.uid));
+    for (const node of previousRow) {
+      const destinations = (node.connections || []).filter(uid => constraintUids.has(uid));
+      if (node.col === graph.constraintEntryCol && (destinations.length < 2 || destinations.length !== (node.connections || []).length)) errors.push(`l’embranchement ${node.uid} ne mène pas exclusivement à plusieurs contraintes`);
+      if (node.col !== graph.constraintEntryCol && destinations.length) errors.push(`l’embranchement ${node.uid} entre dans le corridor négatif sans l’avoir choisi`);
+    }
+    const combatOffers = rows.flat().filter(node => node.type === 'combat').length;
+    if (combatOffers < 2) errors.push('la ligne doit proposer au moins deux combats normaux');
+    return errors;
+  }
+
+  function buildRouteRows(pathBias) {
+    const constraintRow = ritualRandom() < .5 ? 1 : 2;
+    const minibossRow = constraintRow + 2;
+    const constraintEntryCol = Math.floor(ritualRandom() * BALANCE.rewardChoices);
+    const rows = [];
+    for (let row = 0; row < BALANCE.stopsPerControl; row++) {
+      if (row === constraintRow) {
+        const safeNode = buildPathChoices({
+          step:run.step + row,
+          daysLeft:BALANCE.stopsPerControl - row,
+          pathBias:'noncombat'
+        }).find(node => !['pact','secret'].includes(node.type)) || PATH_NODES.find(node => node.id === 'grove');
+        const gateChoices = shuffle([...constraintRouteNodes(), safeNode]);
+        rows.push(gateChoices.map((node, col) => ({ ...node, uid:routeGraphUid(run.act, row, col), row, col, connections:[] })));
+        continue;
+      }
+      if (row === minibossRow) {
+        const node = PATH_NODES.find(candidate => candidate.type === 'miniboss');
+        rows.push([{ ...node, uid:routeGraphUid(run.act, row, 1), row, col:1, connections:[] }]);
+        continue;
+      }
+      const choices = buildPathChoices({
+        step:run.step + row,
+        daysLeft:BALANCE.stopsPerControl - row,
+        pathBias:row === 0 ? pathBias : null,
+        forceCombat:true
+      });
+      rows.push(choices.map((node, col) => ({ ...node, uid:routeGraphUid(run.act, row, col), row, col, connections:[] })));
+    }
+    for (let row = 0; row < rows.length - 1; row++) {
+      connectRouteRows(rows[row], rows[row + 1], { constraintGate:row + 1 === constraintRow, constraintEntryCol });
+    }
+    return { rows, constraintRow, minibossRow, constraintEntryCol };
   }
 
   function createRouteGraph() {
     if (!run) return;
     const pathBias = run.nextPathBias;
     run.nextPathBias = null;
-    const rows = [];
-    for (let row = 0; row < BALANCE.stopsPerControl; row++) {
-      const choices = buildPathChoices({
-        step:run.step + row,
-        daysLeft:BALANCE.stopsPerControl - row,
-        pathBias:row === 0 ? pathBias : null
-      });
-      rows.push(choices.map((node, col) => ({ ...node, uid:routeGraphUid(run.act, row, col), row, col, connections:[] })));
+    let layout = null;
+    let signature = '';
+    for (let attempt = 0; attempt < 4; attempt++) {
+      layout = buildRouteRows(pathBias);
+      signature = routeGraphSignature(layout.rows);
+      if (run.act !== 0 || signature !== profile.lastOpeningRouteSignature) break;
     }
-    for (let row = 0; row < rows.length - 1; row++) {
-      for (const node of rows[row]) {
-        node.connections = routeConnectionColumns(node.col, row)
-          .map(col => rows[row + 1][col]?.uid)
-          .filter(Boolean);
-      }
+    if (run.act === 0 && signature === profile.lastOpeningRouteSignature && layout.rows[0]?.length > 1) {
+      const descriptors = layout.rows[0].map(({ uid, row, col, connections, ...descriptor }) => descriptor);
+      descriptors.push(descriptors.shift());
+      layout.rows[0] = layout.rows[0].map((node, index) => ({
+        ...descriptors[index], uid:node.uid, row:node.row, col:node.col, connections:node.connections
+      }));
+      signature = routeGraphSignature(layout.rows);
     }
+    const { rows, constraintRow, minibossRow, constraintEntryCol } = layout;
+    if (run.act === 0) profile.lastOpeningRouteSignature = signature;
     const hunter = hunterForAct();
     const boss = {
       uid:`ligne-${run.act + 1}-controle-celeste`, id:'hunt', icon:'☀', name:hunter.name, type:'hunt',
       desc:`Contrôle céleste : ${hunter.rule}`, row:rows.length, col:1, connections:[]
     };
     for (const node of rows.at(-1) || []) node.connections = [boss.uid];
-    run.routeGraph = { act:run.act, rows, boss, currentRow:0, previousNodeId:null, visited:[] };
+    const graph = { version:ROUTE_GRAPH_VERSION, signature, act:run.act, rows, boss, constraintRow, constraintEntryCol, minibossRow, currentRow:0, previousNodeId:null, visited:[] };
+    const invariantErrors = routeGraphInvariantErrors(graph);
+    if (invariantErrors.length) throw new Error(`Carte de route invalide : ${invariantErrors.join(' · ')}`);
+    run.routeGraph = graph;
     syncPathChoicesFromGraph();
     run.routePreviewId = null;
   }
 
   function ensureRouteGraph() {
     if (!run) return null;
-    if (!run.routeGraph || run.routeGraph.act !== run.act || !Array.isArray(run.routeGraph.rows)) createRouteGraph();
+    if (!run.routeGraph || run.routeGraph.version !== ROUTE_GRAPH_VERSION || run.routeGraph.act !== run.act || !Array.isArray(run.routeGraph.rows)) createRouteGraph();
     const expectedRow = clamp(BALANCE.stopsPerControl - Math.max(0, run.daysLeft), 0, BALANCE.stopsPerControl);
     if (run.routeGraph.currentRow < expectedRow) run.routeGraph.currentRow = expectedRow;
     syncPathChoicesFromGraph();
@@ -1333,6 +1438,7 @@
 
   function routeImpactTags(node) {
     if (!node) return [];
+    if (node.type === 'malus') return malusImpactTags(MALUS_CHOICES.find(option => option.id === node.constraintId));
     const teeth = run?.teeth || 0;
     const malusCount = run?.maluses?.length || 0;
     const labels = {
@@ -1349,7 +1455,6 @@
       thread:['secret de route', 'carte + preuve'],
       weather:['2 combats', 'règle climatique'],
       pact:['gain immédiat', 'prix annoncé'],
-      malus:['3 malus purs', 'aucun bonus caché'],
       meta:['rare permanent', 'deck de départ'],
       secret:['levier risqué', 'piste possible']
     };
@@ -1481,7 +1586,7 @@
     if (node.type === 'pact') return showPactChoice();
     if (node.type === 'weather') return showWeatherChoice();
     if (node.type === 'meta') return showStarterRewrite();
-    if (node.type === 'malus') return showMalusChoice();
+    if (node.type === 'malus') return applyRouteConstraint(node);
     if (node.type === 'shop') return showRitualShop();
     if (node.type === 'secret') return resolveSecretPath();
   }
@@ -2130,20 +2235,13 @@
     openRitualModal(`<span class="kicker">${esc(kicker)}</span><h2>${esc(title)}</h2><p>${esc(text)}</p><div class="card-change-row"><div><small>AVANT</small>${ritualCardDisplayMarkup(before)}</div><b>→</b><div><small>APRÈS</small>${ritualCardDisplayMarkup(after)}</div></div><div class="modal-actions"><button class="primary-button" data-action="${action}">Continuer</button></div>`, 'card-change-modal');
   }
 
-  function showMalusChoice() {
-    const options = shuffle(MALUS_CHOICES).slice(0, BALANCE.rewardChoices);
-    run.malusChoices = options.map(option => option.id);
-    openRitualModal(`<span class="kicker">CONTRAT DÉFAVORABLE</span><h2>La voie exige un prix</h2><p>Entre deux contrôles divins, le Moonrail ne donne pas toujours un cadeau. Choisissez le malus le moins dangereux pour votre deck.</p><div class="salvage-grid malus-grid">${options.map(option => `<button data-ritual-malus="${option.id}"><i>${option.icon}</i><small>MALUS TEMPORAIRE</small><strong>${esc(option.name)}</strong><span>${esc(option.text)}</span>${choiceImpactMarkup(malusImpactTags(option), 'loss')}<b>Accepter ce prix →</b></button>`).join('')}</div>`, 'malus-modal');
-  }
-
-  function chooseMalus(id) {
-    if (!run?.malusChoices?.includes(id)) return;
-    const malus = MALUS_CHOICES.find(option => option.id === id);
+  function applyRouteConstraint(node) {
+    const malus = MALUS_CHOICES.find(option => option.id === node?.constraintId);
+    if (!run || !malus) return ritualToast('Cette contrainte de voie est illisible.');
     malus?.apply(run);
-    run.malusChoices = null;
     persist();
     announceFeedback('loss', 'Malus accepté', malus?.text || 'La voie a réclamé son prix.');
-    openRitualModal(`<span class="kicker">MALUS ACCEPTÉ</span><h2>${esc(malus?.name || 'Contrat défavorable')}</h2><p>${esc(malus?.text || 'La voie a réclamé son prix.')}</p><div class="malus-impact-card"><i>${malus?.icon || '◉'}</i><strong>Le prochain combat change</strong><span>Ce n’est pas une récompense : c’est une contrainte temporaire à intégrer dans votre plan de deck.</span></div><div class="modal-actions"><button class="primary-button" data-action="ritual-complete-event">Reprendre les rails</button></div>`, 'malus-modal');
+    openRitualModal(`<span class="kicker">CONTRAINTE DE VOIE</span><h2>${esc(malus.name)}</h2><p>${esc(malus.text)}</p><div class="malus-impact-card"><i>${malus.icon || '◉'}</i><strong>La voie est scellée</strong><span>Le Tribunal a refermé les autres rails. Le prochain combat portera la marque de ce passage.</span></div><div class="modal-actions"><button class="primary-button" data-action="ritual-complete-event">Reprendre les rails</button></div>`, 'malus-modal');
   }
 
   function resolveCleanseRoute() {
@@ -4766,7 +4864,6 @@
       if (button.dataset.ritualUpgradePath) return chooseUpgradePath(button.dataset.ritualUpgradePath);
       if (button.dataset.ritualForge !== undefined) return chooseForge(Number(button.dataset.ritualForge));
       if (button.dataset.ritualBuy) return buyRitualCard(button.dataset.ritualBuy);
-      if (button.dataset.ritualMalus) return chooseMalus(button.dataset.ritualMalus);
       if (button.dataset.ritualTransform !== undefined) return chooseTransform(Number(button.dataset.ritualTransform));
       if (button.dataset.ritualPact) return choosePact(button.dataset.ritualPact);
       if (button.dataset.ritualWeather) return chooseWeather(button.dataset.ritualWeather);
