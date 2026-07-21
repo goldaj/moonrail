@@ -306,6 +306,8 @@ class RitualProductTests(unittest.TestCase):
         for function_name in ("createRouteGraph", "reachableRouteNodes", "inspectRouteNode", "advanceRouteGraph", "routeGraphMarkup"):
             self.assertIn(f"function {function_name}", self.source)
         self.assertIn('id="ritual-route-map"', self.html)
+        self.assertIn('id="ritual-route-viewport"', self.html)
+        self.assertIn("function focusRouteViewportOnPlayer", self.source)
         self.assertIn("ritual-map-main", self.html + self.css)
         self.assertIn("ritual-run-metrics", self.html + self.css)
         self.assertNotIn("route-board-help", self.html)
@@ -386,7 +388,9 @@ class RitualProductTests(unittest.TestCase):
             self.assertIn(helper_name, self.source)
         self.assertIn("Indice plutôt que jackpot", self.source)
         self.assertIn("#screen-ritual-map .route-board-help,#screen-ritual-map .ritual-path-choices{display:none!important}", self.css)
-        self.assertIn("#screen-ritual-map .ritual-route-map{flex:1 1 auto!important;min-height:430px!important", self.css)
+        self.assertIn("overflow-y:auto!important", self.css)
+        self.assertIn("height:820px!important", self.css)
+        self.assertIn("viewport.scrollTo", self.source)
         self.assertIn("visible pour anticiper, pas encore sélectionnable", self.source)
 
     def test_former_placeholder_mechanics_are_runtime_backed(self):
@@ -940,7 +944,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("height:30px!important", self.css)
         self.assertIn("height:35px!important", self.css)
         self.assertIn("font-size:9.6px!important", self.css)
-        self.assertIn('styles.css?v=ui-11-3', self.html)
+        self.assertIn('styles.css?v=ui-11-5', self.html)
         self.assertIn("battle-toast", self.source + self.css)
         self.assertIn("Garde combat 10.2", self.css)
         self.assertIn("Garde combat 10.4", self.css)
@@ -952,6 +956,9 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("height:calc((100dvh - 84px) * 1.25)!important", self.css)
         self.assertIn("zoom:.8", self.css)
         self.assertIn("height:183px!important", self.css)
+        self.assertIn("Garde carte 11.4", self.css)
+        self.assertIn("Garde route 11.5", self.css)
+        self.assertIn("function handleRouteViewportKey", self.source)
         self.assertIn("padding:78px 6px 6px!important", self.css)
         self.assertIn("grid-row:11!important", self.css)
         self.assertIn("height:calc(100dvh - 12px)!important", self.css)

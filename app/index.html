@@ -7,7 +7,7 @@
   <link rel="icon" href="data:,">
   <meta name="description" content="Moonrail — roguelite de cartes, convois célestes et secrets sous une nuit sans fin.">
   <title>Moonrail — La Centième Nuit</title>
-  <link rel="stylesheet" href="styles.css?v=ui-11-3">
+  <link rel="stylesheet" href="styles.css?v=ui-11-5">
 </head>
 <body>
   <div id="app" class="app">
@@ -78,7 +78,13 @@
                 <div><small>CARTE DE LA LIGNE</small><h3 id="route-board-title">Choisissez le prochain embranchement</h3></div>
                 <span><i></i> accessible maintenant</span>
               </header>
-              <div id="ritual-route-map" class="ritual-route-map" aria-label="Carte à embranchements du Moonrail"></div>
+              <div class="ritual-route-viewport-frame">
+                <div id="ritual-route-viewport" class="ritual-route-viewport" tabindex="0" role="region" aria-label="Carte verticale de la ligne, défilement disponible">
+                  <div id="ritual-route-map" class="ritual-route-map" aria-label="Carte à embranchements du Moonrail"></div>
+                </div>
+                <span class="route-scroll-shade route-scroll-shade-top" aria-hidden="true"></span>
+                <span class="route-scroll-shade route-scroll-shade-bottom" aria-hidden="true"></span>
+              </div>
             </section>
             <section id="ritual-run-murmur" class="run-murmur" aria-live="polite"></section>
           </div>

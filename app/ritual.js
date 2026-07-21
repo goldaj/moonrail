@@ -1229,6 +1229,33 @@
     return `<svg class="route-map-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines.join('')}</svg>${nodeButtons}<span class="route-map-train" style="--train-y:${trainY}%">🚂</span>`;
   }
 
+  function focusRouteViewportOnPlayer() {
+    const viewport = $('#ritual-route-viewport');
+    const train = viewport?.querySelector('.route-map-train');
+    if (!viewport || !train) return;
+    requestAnimationFrame(() => {
+      const target = train.offsetTop + train.offsetHeight / 2 - viewport.clientHeight * .72;
+      const maximum = Math.max(0, viewport.scrollHeight - viewport.clientHeight);
+      viewport.scrollTo({ top:clamp(target, 0, maximum), behavior:'auto' });
+    });
+  }
+
+  function handleRouteViewportKey(event) {
+    const viewport = event.currentTarget;
+    const page = Math.max(120, viewport.clientHeight * .78);
+    const targets = {
+      ArrowUp:viewport.scrollTop - 48,
+      ArrowDown:viewport.scrollTop + 48,
+      PageUp:viewport.scrollTop - page,
+      PageDown:viewport.scrollTop + page,
+      Home:0,
+      End:viewport.scrollHeight
+    };
+    if (!(event.key in targets)) return;
+    event.preventDefault();
+    viewport.scrollTo({ top:targets[event.key], behavior:event.repeat ? 'auto' : 'smooth' });
+  }
+
   function routeDetailMarkup(nodeOverride = null, includeAction = true) {
     const graph = run?.routeGraph;
     if (!graph) return '';
@@ -1287,7 +1314,10 @@
       murmurPanel.innerHTML = runMurmurMarkup();
     }
     const routeMap = $('#ritual-route-map');
-    if (routeMap) routeMap.innerHTML = routeGraphMarkup();
+    if (routeMap) {
+      routeMap.innerHTML = routeGraphMarkup();
+      focusRouteViewportOnPlayer();
+    }
     const routeChoices = $('#ritual-path-choices');
     if (routeChoices) routeChoices.innerHTML = '';
     persist();
@@ -4954,6 +4984,7 @@
       document.addEventListener('pointerup', event => finishRitualPointerDrag(event));
       document.addEventListener('pointercancel', event => finishRitualPointerDrag(event, true));
       document.addEventListener('keydown', handleKey);
+      $('#ritual-route-viewport')?.addEventListener('keydown', handleRouteViewportKey);
       if (run?.deck?.length) setTimeout(() => showPendingCardTypeTutorial(), 320);
     } catch (error) {
       console.error('Ritual boot failed', error);

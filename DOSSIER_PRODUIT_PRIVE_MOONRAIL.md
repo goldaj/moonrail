@@ -116,6 +116,8 @@ Longueur cible actuelle : cinq haltes entre chaque contrôle divin, avec des com
 
 Le joueur ne planifie pas toute la route. La carte montre les embranchements futurs comme information, mais seules les étapes reliées à la position actuelle sont cliquables. À chaque arrêt, le train avance visuellement puis un nouvel embranchement devient disponible. Aucun arrêt n’est présélectionné sur la carte : cliquer sur un nœud ouvre une fenêtre de détail, puis le joueur confirme ou revient à la carte.
 
+La ligne est un rouleau vertical indépendant du reste de l’écran. À chaque affichage, elle se recadre automatiquement sur le train courant en gardant davantage de route future visible au-dessus. Le joueur peut ensuite la faire défiler vers le boss ou revenir vers les haltes passées à la molette, au toucher, avec la barre latérale ou au clavier. Le contrôleur céleste, les ressources, le Murmure et l’abandon ne défilent pas avec les rails et ne peuvent jamais être recouverts par la carte. La fenêtre de confirmation d’un arrêt utilise une typographie de lecture normale, distincte des micro-libellés de nœud.
+
 | Famille | Rôle |
 |---|---|
 | Incident de voie | Combat normal, carte après victoire. |
@@ -393,6 +395,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - L’ancien écran « Repères de conduite » est supprimé. Les raccourcis d’aide en haut de l’écran ouvrent directement le Manuel.
 - Dans le prologue avant le choix de conductrice, l’objectif annoncé s’appelle « Votre but » et ne sous-entend pas qu’un autre but invisible existe.
 - Le premier écran de run après le combat-prologue affiche le prochain contrôleur céleste sur toute la largeur, la carte au centre en grand, les cartes/Présages/éclats en haut, et un Murmure compact en bas. Le Murmure compact ne montre que son nom, son titre et son avancement ; le lore, la citation et la récompense sont réservés à sa popup détaillée.
+- À 100 % de zoom navigateur, la carte occupe uniquement la hauteur réellement disponible entre le contrôleur et le Murmure. Son canevas interne reste haut et scrollable ; le train courant est visible dès l’arrivée sur l’écran, tandis que le Murmure et le bouton d’abandon restent intégralement dans le viewport.
 - L’écran de combat doit tenir à 100 % de zoom navigateur de 1280×600 à 1920×1080, ainsi qu’en 1024×768, sans chevauchement : la table commence toujours sous la barre globale, utilise toute la hauteur restante et réserve une rangée explicite à chaque bloc. Masquer le journal sur un écran bas ne peut donc plus déplacer l’aide ou la main sur une autre rangée.
 - Les deux jauges de combat restent toujours visibles sous forme de compteurs `/10` accompagnés d’une barre de progression animée et strictement synchronisée : Moonrail pour le joueur, Poursuite pour l’adversaire. Une valeur de `n/10` doit occuper visuellement `n × 10 %` de la piste. Le bandeau qui les contient doit commencer au-dessous de la barre globale et ne peut jamais passer derrière elle, même lors d’une animation ou d’un changement de résolution.
 - Les manœuvres annoncées utilisent des aperçus horizontaux compacts : illustration, nom, effet court, coût et statistiques restent identifiables sans afficher une carte entière réduite et coupée. La lecture des trois wagons occupe sa propre rangée et réduit son détail textuel sur un écran bas au lieu de le tronquer.
@@ -457,3 +460,5 @@ Pour les boucles fréquentes, `MOONRAIL_SMOKE_SCREENSHOTS=0` lance le même parc
 Les écrans de récapitulatif de run sont mesurés après la fin de l’animation d’insertion des cartes afin de contrôler le gabarit stable, pas une frame intermédiaire volontairement transformée.
 
 Le parcours automatisé ferme aussi les tutoriels de premier déblocage injectés par le centre de test avant de démarrer une run ; un tutoriel différé ne doit jamais masquer un bouton et rendre le contrôle multi-résolution non déterministe.
+
+Le smoke UI joue désormais le combat-prologue obligatoire avant d’auditer la carte. Les écrans `route_map`, `route_future_locked` et `route_detail` vérifient la présence d’un vrai rouleau vertical, le cadrage initial du train, l’absence de chevauchement avec le Murmure et le pied de carte, ainsi que la lisibilité de la confirmation d’arrêt. Un écran de combat ne peut plus être comptabilisé par erreur comme une validation de map.

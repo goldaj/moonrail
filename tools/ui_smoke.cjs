@@ -136,7 +136,22 @@ async function inspectScreen(page, label, viewport, errors) {
         });
       }
     }
-    return { tinyText, interactiveOverflow, portraits, viewportOverflow, layoutWaste, cardOverlap, criticalOverlap, combatCardReadability };
+    const routeLayout = [];
+    const routeViewport = document.querySelector('#ritual-route-viewport');
+    if (routeViewport && visible(routeViewport)) {
+      const routeFrame = document.querySelector('.ritual-route-viewport-frame');
+      const routeBoard = document.querySelector('.moonrail-route-board');
+      const murmur = document.querySelector('#ritual-run-murmur');
+      const footer = document.querySelector('.ritual-map-footer');
+      const train = document.querySelector('.route-map-train');
+      const routeRect = routeViewport.getBoundingClientRect();
+      const trainRect = train?.getBoundingClientRect();
+      if (routeViewport.scrollHeight <= routeViewport.clientHeight + 20) routeLayout.push('la carte verticale ne défile pas');
+      if (routeBoard && murmur && routeBoard.getBoundingClientRect().bottom > murmur.getBoundingClientRect().top + 1) routeLayout.push('la carte chevauche le murmure');
+      if (footer && footer.getBoundingClientRect().bottom > innerHeight + 1) routeLayout.push('le bouton abandon est tronqué');
+      if (routeFrame && trainRect && (trainRect.top < routeRect.top || trainRect.bottom > routeRect.bottom)) routeLayout.push('le train courant n’est pas visible au chargement');
+    }
+    return { tinyText, interactiveOverflow, portraits, viewportOverflow, layoutWaste, cardOverlap, criticalOverlap, combatCardReadability, routeLayout };
   });
   return { label, viewport, errors:[...errors], ...metrics };
 }
@@ -182,6 +197,57 @@ async function clickDom(page, selector) {
     if (!element) throw new Error(`Selector not found: ${selector}`);
     element.click();
   }, selector);
+}
+
+async function completeOpeningBattle(page, errors) {
+  for (let turn = 0; turn < 16; turn++) {
+    await dismissOnboarding(page);
+    if (await page.locator('#screen-ritual-map.active').count()) return true;
+    if (await page.locator('[data-action="ritual-casualty-continue"]:visible').count()) {
+      await clickDom(page, '[data-action="ritual-casualty-continue"]');
+      await page.waitForTimeout(240);
+      continue;
+    }
+    if (await page.locator('.reward-modal [data-action="ritual-skip-reward"]:visible').count()) {
+      await clickDom(page, '.reward-modal [data-action="ritual-skip-reward"]');
+      await page.waitForTimeout(320);
+      continue;
+    }
+    if (!(await page.locator('#screen-ritual-battle.active').count())) {
+      await page.waitForTimeout(250);
+      continue;
+    }
+    for (let placement = 0; placement < 3; placement++) {
+      const move = await page.evaluate(() => {
+        const lumen = Number(document.querySelector('#ritual-lumen')?.textContent || 0);
+        const ashes = Number(document.querySelector('#ritual-ashes')?.textContent || 0);
+        const lane = [...document.querySelectorAll('[data-ritual-player-slot]')]
+          .find(element => element.classList.contains('empty'))?.dataset.ritualPlayerSlot;
+        if (lane === undefined) return null;
+        const candidates = [...document.querySelectorAll('[data-ritual-hand]')].map(element => {
+          const costText = element.querySelector('.ritual-cost')?.textContent || '0';
+          const cost = Number((costText.match(/\d+/) || ['0'])[0]);
+          const ashCost = costText.includes('✹');
+          const attack = Number(element.querySelector('.ritual-card-stats b')?.textContent || 0);
+          return { hand:element.dataset.ritualHand, cost, attack, playable:ashCost ? ashes >= cost : lumen >= cost };
+        }).filter(card => card.playable).sort((a, b) => b.attack - a.attack || a.cost - b.cost);
+        return candidates[0] ? { hand:candidates[0].hand, lane } : null;
+      });
+      if (!move) break;
+      await clickDom(page, `[data-ritual-hand="${move.hand}"]`);
+      await clickDom(page, `[data-ritual-player-slot="${move.lane}"]`);
+      await page.waitForTimeout(120);
+    }
+    const departure = page.locator('[data-action="ritual-end-turn"]');
+    if (!(await departure.count()) || !(await departure.isEnabled())) {
+      await page.waitForTimeout(350);
+      continue;
+    }
+    await clickDom(page, '[data-action="ritual-end-turn"]');
+    await page.waitForTimeout(1900);
+  }
+  errors.push('route: le combat d’ouverture n’a pas atteint la carte en 16 tours');
+  return false;
 }
 
 async function auditViewport(browser, viewport) {
@@ -244,6 +310,7 @@ async function auditViewport(browser, viewport) {
   results.push(await inspectScreen(page, 'deck_preview', viewport, errors));
   await clickDom(page, '[data-action="ritual-confirm-guardian"]');
   await dismissOnboarding(page);
+  await completeOpeningBattle(page, errors);
   results.push(await inspectScreen(page, 'route_map', viewport, errors));
 
   const futureRoute = page.locator('.route-map-node.future').last();
@@ -329,13 +396,14 @@ async function auditViewport(browser, viewport) {
     ...report.cardOverlap.map(item => `${report.label}: ${item.context} card ${item.cardHeight}px text overlaps stats by ${item.overlap}px for ${item.name}`),
     ...report.criticalOverlap.map(item => `${report.label}: ${item.source} overlaps ${item.target}`),
     ...report.combatCardReadability.map(item => `${report.label}: carte de main trop compacte ${item.card} (${item.width}x${item.height}, texte ${item.copySize}px/${item.copyHeight}px)`),
+    ...report.routeLayout.map(item => `${report.label}: ${item}`),
     ...report.errors.map(error => `${report.label}: ${error}`),
     ...report.tinyText.map(item => `${report.label}: texte ${item.size}px « ${item.text} »`),
     ...report.interactiveOverflow.map(item => `${report.label}: libellé interactif tronqué « ${item.text} »`),
   ]);
   console.log(`UI smoke: ${reports.length} écrans inspectés · ${failures.length} alerte(s)`);
   for (const failure of failures.slice(0, 40)) console.log(`- ${failure}`);
-  if (reports.some(report => report.errors.length || report.tinyText.length || report.interactiveOverflow.length || report.layoutWaste.length || report.cardOverlap.length || report.criticalOverlap.length || report.combatCardReadability.length)) process.exitCode = 1;
+  if (reports.some(report => report.errors.length || report.tinyText.length || report.interactiveOverflow.length || report.layoutWaste.length || report.cardOverlap.length || report.criticalOverlap.length || report.combatCardReadability.length || report.routeLayout.length)) process.exitCode = 1;
 })().catch(error => {
   console.error(error);
   process.exit(1);
