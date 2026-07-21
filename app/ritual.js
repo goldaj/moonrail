@@ -1604,6 +1604,17 @@
     return [...deckPool, ...gachaPool];
   }
 
+  const CARD_ART_SHEETS = Object.freeze({
+    signature: { file:'cards-signatures-sheet-v1.png', cols:6, rows:2 },
+    boss: { file:'cards-enemy-spells-sheet-v1.png', cols:6, rows:3, indexOffset:-1, wrap:false },
+    secret: { file:'cards-secret-unique-sheet-v1.png', cols:4, rows:4 },
+    mechanics: { file:'cards-mechanics-sheet-v1.png', cols:5, rows:4 },
+    common: { file:'cards-common-sheet.png', cols:4, rows:4 },
+    uncommon: { file:'cards-uncommon-sheet.png', cols:5, rows:2 },
+    rare: { file:'cards-rare-sheet.png', cols:4, rows:2 },
+    default: { file:'ritual-creatures-sheet-v1.png', cols:5, rows:4 }
+  });
+
   function cardArtSheet(card) {
     const id = String(card?.id || '');
     const cost = card?.lumen ?? card?.blood ?? (card?.bones ? Math.ceil(card.bones / 2) : 0);
@@ -1612,14 +1623,14 @@
       || Number(card?.attack ?? 0) <= 0
       || Number(card?.health ?? 0) <= 0
       || Number(cost ?? 0) <= 0;
-    if (isSignature) return { file:'cards-signatures-sheet-v1.png', cols:6, rows:2 };
-    if (id.startsWith('boss_')) return { file:'cards-enemy-spells-sheet-v1.png', cols:4, rows:2 };
-    if (card?.rarity === 'unique' || card?.rarity === 'secret') return { file:'cards-secret-unique-sheet-v1.png', cols:4, rows:4 };
-    if (isMechanicalOddity) return { file:'cards-mechanics-sheet-v1.png', cols:5, rows:4 };
-    if (card?.rarity === 'common') return { file:'cards-common-sheet.png', cols:4, rows:4 };
-    if (card?.rarity === 'uncommon') return { file:'cards-uncommon-sheet.png', cols:4, rows:2 };
-    if (card?.rarity === 'rare') return { file:'cards-rare-sheet.png', cols:4, rows:2 };
-    return { file:'ritual-creatures-sheet-v1.png', cols:5, rows:4 };
+    if (isSignature) return CARD_ART_SHEETS.signature;
+    if (id.startsWith('boss_')) return CARD_ART_SHEETS.boss;
+    if (card?.rarity === 'unique' || card?.rarity === 'secret') return CARD_ART_SHEETS.secret;
+    if (isMechanicalOddity) return CARD_ART_SHEETS.mechanics;
+    if (card?.rarity === 'common') return CARD_ART_SHEETS.common;
+    if (card?.rarity === 'uncommon') return CARD_ART_SHEETS.uncommon;
+    if (card?.rarity === 'rare') return CARD_ART_SHEETS.rare;
+    return CARD_ART_SHEETS.default;
   }
 
 
@@ -1631,7 +1642,7 @@
     const x = safe % cols, y = Math.floor(safe / cols);
     const posX = cols === 1 ? 0 : (x * 100) / (cols - 1);
     const posY = rows === 1 ? 0 : (y * 100) / (rows - 1);
-    return `background-image:url('../assets/${file}');background-size:${cols * 100}% auto;background-position:${posX}% ${posY}%`;
+    return `background-image:url('../assets/${file}');background-size:${cols * 100}% auto;background-position:${posX}% ${posY}%;background-repeat:no-repeat`;
   }
 
   const CARD_SPECIFIC_ART = Object.freeze({
@@ -1779,7 +1790,8 @@
     const specific = CARD_SPECIFIC_ART[card?.id];
     if (specific) return spriteSheetStyle(specific[0], 4, 4, specific[1], false);
     const sheet = cardArtSheet(card);
-    return spriteSheetStyle(sheet.file, sheet.cols, sheet.rows, card?.art, true);
+    const index = Number(card?.art ?? 0) + Number(sheet.indexOffset || 0);
+    return spriteSheetStyle(sheet.file, sheet.cols, sheet.rows, index, sheet.wrap !== false);
   }
 
   function routeArtStyle(node) {

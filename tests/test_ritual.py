@@ -711,6 +711,31 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("background-size:300% auto", self.source)
         self.assertIn("background-size:${cols * 100}% auto", self.source)
         self.assertIn("function cardArtSheet", self.source)
+        self.assertIn("const CARD_ART_SHEETS", self.source)
+        expected_card_grids = {
+            "signature": ("cards-signatures-sheet-v1.png", 6, 2),
+            "boss": ("cards-enemy-spells-sheet-v1.png", 6, 3),
+            "secret": ("cards-secret-unique-sheet-v1.png", 4, 4),
+            "mechanics": ("cards-mechanics-sheet-v1.png", 5, 4),
+            "common": ("cards-common-sheet.png", 4, 4),
+            "uncommon": ("cards-uncommon-sheet.png", 5, 2),
+            "rare": ("cards-rare-sheet.png", 4, 2),
+            "default": ("ritual-creatures-sheet-v1.png", 5, 4),
+        }
+        for family, (filename, columns, rows) in expected_card_grids.items():
+            self.assertIn(f"{family}: {{ file:'{filename}', cols:{columns}, rows:{rows}", self.source)
+            path = ROOT / "assets" / filename
+            with path.open("rb") as handle:
+                handle.read(16)
+                width, height = struct.unpack(">II", handle.read(8))
+            self.assertGreater(width / columns, 240)
+            self.assertGreater(height / rows, 240)
+        self.assertIn("boss: { file:'cards-enemy-spells-sheet-v1.png', cols:6, rows:3, indexOffset:-1, wrap:false }", self.source)
+        vespera_technique = next(card for card in self.cards if card["id"] == "boss_vespera_technique")
+        self.assertEqual(vespera_technique["art"] - 1, 6 * 3 - 1)
+        self.assertIn("sheet.indexOffset", self.source)
+        self.assertIn("sheet.wrap !== false", self.source)
+        self.assertIn("background-repeat:no-repeat", self.source)
         self.assertIn("cards-mechanics-sheet-v1.png", self.source)
         self.assertIn("cards-enemy-spells-sheet-v1.png", self.source)
         self.assertIn("cards-secret-unique-sheet-v1.png", self.source)
@@ -728,6 +753,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("cards-uncommon-folklore-sheet-v1.png", self.source + self.css)
         self.assertIn("cards-rare-myth-sheet-v1.png", self.source + self.css)
         self.assertIn("cards-secret-lore-sheet-v1.png", self.source + self.css)
+        self.assertIn('ritual.js?v=art-12-2', self.html)
         self.assertIn("const CARD_SPECIFIC_ART", self.source)
         self.assertIn("moon_hare: ['cards-starter-core-sheet-v1.png', 0]", self.source)
         self.assertIn("paper_crane: ['cards-starter-core-sheet-v1.png', 1]", self.source)
@@ -746,7 +772,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("verdict_player_seat_lantern: ['cards-secret-lore-sheet-v1.png', 14]", self.source)
         self.assertIn("skull_mochi: ['cards-starter-expanded-sheet-v1.png', 0]", self.source)
         self.assertIn("moonless_bodyguard: ['cards-starter-expanded-sheet-v1.png', 15]", self.source)
-        self.assertIn("return spriteSheetStyle(sheet.file, sheet.cols, sheet.rows, card?.art, true)", self.source)
+        self.assertIn("return spriteSheetStyle(sheet.file, sheet.cols, sheet.rows, index, sheet.wrap !== false)", self.source)
         self.assertNotIn("function semanticCardArtStyle", self.source)
         self.assertNotIn("background-image:url('data:image/svg+xml", self.source)
 
