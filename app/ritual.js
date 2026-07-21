@@ -1262,7 +1262,7 @@
     viewport.scrollTo({ top:targets[event.key], behavior:event.repeat ? 'auto' : 'smooth' });
   }
 
-  function routeDetailMarkup(nodeOverride = null, includeAction = true) {
+  function routeDetailMarkup(nodeOverride = null) {
     const graph = run?.routeGraph;
     if (!graph) return '';
     const reachable = reachableRouteNodes();
@@ -1274,16 +1274,18 @@
     const state = isCurrent
       ? 'PROCHAIN ARRÊT · DÉCISION ACTIVE'
       : 'APERÇU DE LA LIGNE · CHOIX FUTUR';
-    const action = includeAction && isCurrent
-      ? `<button class="primary-button route-commit-button" data-ritual-path="${esc(node.id)}">${esc(family.verb)} · prendre cette voie <b>→</b></button>`
-      : '';
-    return `<article class="ritual-path-card route-detail-card type-${node.type} tone-${family.tone}">
-      <span class="route-art" style="${routeArtStyle(node)}"></span>
-      <header><i>${node.icon}</i><div><small>${esc(state)}</small><h3>${esc(node.name)}</h3></div></header>
-      <p>${esc(node.desc + wallet)}</p>
-      <div class="route-family-summary"><b>${esc(family.label)}</b><span>${esc(family.summary)}</span></div>
-      ${routeMurmurHintMarkup(node)}${routeImpactMarkup(node)}
-      <footer>${action}</footer>
+    const murmurHint = routeMurmurHintMarkup(node);
+    return `<article class="route-choice-summary route-detail-card type-${node.type} tone-${family.tone}">
+      <span class="route-art" style="${routeArtStyle(node)}" aria-hidden="true"></span>
+      <div class="route-choice-summary-content">
+        <header><i>${node.icon}</i><div><small>${esc(state)}</small><h3>${esc(node.name)}</h3></div></header>
+        <p class="route-choice-description">${esc(node.desc + wallet)}</p>
+        <div class="route-choice-facts">
+          <section class="route-family-summary"><small>TYPE D’ARRÊT</small><b>${esc(family.label)}</b><span>${esc(family.summary)}</span></section>
+          <section class="route-impact-summary"><small>EFFETS ANNONCÉS</small>${routeImpactMarkup(node)}</section>
+        </div>
+        ${murmurHint ? `<div class="route-choice-murmur"><small>LIEN AVEC LE MURMURE</small>${murmurHint}</div>` : ''}
+      </div>
     </article>`;
   }
 
@@ -1293,7 +1295,7 @@
     if (!node || !reachable.some(candidate => candidate.uid === uid)) {
       return ritualToast('La suite reste visible, mais le Moonrail choisit un seul embranchement à la fois.');
     }
-    openRitualModal(`<span class="kicker">PROCHAIN ARRÊT</span><h2>Confirmer cette voie ?</h2>${routeDetailMarkup(node, false)}<div class="modal-actions route-choice-actions"><button class="secondary-button" data-action="ritual-modal-close">Retour à la carte</button><button class="primary-button large" data-ritual-path="${esc(node.id)}">${esc((ROUTE_FAMILIES[node.type] || ROUTE_FAMILIES.secret).verb)} cette voie <b>→</b></button></div>`, 'route-choice-modal');
+    openRitualModal(`<span class="kicker">PROCHAIN ARRÊT</span><h2>Confirmer cette voie ?</h2>${routeDetailMarkup(node)}<div class="modal-actions route-choice-actions"><button class="secondary-button" data-action="ritual-modal-close">Retour à la carte</button><button class="primary-button large" data-ritual-path="${esc(node.id)}">Prendre cette voie <b>→</b></button></div>`, 'route-choice-modal');
   }
 
   function showRitualMap() {
