@@ -7,7 +7,7 @@
   <link rel="icon" href="data:,">
   <meta name="description" content="Moonrail — roguelite de cartes, convois célestes et secrets sous une nuit sans fin.">
   <title>Moonrail — La Centième Nuit</title>
-  <link rel="stylesheet" href="styles.css?v=ui-11-5">
+  <link rel="stylesheet" href="styles.css?v=ui-12-0">
 </head>
 <body>
   <div id="app" class="app">
@@ -19,12 +19,13 @@
     <header id="topbar" class="topbar hidden">
       <button class="brand-mini" data-action="home" aria-label="Retour au menu"><span>✦</span> MOONRAIL</button>
       <div class="run-stats">
-        <div class="stat-chip"><span class="stat-icon">♥</span><strong id="hud-hp">—</strong><small>arrêts</small></div>
-        <div class="stat-chip"><span class="stat-icon brass">◉</span><strong id="hud-tickets">0</strong><small>éclats</small></div>
-        <div class="stat-chip"><span class="stat-icon cyan">◆</span><strong id="hud-act">—</strong><small>ligne</small></div>
+        <div class="stat-chip shard-chip"><span class="stat-icon brass">◉</span><strong id="hud-tickets">0</strong><small>éclats</small></div>
+        <div class="stat-chip route-chip"><span class="stat-icon cyan">◆</span><strong id="hud-act">—</strong><small>ligne</small></div>
+        <div id="hud-omens-chip" class="stat-chip omen-chip hidden" title="Tous les 3 Présages ajoutent 2 profondeurs virtuelles au prisme de fin de run."><span class="stat-icon omen">☾</span><strong id="hud-omens">0</strong><small>présages</small></div>
       </div>
       <div class="top-actions">
         <button class="icon-button deck-button" data-action="deck" aria-label="Voir le grimoire"><span>▤</span><small>Grimoire</small><b id="deck-count">10</b></button>
+        <button id="run-abandon-button" class="icon-button run-abandon-button hidden" data-action="ritual-abandon" aria-label="Abandonner la nuit"><span>×</span><small>Abandonner</small></button>
         <button id="sound-button" class="icon-button" data-action="sound" aria-label="Couper le son">♫</button>
         <button class="icon-button" data-action="ritual-rulebook" aria-label="Manuel">?</button>
         <button class="icon-button" data-action="fullscreen" aria-label="Plein écran">⛶</button>
@@ -57,21 +58,14 @@
         <div class="version">PROTOTYPE JOUABLE · CENTIÈME NUIT</div>
       </section>
 
-      <section id="screen-ritual-map" class="screen ritual-map-screen" aria-labelledby="ritual-map-title">
+      <section id="screen-ritual-map" class="screen ritual-map-screen" aria-labelledby="route-board-title">
         <div class="ritual-map-shell">
-          <header class="ritual-run-header">
-            <div><span class="kicker">LA NUIT AVANCE</span><h2 id="ritual-map-title">Choisissez où arrêter le Moonrail</h2><p id="ritual-story-whisper">Quelque chose suit le train entre les arbres.</p></div>
-            <div class="ritual-run-metrics">
-              <button class="ritual-deck-pill" data-action="ritual-deck"><span>▤</span><strong id="ritual-deck-count">10</strong><small>cartes</small></button>
-              <div class="ritual-resources"><span title="Tous les 3 Présages ajoutent 2 profondeurs virtuelles au prisme de fin de run.">☾ <b id="ritual-omens">0</b> Présages stellaires</span><span>♢ <b id="ritual-teeth">0</b> éclats de voie</span></div>
-              <div class="hunter-clock"><small>CONTRÔLE CÉLESTE DANS</small><strong id="ritual-days-left">4</strong><span id="ritual-cycle-label">ARRÊTS</span></div>
-            </div>
-          </header>
           <div class="ritual-map-main">
             <section class="hunter-omen" id="hunter-omen">
               <div id="hunter-portrait" class="hunter-portrait"></div>
               <div><small>PROCHAIN CONTRÔLEUR CÉLESTE</small><h3 id="hunter-name">L'Archiviste aux Bois Blancs</h3><p id="hunter-rule">Sa première manœuvre est révélée avant votre choix de route.</p></div>
               <div class="hunter-advice"><small>PRÉPAREZ</small><strong id="hunter-advice">Des créatures nombreuses</strong></div>
+              <div class="hunter-clock"><small>CONTRÔLE DANS</small><strong id="ritual-days-left">4</strong><span id="ritual-cycle-label">ARRÊTS</span></div>
             </section>
             <section class="moonrail-route-board" aria-labelledby="route-board-title">
               <header>
@@ -88,9 +82,6 @@
             </section>
             <section id="ritual-run-murmur" class="run-murmur" aria-live="polite"></section>
           </div>
-          <footer class="ritual-map-footer">
-            <button class="text-button" data-action="ritual-abandon">Abandonner la nuit</button>
-          </footer>
         </div>
       </section>
 

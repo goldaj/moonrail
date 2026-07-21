@@ -573,6 +573,7 @@
   let pendingCardZoomAction = null;
   let ritualPointerDrag = null;
   let suppressNextClick = false;
+  let routeViewportFocusTimer = null;
   let ritualReady = false;
 
   const $ = selector => document.querySelector(selector);
@@ -764,9 +765,9 @@
     $('#deck-count') && ($('#deck-count').textContent = run?.deck?.length || profile.unlockedCards.length);
     $('#hud-tickets') && ($('#hud-tickets').textContent = run ? run.teeth : profile.truths.length);
     $('#hud-act') && ($('#hud-act').textContent = run ? `${run.act + 1}-${run.step + 1}` : `${profile.clears} aubes`);
-    const hpChip = $('#hud-hp')?.closest('.stat-chip');
-    hpChip?.classList.toggle('hidden', !!run?.battle);
-    $('#hud-hp') && ($('#hud-hp').textContent = run ? `${run.daysLeft} arrêts` : 'menu');
+    $('#hud-omens') && ($('#hud-omens').textContent = run?.omens || 0);
+    $('#hud-omens-chip')?.classList.toggle('hidden', !run);
+    $('#run-abandon-button')?.classList.toggle('hidden', !run);
   }
 
   function truthTotal() { return story?.truths?.length || 24; }
@@ -844,7 +845,6 @@
   }
 
   function pulseDeckCounter(tone = 'gain') {
-    pulseElement('#ritual-deck-count', tone);
     pulseElement('#deck-count', tone);
   }
 
@@ -887,7 +887,7 @@
     run.teeth += amount;
     profile.lifetimeTeeth = (profile.lifetimeTeeth || 0) + amount;
     run.lastTeethGain = { amount, reason, at: Date.now() };
-    pulseElement('#ritual-teeth', 'gain');
+    pulseElement('#hud-tickets', 'gain');
     ritualToast(`+${amount} éclat${amount > 1 ? 's' : ''} · ${reason}`);
   }
 
@@ -1240,6 +1240,12 @@
     });
   }
 
+  function scheduleRouteViewportFocus() {
+    if (!$('#screen-ritual-map')?.classList.contains('active')) return;
+    clearTimeout(routeViewportFocusTimer);
+    routeViewportFocusTimer = setTimeout(focusRouteViewportOnPlayer, 90);
+  }
+
   function handleRouteViewportKey(event) {
     const viewport = event.currentTarget;
     const page = Math.max(120, viewport.clientHeight * .78);
@@ -1301,16 +1307,11 @@
     $('#hunter-rule').textContent = hunter.rule;
     $('#hunter-advice').textContent = hunter.advice;
     $('#hunter-portrait').style.cssText = `background-image:url('../assets/enemies-major-sheet-v2.png');background-size:300% auto;background-position:${(hunter.portrait % 3) * 50}% ${Math.floor(hunter.portrait / 3) * 100}%;background-repeat:no-repeat`;
-    $('#ritual-story-whisper').textContent = ritualWhisper();
-    $('#ritual-deck-count').textContent = run.deck.length;
-    $('#ritual-omens').textContent = run.omens;
-    $('#ritual-teeth').textContent = run.teeth;
     const murmurPanel = $('#ritual-run-murmur');
     if (murmurPanel) {
       murmurPanel.innerHTML = runMurmurMarkup();
       resolveRunMurmurReward();
-      $('#ritual-omens').textContent = run.omens;
-      $('#ritual-teeth').textContent = run.teeth;
+      renderRitualProfile();
       murmurPanel.innerHTML = runMurmurMarkup();
     }
     const routeMap = $('#ritual-route-map');
@@ -1452,41 +1453,6 @@
     const insight = cardRewardInsight(card);
     const cost = cardResourceCost(card, null);
     return `<button class="reward-card-option" data-ritual-reward="${esc(card.id)}">${ritualCardDisplayMarkup(card)}<div class="reward-card-insight"><span>${esc(card.rarity)} · ${cost.icon}${cost.amount}</span><b>${esc(insight.title)}</b><small>${esc(insight.detail)}</small></div></button>`;
-  }
-
-  function ritualWhisper() {
-    const lines = [
-      'L’Étincelle fredonne un air qu’aucun de vous ne se rappelle avoir appris.',
-      'Dans la vitre, le train roule dans la direction opposée.',
-      'Une cloche sonne au loin. Elle se rapproche lorsque vous restez immobile.',
-      'Le ciel a perdu une lune depuis votre dernière tentative.',
-      'Quelqu’un a écrit « NE CROYEZ PAS LE MATIN » sous la table.'
-    ];
-    const guardianLine = {
-      controleur:'Ayame trouve parfois des talismans signés de sa main, mais datés de demain.',
-      mecano:'Kohana entend une seconde locomotive battre sous le plancher, comme un cœur mécanique clandestin.',
-      rinka:'La braise de Rinka pointe toujours vers l’est, même quand les rails tournent.',
-      eir:'La brume d’Eir dessine des symptômes dans l’air avant que le combat ne commence.',
-      kaguya:'Les orbites de Kaguya évitent une constellation absente, comme si elle était contagieuse.',
-      vespera:'Le reflet de Vespera arrive toujours une station avant elle.'
-    }[run?.guardianId];
-    if (guardianLine) lines.push(guardianLine);
-    if (loreUnlocked('white_route')) lines.push('Le Fil blanc traverse les boutons de l’interface comme une couture que le Tribunal n’a pas vue.');
-    if (loreUnlocked('name')) lines.push('Quand la chaudière murmure « Amahina », certains pictogrammes regardent ailleurs.');
-    if (loreUnlocked('sealed_signature')) lines.push('Votre billet porte maintenant une phrase personnelle. Le papier essaie encore de la cacher.');
-    if (loreUnlocked('three_private_oaths')) lines.push('Trois serments cousus séparément forment une phrase quand la carte tremble.');
-    if (loreUnlocked('player_seat')) lines.push('Un siège vide apparaît dans l’observatoire du reflet. Il n’est jamais poussiéreux.');
-    if (loreUnlocked('dawn_refusal')) lines.push('L’Étincelle ne demande plus où aller. Elle demande qui aura le courage de lui dire non.');
-    if (completedDialoguePairs().length >= 6) lines.push('L’observatoire classe maintenant certaines voix par regret, pas par nom.');
-    if ((profile.dialogueRewards || []).length >= 3) lines.push('Trois tiroirs d’archives restent entrouverts : ils attendent que quelqu’un assume leurs excuses.');
-    if ((profile.routeSecrets || []).length >= 1) lines.push('Certains dossiers ne restent plus dans l’observatoire : ils montent dans le train entre deux arrêts.');
-    if ((profile.routeSecrets || []).length >= 3) lines.push('Trois dossiers vivants se répondent maintenant d’une run à l’autre, comme des preuves qui auraient appris à marcher.');
-    if ((profile.relationshipMemories || []).length >= 1) lines.push('Un souvenir relationnel change la chaleur des dialogues : certaines ennemies ne savent plus réciter leur sermon droit.');
-    if ((profile.relationshipMemories || []).length >= 3) lines.push('Trois relations se souviennent maintenant ensemble. Le Tribunal appelle cela une contamination narrative.');
-    if ((profile.secretVerdicts || []).length >= 1) lines.push('Un verdict secret a été rendu sans condamner personne. Le Tribunal déteste quand une case reste vide.');
-    if ((profile.secretVerdicts || []).length >= 3) lines.push('Trois verdicts se contredisent maintenant dans vos archives. Le ciel commence à plaider contre lui-même.');
-    if ((profile.hunterWins || 0) >= 3) lines.push('Les contrôleurs célestes ne vous barrent plus seulement la route : ils viennent vérifier ce que vous avez compris.');
-    return lines[(run.step + profile.truths.length) % lines.length];
   }
 
   function choosePath(id) {
@@ -2423,7 +2389,7 @@
     if (!run?.shopChoices?.includes(id) || run.teeth < price) return;
     run.teeth -= price; addRunCard(id); run.shopChoices = null;
     queueCardTypeTutorial(id);
-    pulseElement('#ritual-teeth', 'loss');
+    pulseElement('#hud-tickets', 'loss');
     pulseDeckCounter('gain');
     announceFeedback('gain', 'Carte achetée', `${card?.name || 'Carte'} rejoint le deck pour ${price} éclats.`, card);
     closeRitualModal(); completeNode();
@@ -4984,6 +4950,7 @@
       document.addEventListener('pointerup', event => finishRitualPointerDrag(event));
       document.addEventListener('pointercancel', event => finishRitualPointerDrag(event, true));
       document.addEventListener('keydown', handleKey);
+      window.addEventListener('resize', scheduleRouteViewportFocus);
       $('#ritual-route-viewport')?.addEventListener('keydown', handleRouteViewportKey);
       if (run?.deck?.length) setTimeout(() => showPendingCardTypeTutorial(), 320);
     } catch (error) {
