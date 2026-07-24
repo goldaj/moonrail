@@ -15,7 +15,10 @@ class RitualProductTests(unittest.TestCase):
         cls.story = json.loads((ROOT / "data" / "ritual_story.json").read_text(encoding="utf-8"))
         cls.source = (ROOT / "app" / "ritual.js").read_text(encoding="utf-8")
         cls.html = (ROOT / "app" / "index.html").read_text(encoding="utf-8")
-        cls.css = (ROOT / "app" / "styles.css").read_text(encoding="utf-8")
+        cls.css = "\n".join(
+            (ROOT / "app" / name).read_text(encoding="utf-8")
+            for name in ("styles.css", "combat-feedback.css")
+        )
 
     def test_legacy_mode_is_removed_from_product_surface_and_repo(self):
         self.assertFalse((ROOT / "app" / "game.js").exists())
@@ -316,7 +319,9 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("function showBossOutroDialogue", self.source)
         self.assertIn("boss-rule-spotlight", self.source + self.css)
         self.assertIn("targeted-lane", self.source + self.css)
-        self.assertIn("targets:lanes", self.source)
+        self.assertIn("function combatAttackProjection", self.source)
+        self.assertIn("combatCueTargets(projection)", self.source)
+        self.assertIn("unit.sigils?.includes('bifurcated')", self.source)
         self.assertNotIn("attackPower", self.source)
         for rule in ("seal_tax", "gear_summon", "ember_duel", "mist_return", "sky_drop", "mirror_copy"):
             self.assertIn(rule, self.source + json.dumps(self.story))
@@ -790,7 +795,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("cards-uncommon-folklore-sheet-v1.png", self.source + self.css)
         self.assertIn("cards-rare-myth-sheet-v1.png", self.source + self.css)
         self.assertIn("cards-secret-lore-sheet-v1.png", self.source + self.css)
-        self.assertIn('ritual.js?v=first-night-tutorial-3', self.html)
+        self.assertIn('ritual.js?v=combat-clarity-1', self.html)
         self.assertIn("const CARD_SPECIFIC_ART", self.source)
         self.assertIn("moon_hare: ['cards-starter-core-sheet-v1.png', 0]", self.source)
         self.assertIn("paper_crane: ['cards-starter-core-sheet-v1.png', 1]", self.source)
@@ -969,7 +974,7 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn("lastOpeningRouteSignature", self.source)
         self.assertIn("descriptors.push(descriptors.shift())", self.source)
         self.assertIn("connections:node.connections", self.source)
-        self.assertIn("ritual.js?v=first-night-tutorial-3", self.html)
+        self.assertIn("ritual.js?v=combat-clarity-1", self.html)
         self.assertIn("isCurrent ? '' : 'disabled'", self.source)
         self.assertNotIn("function routePathTo", self.source)
         self.assertIn("function markRunCardDead", self.source)
@@ -1096,6 +1101,40 @@ class RitualProductTests(unittest.TestCase):
         self.assertIn('[data-action="ritual-new"]', smoke)
         self.assertIn("night_album", smoke)
         self.assertIn("battle_toast_feedback", smoke)
+
+    def test_combat_feedback_is_semantic_accessible_and_smoke_tested(self):
+        self.assertIn('combat-feedback.css?v=combat-feedback-1', self.html)
+        self.assertIn('id="combat-announcer"', self.html)
+        self.assertIn('role="status" aria-live="polite" aria-atomic="true"', self.html)
+        for marker in (
+            "function combatAttackProjection",
+            "function inspectCombatUnit",
+            "function waitForCombatPresentation",
+            "phase:'telegraph'",
+            "phase:'impact'",
+            "phase:'consequence'",
+            "combatPresentation.speed = 'fast'",
+            "role=\"dialog\" aria-modal=\"true\"",
+            "cardZoomReturnFocus",
+            "app.inert = true",
+            "cardResourceCost(card, null)",
+            'role="progressbar"',
+        ):
+            self.assertIn(marker, self.source)
+        for marker in (
+            ".combat-source",
+            ".combat-target",
+            ".combat-relation-label",
+            ".drag-placement-ready",
+            "@media (prefers-reduced-motion: reduce)",
+        ):
+            self.assertIn(marker, self.css)
+        smoke = (ROOT / "tools" / "combat_feedback_smoke.cjs").read_text(encoding="utf-8")
+        for viewport in ("1280x600", "1024x768", "1366x768", "1920x1080"):
+            self.assertIn(viewport, smoke)
+        self.assertIn(".combat-source", smoke)
+        self.assertIn(".combat-target", smoke)
+        self.assertIn(".combat-delta", smoke)
 
 
 if __name__ == "__main__":

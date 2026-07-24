@@ -8,6 +8,7 @@
   <meta name="description" content="Moonrail — roguelite de cartes, convois célestes et secrets sous une nuit sans fin.">
   <title>Moonrail — La Centième Nuit</title>
   <link rel="stylesheet" href="styles.css?v=ui-12-3">
+  <link rel="stylesheet" href="combat-feedback.css?v=combat-feedback-1">
 </head>
 <body>
   <div id="app" class="app">
@@ -94,19 +95,19 @@
           </header>
           <div class="ritual-forecast-label">MANŒUVRES ANNONCÉES · CES CARTES ARRIVENT AU PROCHAIN DÉPART</div>
           <div id="ritual-enemy-forecast" class="ritual-row forecast-row"></div>
-          <div id="ritual-lane-readout" class="lane-readout-shell" aria-live="polite" aria-label="Lecture tactique des wagons"></div>
+          <div id="ritual-lane-readout" class="lane-readout-shell" aria-label="Lecture tactique des wagons"></div>
           <div id="ritual-enemy-board" class="ritual-row enemy-board"></div>
           <div class="ritual-divider"><span></span><b>☾</b><span></span></div>
           <div id="ritual-player-board" class="ritual-row player-board"></div>
           <div class="ritual-quick-guide"><span><b>1</b> Main auto</span><span><b>2</b> Glissez ou cliquez vers un wagon</span><span><b>3</b> Chauffez si nécessaire</span><span><b>4</b> Lancez le convoi</span><button data-action="ritual-rulebook">Règles détaillées ?</button><button class="battle-abandon-link" data-action="ritual-abandon">Abandonner la nuit</button></div>
-          <aside id="ritual-combat-feed" class="combat-action-feed" aria-live="polite" aria-label="Journal de combat"></aside>
+          <aside id="ritual-combat-feed" class="combat-action-feed" role="region" aria-label="Journal de combat"></aside>
           <div class="ritual-battle-controls">
             <div class="ritual-piles">
-              <button data-ritual-draw="deck"><span>▤</span><strong id="ritual-draw-count">0</strong><small>Pioche auto</small></button>
+              <button data-ritual-draw="deck" data-combat-resource="deck"><span>▤</span><strong id="ritual-draw-count">0</strong><small>Pioche auto</small></button>
               <button data-action="ritual-stoke"><span>♨</span><strong>+2</strong><small>Chauffer</small></button>
             </div>
-            <div class="ritual-resource-orbs"><span class="lumen-orb">✦ <b id="ritual-lumen">3</b><small>LUEUR</small></span><span class="ash-orb" title="Produites en chauffant ou en perdant des cartes. Paient les cartes ✹.">✹ <b id="ritual-ashes">0</b><small>CENDRES</small></span></div>
-            <div id="ritual-hand" class="ritual-hand" aria-label="Main rituelle"></div>
+            <div class="ritual-resource-orbs"><span class="lumen-orb" data-combat-resource="lumen">✦ <b id="ritual-lumen">3</b><small>LUEUR</small></span><span class="ash-orb" data-combat-resource="ashes" title="Produites en chauffant ou en perdant des cartes. Paient les cartes ✹.">✹ <b id="ritual-ashes">0</b><small>CENDRES</small></span></div>
+            <div id="ritual-hand" class="ritual-hand" data-combat-resource="hand" aria-label="Main rituelle"></div>
             <button id="ritual-bell" class="ritual-bell" data-action="ritual-end-turn"><span>➤</span><strong>DÉPART</strong><small>Résoudre les trois wagons</small></button>
           </div>
           <div id="ritual-hint" class="ritual-hint">Votre main se remplit au départ. Dépensez de la Lueur, chauffez si nécessaire, puis lancez le train.</div>
@@ -118,8 +119,9 @@
     <div id="feedback-layer" class="feedback-layer" aria-live="polite" aria-label="Événements importants"></div>
     <div id="modal-layer" class="modal-layer" aria-live="polite"></div>
     <div id="toast" class="toast" role="status"></div>
+    <div id="combat-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
   </div>
   <noscript>Moonrail nécessite JavaScript pour fonctionner.</noscript>
-  <script src="ritual.js?v=first-night-tutorial-3" defer></script>
+  <script src="ritual.js?v=combat-clarity-1" defer></script>
 </body>
 </html>

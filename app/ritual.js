@@ -723,16 +723,123 @@
   let run = load(RUN_KEY, null);
   let pendingGuardian = null;
   let pendingCardZoomAction = null;
+  let cardZoomReturnFocus = null;
   let ritualPointerDrag = null;
   let suppressedPointerClick = null;
   let routeViewportFocusTimer = null;
   let firstTutorialLayoutTimer = null;
   let ritualStarting = false;
   let ritualReady = false;
+  let combatAudioContext = null;
+  let combatCueTimer = null;
+  let combatPresentation = {
+    inspected:null,
+    cue:null,
+    speed:'normal',
+    sequence:0
+  };
 
   const $ = selector => document.querySelector(selector);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+  function reducedMotionPreferred() {
+    return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function resetCombatPresentation() {
+    clearTimeout(combatCueTimer);
+    combatCueTimer = null;
+    combatPresentation.sequence++;
+    combatPresentation.inspected = null;
+    combatPresentation.cue = null;
+    combatPresentation.speed = 'normal';
+  }
+
+  function announceCombatCue(cue) {
+    const announcer = $('#combat-announcer');
+    if (!announcer || !cue) return;
+    announcer.textContent = [cue.title, cue.detail].filter(Boolean).join('. ');
+  }
+
+  function setCombatCue(cue) {
+    combatPresentation.cue = cue ? { id:`combat-cue-${Date.now()}-${Math.random()}`, ...cue } : null;
+    if (cue) announceCombatCue(cue);
+  }
+
+  async function waitForCombatPresentation(duration) {
+    const target = Math.max(0, Number(duration || 0));
+    if (!target) return;
+    let elapsed = 0;
+    let previous = performance.now();
+    while (elapsed < target) {
+      await wait(32);
+      const now = performance.now();
+      /* Le mode mouvement réduit supprime les déplacements en CSS, mais garde
+         le temps de lecture des libellés et des annonces vocales. */
+      const speed = combatPresentation.speed === 'fast' ? 2.35 : 1;
+      elapsed += (now - previous) * speed;
+      previous = now;
+    }
+  }
+
+  function playCombatCue(kind = 'select') {
+    if (profile.soundMuted || !window.AudioContext && !window.webkitAudioContext) return;
+    try {
+      const AudioCtor = window.AudioContext || window.webkitAudioContext;
+      combatAudioContext ||= new AudioCtor();
+      const context = combatAudioContext;
+      const now = context.currentTime;
+      const palette = {
+        select:[330, 440, .065, 'sine'],
+        target:[260, 390, .09, 'triangle'],
+        summon:[220, 520, .14, 'triangle'],
+        windup:[170, 270, .16, 'sine'],
+        hit:[115, 72, .13, 'triangle'],
+        progress:[410, 660, .16, 'sine'],
+        defeat:[180, 55, .24, 'sawtooth'],
+        stoke:[240, 560, .18, 'triangle'],
+        draw:[360, 520, .12, 'sine']
+      };
+      const [from, to, length, type] = palette[kind] || palette.select;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = type;
+      oscillator.frequency.setValueAtTime(from, now);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(40, to), now + length);
+      gain.gain.setValueAtTime(.0001, now);
+      gain.gain.exponentialRampToValueAtTime(.026, now + .015);
+      gain.gain.exponentialRampToValueAtTime(.0001, now + length);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + length + .02);
+    } catch {
+      // Le combat reste entièrement lisible sans Web Audio.
+    }
+  }
+
+  function showTransientCombatCue(cue, duration = 680) {
+    const battle = run?.battle;
+    if (!battle) return;
+    clearTimeout(combatCueTimer);
+    setCombatCue(cue);
+    renderRitualBattle();
+    if (cue.sound) playCombatCue(cue.sound);
+    const cueId = combatPresentation.cue?.id;
+    combatCueTimer = setTimeout(() => {
+      if (run?.battle !== battle || combatPresentation.cue?.id !== cueId || battle.resolving) return;
+      combatPresentation.cue = null;
+      renderRitualBattle();
+    }, duration);
+  }
+
+  function clearTransientCombatCue() {
+    if (run?.battle?.resolving) return;
+    clearTimeout(combatCueTimer);
+    combatCueTimer = null;
+    combatPresentation.cue = null;
+  }
 
   function load(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key)) ?? structuredClone(fallback); }
@@ -2244,14 +2351,18 @@
   }
 
   function sigilMarkup(sigils, compact = false) {
-    return (sigils || []).map(id => { const info = SIGILS[id] || ['?','Inconnu','']; return `<span class="ritual-sigil" title="${esc(info[1])} · ${esc(info[2])}">${info[0]}${compact ? '' : `<small>${esc(info[1])}</small>`}</span>`; }).join('');
+    return (sigils || []).map(id => {
+      const info = SIGILS[id] || ['?','Inconnu',''];
+      return `<span class="ritual-sigil" title="${esc(info[1])} · ${esc(info[2])}" aria-label="${esc(`${info[1]} — ${info[2]}`)}">${info[0]}${compact ? '' : `<small>${esc(info[1])}</small>`}</span>`;
+    }).join('');
   }
 
   function ritualCardShell(tag, card, attrs = '', unit = null) {
     if (!card) return '';
-    const health = unit ? unit.hp : card.health;
-    const details = `Coût ${cardLumenCost(card, null)} Lueur · ${card.attack} Puissance · ${health} Vie · ${card.tribe || 'créature'} · ${card.rarity}. ${card.text}`;
-    return `<${tag} class="ritual-card rarity-${card.rarity}" data-card-id="${esc(card.id)}" data-card-detail="${esc(details)}" ${attrs}><div class="ritual-card-frame">${costMarkup(card)}<div class="ritual-card-art" style="${cardArtStyle(card)}"></div><strong>${esc(card.name)}</strong><div class="ritual-card-sigils">${sigilMarkup(card.sigils, true)}</div><p>${esc(card.text)}</p><div class="ritual-card-stats"><b class="attack" title="Puissance">${card.attack}</b><span>PUISS. / VIE</span><b class="health" title="Vie">${health}</b></div></div></${tag}>`;
+    const health = unit ? Math.max(0, unit.hp) : card.health;
+    const resource = cardResourceCost(card, null);
+    const details = `Coût ${resource.amount} ${resource.label}${resource.amount > 1 ? 's' : ''} · ${card.attack} Puissance · ${health} Vie · ${card.tribe || 'créature'} · ${card.rarity}. ${card.text}`;
+    return `<${tag} class="ritual-card rarity-${card.rarity}" data-card-id="${esc(card.id)}" data-card-detail="${esc(details)}" aria-label="${esc(`${card.name}. ${details}`)}" ${attrs}><div class="ritual-card-frame">${costMarkup(card)}<div class="ritual-card-art" style="${cardArtStyle(card)}"></div><strong>${esc(card.name)}</strong><div class="ritual-card-sigils">${sigilMarkup(card.sigils, true)}</div><p>${esc(card.text)}</p><div class="ritual-card-stats"><b class="attack" title="Puissance">${card.attack}</b><span>PUISS. / VIE</span><b class="health" title="Vie">${health}</b></div></div></${tag}>`;
   }
 
   function ritualCardMarkup(card, attrs = '', unit = null) {
@@ -2280,11 +2391,11 @@
   function cardZoomRole(card) {
     const id = String(card?.id || '');
     const sigils = card?.sigils || [];
-    const cost = cardLumenCost(card, null);
+    const cost = cardResourceCost(card, null);
     if (card?.tribe === 'signature' || id.startsWith('spell_') || id.startsWith('last_')) return 'Spell Card personnelle : elle exprime le style d’une conductrice et sert souvent de pivot de deck.';
     if (card?.rarity === 'unique' || card?.rarity === 'secret') return 'Carte de collection majeure : elle débloque une stratégie rare, parfois liée à un secret ou à une fin.';
     if (card?.attack <= 0 && card?.health <= 0) return 'Pièce rituelle vide : elle ne gagne pas par les stats, mais par son timing, son coût ou ses sigils.';
-    if (cost <= 0) return 'Carte gratuite : elle sert à déclencher un combo, occuper une voie ou préparer un sacrifice sans dépenser de Lueur.';
+    if (cost.amount <= 0) return 'Carte gratuite : elle sert à déclencher un combo, occuper une voie ou préparer un sacrifice sans dépenser de ressource.';
     if (card?.attack <= 0) return 'Défenseur utilitaire : elle bloque, temporise ou déclenche ses sigils plutôt que d’infliger des dégâts.';
     if (card?.health <= 0) return 'Effet fragile : elle agit comme une carte instantanée ou un leurre qui disparaît vite.';
     if (sigils.includes('airborne')) return 'Pression aérienne : elle contourne beaucoup d’obstacles, sauf les unités avec Vigie.';
@@ -2297,8 +2408,8 @@
   function cardZoomTips(card) {
     const tips = [];
     const id = String(card?.id || '');
-    const cost = cardLumenCost(card, null);
-    if (cost <= 0) tips.push('Coût 0 : jouable même quand la Lueur est basse.');
+    const cost = cardResourceCost(card, null);
+    if (cost.amount <= 0) tips.push('Coût 0 : jouable même quand vos ressources sont basses.');
     if (card?.attack <= 0) tips.push('0 Puissance : ne cherchez pas le dégât brut, cherchez le blocage ou le combo.');
     if (card?.health <= 0) tips.push('0 Vie : effet très fragile, souvent meilleur quand il est joué au bon moment.');
     if (card?.sigils?.includes('brittle')) tips.push('Usage unique : prévoyez qu’elle quitte vite le plateau.');
@@ -2310,11 +2421,71 @@
     return tips;
   }
 
-  function showCardZoom(cardElement) {
+  function combatBoardForSide(side, battle = run?.battle) {
+    if (!battle) return [];
+    if (side === 'player') return battle.playerBoard || [];
+    if (side === 'enemy') return battle.enemyBoard || [];
+    if (side === 'forecast') return battle.forecast || [];
+    return [];
+  }
+
+  function combatCardContext(cardElement) {
+    const handIndex = Number(cardElement?.dataset?.ritualHand);
+    if (Number.isInteger(handIndex) && run?.battle?.hand?.[handIndex]) {
+      const ref = run.battle.hand[handIndex];
+      const card = effectiveCard(ref) || getCard(ref);
+      if (!card) return null;
+      return {
+        side:'hand',
+        lane:handIndex,
+        unit:{ cardId:card.id, attack:card.attack, hp:card.health, maxHp:card.health, sigils:[...(card.sigils || [])], ref },
+        card,
+        projection:null,
+        inHand:true
+      };
+    }
+    const side = cardElement?.dataset?.combatSide;
+    const lane = Number(cardElement?.dataset?.combatLane);
+    if (!side || !Number.isInteger(lane)) return null;
+    const unit = combatBoardForSide(side)[lane];
+    if (!unit) return null;
+    const effective = (side === 'player' ? effectiveCard(unit.ref || { cardId:unit.cardId, runUid:unit.runUid }) : getCard(unit.cardId)) || getCard(unit.cardId);
+    if (!effective) return null;
+    const card = { ...effective, attack:unit.attack, health:unit.maxHp, sigils:[...(unit.sigils || effective.sigils || [])] };
+    const projection = combatAttackProjection(unit, lane, side);
+    return { side, lane, unit, card, projection };
+  }
+
+  function combatCardContextMarkup(context) {
+    if (!context) return '';
+    const { side, lane, unit, projection } = context;
+    const location = side === 'hand'
+      ? `Main actuelle · position ${lane + 1}`
+      : side === 'forecast'
+      ? `Manœuvre annoncée · wagon ${lane + 1}`
+      : side === 'enemy'
+      ? `Adversaire · wagon ${lane + 1}`
+      : `Moonrail · wagon ${lane + 1}`;
+    const wound = unit.hp < unit.maxHp
+      ? `<span class="wounded">♥ ${unit.hp}/${unit.maxHp} · blessée</span>`
+      : `<span>♥ ${unit.hp}/${unit.maxHp} · intacte</span>`;
+    const notes = (projection?.sigilNotes || []).map(note => `<li>${esc(note)}</li>`).join('');
+    return `<section class="card-zoom-combat-context">
+      <h3>Projection sur ce plateau</h3>
+      <div><b>${esc(location)}</b>${wound}<span>⚔ ${unit.attack} Puissance actuelle</span></div>
+      <strong>${esc(projection?.title || (side === 'hand' ? 'Prête à être affectée' : 'Lecture tactique'))}</strong>
+      <p>${esc(projection?.detail || (side === 'hand' ? 'Sélectionnez cette carte puis choisissez un wagon. Les cases possibles seront signalées avant toute pose.' : 'Cette unité attend sa prochaine résolution.'))}</p>
+      ${notes ? `<ul>${notes}</ul>` : ''}
+    </section>`;
+  }
+
+  function showCardZoom(cardElement, options = {}) {
     const id = cardElement?.dataset?.cardId;
-    const card = (run ? effectiveCard(id) : null) || getCard(id);
+    const context = combatCardContext(cardElement);
+    const card = context?.card || (run ? effectiveCard(id) : null) || getCard(id);
     if (!card || document.querySelector('.card-zoom-layer')) return;
-    pendingCardZoomAction = cardZoomActionFor(cardElement);
+    pendingCardZoomAction = options.readOnly ? null : cardZoomActionFor(cardElement);
+    cardZoomReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : cardElement;
     const sigils = (card.sigils || []).map(id => {
       const info = SIGILS[id] || ['?','Inconnu',''];
       return `<li><b>${info[0]} ${esc(info[1])}</b><span>${esc(info[2])}</span></li>`;
@@ -2324,22 +2495,36 @@
       : '';
     const tips = cardZoomTips(card).map(tip => `<li>${esc(tip)}</li>`).join('');
     const role = cardZoomRole(card);
+    const titleId = `card-zoom-title-${String(card.id || 'card').replace(/[^a-z0-9_-]/gi, '-')}`;
+    const healthMeta = context ? `${context.unit.hp}/${context.unit.maxHp} Vie actuelle` : `${card.health} Vie`;
+    const zoomCost = cardResourceCost(card, null);
     const layer = document.createElement('div');
     layer.className = 'card-zoom-layer';
-    layer.innerHTML = `<button class="card-zoom-backdrop" data-action="ritual-card-zoom-close" aria-label="Fermer l’aperçu"></button><section class="card-zoom-panel rarity-${card.rarity}"><button class="card-zoom-close" data-action="ritual-card-zoom-close">×</button><div class="card-zoom-card">${ritualCardDisplayMarkup(card)}</div><aside><span class="kicker">APERÇU DE CARTE</span><h2>${esc(card.name)}</h2><div class="card-zoom-meta"><span>✦ ${cardLumenCost(card, null)} Lueur</span><span>⚔ ${card.attack} Puissance</span><span>♥ ${card.health} Vie</span><span>${esc(card.rarity)}</span><span>${esc(card.tribe || 'créature')}</span></div><p class="card-zoom-main-text">${esc(card.text)}</p><div class="card-zoom-explain"><section><h3>Lecture rapide</h3><p>${esc(role)}</p></section><section><h3>À surveiller</h3><ul>${tips}</ul></section></div>${sigils ? `<h3 class="card-zoom-section-title">Sigils détaillés</h3><ul class="card-zoom-sigils">${sigils}</ul>` : '<p class="memory-note">Aucun sigil : cette carte gagne surtout par ses statistiques et son timing.</p>'}<div class="modal-actions">${action}<button class="secondary-button" data-action="ritual-card-zoom-close">Fermer</button></div></aside></section>`;
+    layer.innerHTML = `<button class="card-zoom-backdrop" data-action="ritual-card-zoom-close" aria-label="Fermer l’inspection de la carte"></button><section class="card-zoom-panel rarity-${card.rarity}" role="dialog" aria-modal="true" aria-labelledby="${titleId}" tabindex="-1"><button class="card-zoom-close" data-action="ritual-card-zoom-close" aria-label="Fermer l’inspection de la carte">×</button><div class="card-zoom-card">${ritualCardDisplayMarkup(card, '', context?.unit || null)}</div><aside><span class="kicker">${context ? 'INSPECTION TACTIQUE' : 'APERÇU DE CARTE'}</span><h2 id="${titleId}">${esc(card.name)}</h2><div class="card-zoom-meta"><span>${zoomCost.icon} ${zoomCost.amount} ${esc(zoomCost.label)}${zoomCost.amount > 1 ? 's' : ''}</span><span>⚔ ${card.attack} Puissance</span><span>♥ ${esc(healthMeta)}</span><span>${esc(card.rarity)}</span><span>${esc(card.tribe || 'créature')}</span></div><p class="card-zoom-main-text">${esc(card.text)}</p>${combatCardContextMarkup(context)}<div class="card-zoom-explain"><section><h3>Lecture rapide</h3><p>${esc(role)}</p></section><section><h3>À surveiller</h3><ul>${tips}</ul></section></div>${sigils ? `<h3 class="card-zoom-section-title">Sigils détaillés</h3><ul class="card-zoom-sigils">${sigils}</ul>` : '<p class="memory-note">Aucun sigil : cette carte gagne surtout par ses statistiques et son timing.</p>'}<div class="modal-actions">${action}<button class="secondary-button" data-action="ritual-card-zoom-close">Fermer</button></div></aside></section>`;
+    const app = $('#app');
+    if (app) app.inert = true;
     document.body.appendChild(layer);
-    requestAnimationFrame(() => layer.classList.add('visible'));
+    requestAnimationFrame(() => {
+      layer.classList.add('visible');
+      layer.querySelector('.card-zoom-close')?.focus({ preventScroll:true });
+    });
   }
 
-  function closeCardZoom() {
+  function closeCardZoom(options = {}) {
     document.querySelector('.card-zoom-layer')?.remove();
+    const app = $('#app');
+    if (app) app.inert = false;
     pendingCardZoomAction = null;
+    const focusTarget = cardZoomReturnFocus;
+    cardZoomReturnFocus = null;
+    if (options.restoreFocus !== false && focusTarget instanceof HTMLElement) {
+      requestAnimationFrame(() => focusTarget.isConnected && focusTarget.focus({ preventScroll:true }));
+    }
   }
 
   function confirmCardZoomAction() {
     const action = pendingCardZoomAction;
-    document.querySelector('.card-zoom-layer')?.remove();
-    pendingCardZoomAction = null;
+    closeCardZoom({ restoreFocus:false });
     if (!action || action.disabled) return;
     if (action.kind === 'hand') return selectHand(action.value);
     if (action.kind === 'reward') return takeReward(action.value);
@@ -2964,53 +3149,63 @@
 
   function applySignatureOnSummon(unit, lane, cardId) {
     const battle = run?.battle;
-    if (!battle || !unit || unit.owner !== 'player') return;
+    if (!battle || !unit || unit.owner !== 'player') return null;
     const adjacent = [lane - 1, lane + 1].filter(index => index >= 0 && index < BALANCE.lanes);
+    let feedback = null;
     switch (cardId) {
       case 'spell_ayame_seal':
         adjacent.forEach(index => healUnit(battle.playerBoard[index], 1, true));
         battle.pursuit = Math.max(0, battle.pursuit - 1);
         battle.fx = { side:'player', lane, text:'Sceau -1' };
+        feedback = { detail:'Sceau : −1 Poursuite et +1 Vie maximale aux voisines.', gauge:'enemy', targets:adjacent.map(index => ({ kind:'contact', side:'player', lane:index })) };
         break;
       case 'spell_ayame_boundary':
         playerUnits().forEach(ally => healUnit(ally, 1, true));
         battle.pursuit = Math.max(0, battle.pursuit - 2);
         battle.fx = { side:'player', lane, text:'Frontiere -2' };
+        feedback = { detail:'Frontière : −2 Poursuite et +1 Vie maximale à tous les passagers.', gauge:'enemy', targets:battle.playerBoard.map((ally, index) => ally ? ({ kind:'contact', side:'player', lane:index }) : null).filter(Boolean) };
         break;
       case 'spell_kohana_gearfox':
         drawOneRitualCard();
         if (battle.stokesThisBattle > 0) battle.lumen++;
         battle.fx = { side:'player', lane, text:'Rouage' };
+        feedback = { detail:`Rouage : 1 carte piochée${battle.stokesThisBattle > 0 ? ' et +1 Lueur' : ''}.` };
         break;
       case 'spell_kohana_parade':
         for (let i = 0; i < 2 && battle.hand.length < currentHandLimit(); i++) drawOneRitualCard();
         battle.lumen++;
         battle.fx = { side:'player', lane, text:'+1 Lueur' };
+        feedback = { detail:'Parade : jusqu’à 2 cartes piochées et +1 Lueur.' };
         break;
       case 'spell_rinka_red_sun':
         battle.progress++;
         if (battle.enemyBoard[lane]) unit.attack++;
         battle.fx = { side:'player', lane, text:'+1 rail' };
+        feedback = { detail:`Soleil rouge : +1 Progression${battle.enemyBoard[lane] ? ' et +1 Puissance face à un ennemi' : ''}.`, gauge:'player' };
         break;
       case 'spell_rinka_petals':
         battle.progress += 2;
         damageEnemyInLane(lane, 2);
         battle.fx = { side:'player', lane, text:'+2 rail' };
+        feedback = { detail:'Pétales : +2 Progression et 2 dégâts dans ce wagon.', gauge:'player', targets:battle.enemyBoard[lane] ? [{ kind:'contact', side:'enemy', lane }] : [] };
         break;
       case 'spell_eir_mist':
         battle.pursuit = Math.max(0, battle.pursuit - 1);
         healMostWoundedPlayer(1);
         battle.fx = { side:'player', lane, text:'Brume -1' };
+        feedback = { detail:'Brume : −1 Poursuite et +1 Vie au passager le plus blessé.', gauge:'enemy' };
         break;
       case 'spell_eir_night':
         battle.pursuit = Math.max(0, battle.pursuit - 2);
         playerUnits().forEach(ally => healUnit(ally, 1));
         battle.fx = { side:'player', lane, text:'Nuit -2' };
+        feedback = { detail:'Nuit : −2 Poursuite et +1 Vie à tous les passagers.', gauge:'enemy', targets:battle.playerBoard.map((ally, index) => ally ? ({ kind:'contact', side:'player', lane:index }) : null).filter(Boolean) };
         break;
       case 'spell_kaguya_orbit': {
         const heavy = playerUnits().filter(ally => cardLumenCost(getCard(ally.cardId), null) >= 3).length;
         battle.progress += heavy;
         battle.fx = { side:'player', lane, text:`+${heavy} orbite` };
+        feedback = { detail:`Orbite : +${heavy} Progression pour les passagers lourds.`, gauge:'player' };
         break;
       }
       case 'spell_kaguya_palace': {
@@ -3018,6 +3213,7 @@
         battle.progress += occupied.length;
         occupied.forEach(ally => healUnit(ally, 1, true));
         battle.fx = { side:'player', lane, text:`+${occupied.length} palais` };
+        feedback = { detail:`Palais : +${occupied.length} Progression et +1 Vie maximale aux passagers.`, gauge:'player', targets:battle.playerBoard.map((ally, index) => ally ? ({ kind:'contact', side:'player', lane:index }) : null).filter(Boolean) };
         break;
       }
       case 'spell_vespera_red_moon': {
@@ -3025,6 +3221,7 @@
         battle.pursuit++;
         unit.attack += Math.min(3, mirrors);
         battle.fx = { side:'player', lane, text:`+${Math.min(3, mirrors)} reflet` };
+        feedback = { detail:`Lune rouge : +1 Poursuite, +${Math.min(3, mirrors)} Puissance par reflet.`, gauge:'enemy' };
         break;
       }
       case 'spell_vespera_hundred':
@@ -3032,8 +3229,10 @@
         unit.attack += 2;
         if (!battle.hand.some(ref => cardIdOf(ref) === cardId) && battle.hand.length < currentHandLimit()) battle.hand.push({ cardId, temporary:true });
         battle.fx = { side:'player', lane, text:'+2 lune' };
+        feedback = { detail:'Cent Lunes : +1 Poursuite, +2 Puissance et une copie temporaire en main.', gauge:'enemy' };
         break;
     }
+    return feedback;
   }
 
   function applyDepartureLastWordSecrets() {
@@ -3086,6 +3285,7 @@
   }
 
   function startBattle(isHunter, isMiniboss = false, isOpening = false) {
+    resetCombatPresentation();
     const firstTutorial = !!(isOpening && run?.firstBattleTutorial && !profile.firstBattleTutorialCompleted);
     const encounter = firstTutorial
       ? { id:'quai_zero_lesson', name:'Guetteur du quai zéro', deck:['wisp_scribe','paper_crane'], pressure:0, tutorial:true }
@@ -3327,6 +3527,19 @@
   function renderRitualBattle() {
     const battle = run?.battle;
     if (!battle) return showRitualMap();
+    const battleScreen = $('#screen-ritual-battle');
+    const inspectedState = inspectedCombatProjection();
+    const cue = combatPresentation.cue;
+    battleScreen?.classList.toggle('combat-planning', !battle.resolving);
+    battleScreen?.classList.toggle('combat-inspecting', !!inspectedState && !battle.resolving);
+    battleScreen?.classList.toggle('combat-resolving', !!battle.resolving);
+    battleScreen?.classList.toggle('combat-card-selected', battle.selectedHand !== null && !battle.resolving);
+    if (battleScreen) {
+      if (cue?.phase) battleScreen.dataset.combatPhase = cue.phase;
+      else delete battleScreen.dataset.combatPhase;
+      if (cue?.kind) battleScreen.dataset.combatCue = cue.kind;
+      else delete battleScreen.dataset.combatCue;
+    }
     $('#ritual-encounter-kicker').textContent = battle.isHunter ? `CONTRÔLE CÉLESTE · LIGNE ${run.act + 1}` : battle.isMiniboss ? `MINIBOSS · ARRÊT ${run.step + 1}` : `INCIDENT DE VOIE · ARRÊT ${run.step + 1}`;
     $('#ritual-enemy-name').textContent = battle.encounter.name;
     const guardian = GUARDIANS[run.guardianId];
@@ -3343,7 +3556,9 @@
     const previousPursuitRatio = battle.uiPursuitRatio ?? pursuitRatio;
     const bossBanner = battle.isHunter ? `<div class="boss-rule-banner ${battle.bossRuleFx ? 'active' : ''}"><b>RÈGLE BOSS</b><span>${esc(battle.bossRuleFx?.text || battle.encounter.rule || 'Surveillez les activations de la conductrice adverse.')}</span></div>` : '';
     const weatherBanner = battle.weather ? `<div class="weather-rule-banner"><b>CLIMAT</b><span>${esc(WEATHER_CHOICES.find(item => item.id === battle.weather)?.name || 'Météo lunaire')}</span></div>` : '';
-    $('#ritual-balance').innerHTML = `<div class="combat-life-bars"><div class="combat-life-bar player"><header><span>VOUS · MOONRAIL</span><b>${battle.progress}/${BALANCE.progressGoal}</b></header><div class="health-track"><i class="health-fill" style="--from:${clamp(previousProgressRatio, 0, 100)}%;--to:${clamp(progressRatio, 0, 100)}%;width:${clamp(progressRatio, 0, 100)}%"></i></div></div><div class="combat-life-vs">VS</div><div class="combat-life-bar enemy"><header><span>ADVERSAIRE · POURSUITE</span><b>${battle.pursuit}/${BALANCE.progressGoal}</b></header><div class="health-track"><i class="health-fill enemy" style="--from:${clamp(previousPursuitRatio, 0, 100)}%;--to:${clamp(pursuitRatio, 0, 100)}%;width:${clamp(pursuitRatio, 0, 100)}%"></i></div></div></div><div class="combat-rule-line">${bossBanner}${weatherBanner}</div>`;
+    const highlightedResources = new Set([...(cue?.resourceTargets || []), ...(inspectedState?.projection?.resourceTargets || [])]);
+    const projectedGauge = cue?.gauge || inspectedState?.projection?.gauge || (highlightedResources.has('progress') ? 'player' : highlightedResources.has('pursuit') ? 'enemy' : null);
+    $('#ritual-balance').innerHTML = `<div class="combat-life-bars"><div class="combat-life-bar player ${projectedGauge === 'player' ? 'combat-gauge-target' : ''}" role="progressbar" aria-label="Progression Moonrail" aria-valuemin="0" aria-valuemax="${BALANCE.progressGoal}" aria-valuenow="${battle.progress}"><header><span>VOUS · MOONRAIL</span><b>${battle.progress}/${BALANCE.progressGoal}</b></header><div class="health-track"><i class="health-fill" style="--from:${clamp(previousProgressRatio, 0, 100)}%;--to:${clamp(progressRatio, 0, 100)}%;width:${clamp(progressRatio, 0, 100)}%"></i></div></div><div class="combat-life-vs" aria-hidden="true">VS</div><div class="combat-life-bar enemy ${projectedGauge === 'enemy' ? 'combat-gauge-target' : ''}" role="progressbar" aria-label="Poursuite adverse" aria-valuemin="0" aria-valuemax="${BALANCE.progressGoal}" aria-valuenow="${battle.pursuit}"><header><span>ADVERSAIRE · POURSUITE</span><b>${battle.pursuit}/${BALANCE.progressGoal}</b></header><div class="health-track"><i class="health-fill enemy" style="--from:${clamp(previousPursuitRatio, 0, 100)}%;--to:${clamp(pursuitRatio, 0, 100)}%;width:${clamp(pursuitRatio, 0, 100)}%"></i></div></div></div><div class="combat-rule-line">${bossBanner}${weatherBanner}</div>`;
     battle.uiProgressRatio = progressRatio;
     battle.uiPursuitRatio = pursuitRatio;
     $('#ritual-enemy-forecast').innerHTML = battle.forecast.map((unit, lane) => ritualSlotMarkup(unit, lane, 'forecast')).join('');
@@ -3353,13 +3568,30 @@
     $('#ritual-player-board').innerHTML = battle.playerBoard.map((unit, lane) => ritualSlotMarkup(unit, lane, 'player')).join('');
     const feed = $('#ritual-combat-feed');
     if (feed) feed.innerHTML = combatFeedMarkup(battle);
-    $('#ritual-hand').innerHTML = battle.hand.map((id, index) => ritualCardMarkup(effectiveCard(id) || getCard(id), `data-ritual-hand="${index}" data-ritual-card-id="${esc(cardIdOf(id))}" draggable="true" aria-pressed="${battle.selectedHand === index}"`, null)).join('');
+    $('#ritual-hand').innerHTML = battle.hand.map((id, index) => ritualCardMarkup(effectiveCard(id) || getCard(id), `data-ritual-hand="${index}" data-combat-hand="${index}" data-ritual-card-id="${esc(cardIdOf(id))}" draggable="true" aria-pressed="${battle.selectedHand === index}" aria-keyshortcuts="${index < 9 ? `${index + 1} ` : ''}I"`, null)).join('');
+    const resourceElements = {
+      lumen:$('.lumen-orb'),
+      ashes:$('.ash-orb'),
+      hand:$('#ritual-hand'),
+      deck:document.querySelector('[data-ritual-draw="deck"]')
+    };
+    Object.entries(resourceElements).forEach(([key, element]) => element?.classList.toggle('combat-resource-target', highlightedResources.has(key)));
     document.querySelectorAll('[data-ritual-draw]').forEach(button => {
       button.disabled = true;
       const small = button.querySelector('small');
       if (small) small.textContent = `Défausse ${battle.discard.length}`;
     });
-    $('#ritual-bell').disabled = battle.resolving;
+    const bell = $('#ritual-bell');
+    if (bell) {
+      const tutorialResolving = battle.resolving && isFirstBattleTutorial(battle);
+      bell.disabled = tutorialResolving;
+      bell.classList.toggle('accelerating', battle.resolving && combatPresentation.speed === 'fast');
+      bell.setAttribute('aria-label', battle.resolving ? (tutorialResolving ? 'Résolution guidée en cours' : 'Accélérer les animations de ce départ') : 'Lancer la résolution des trois wagons');
+      const strong = bell.querySelector('strong');
+      const small = bell.querySelector('small');
+      if (strong) strong.textContent = battle.resolving ? (combatPresentation.speed === 'fast' ? 'ACCÉLÉRÉ' : 'ACCÉLÉRER') : 'DÉPART';
+      if (small) small.textContent = battle.resolving ? (tutorialResolving ? 'Suivez la leçon' : 'Animations seulement') : 'Résoudre les trois wagons';
+    }
     const stokeButton = document.querySelector('button[data-action="ritual-stoke"]');
     if (stokeButton) {
       stokeButton.disabled = battle.resolving || battle.selectedHand === null;
@@ -3676,15 +3908,168 @@
     return { id, card, cost:resource.amount, resource, affordable:resource.affordable, missing:resource.missing };
   }
 
+  function projectedSprinterLane(board, lane) {
+    if (!Array.isArray(board)) return null;
+    const next = (lane + 1) % BALANCE.lanes;
+    const fallback = (lane + 2) % BALANCE.lanes;
+    const destination = board[next] ? fallback : next;
+    return !board[destination] ? destination : null;
+  }
+
+  function combatSigilNotes(unit, projection) {
+    const notes = [];
+    for (const id of unit?.sigils || []) {
+      if (id === 'airborne') {
+        notes.push(projection.targets.some(target => target.kind === 'bypass')
+          ? 'Aérien : l’opposant sans Vigie sera survolé et la jauge sera atteinte.'
+          : 'Aérien : contourne un opposant seulement s’il ne possède pas Vigie.');
+      } else if (id === 'reach') notes.push('Vigie : interceptera une unité Aérienne qui agit dans ce wagon.');
+      else if (id === 'thorns') notes.push('Réplique : le prochain attaquant qui la touche perdra 1 Vie.');
+      else if (id === 'brittle') notes.push('Usage unique : cette carte se brisera juste après avoir agi.');
+      else if (id === 'fecund') notes.push('Duplicateur : une copie temporaire a été ajoutée à la main lors de la pose.');
+      else if (id === 'deathless') notes.push('Rappel : après sa destruction, cette carte tentera de revenir dans la main.');
+      else if (id === 'many_lived') notes.push('Recyclage : si elle est chauffée, cette carte retourne dans la pioche.');
+      else if (id === 'bifurcated') notes.push(`Aiguillage : portée sur ${projection.targets.length} wagon${projection.targets.length > 1 ? 's' : ''} voisin${projection.targets.length > 1 ? 's' : ''}.`);
+      else if (id === 'bone_digger') notes.push('Dynamo : si elle reste en place, +1 Lueur sera fournie au prochain tour.');
+      else if (id === 'sprinter') notes.push(projection.movementLane === null
+        ? 'Correspondance : aucun wagon de destination n’est libre après l’action.'
+        : `Correspondance : se déplacera ensuite vers le wagon ${projection.movementLane + 1}.`);
+      else if (id === 'guardian') notes.push('Renfort : gagnera 1 Vie lorsqu’un ennemi annoncé arrivera en face.');
+      else if (id === 'pyre') notes.push('Brasier : chauffer ou perdre cette carte ajoute 1 Progression.');
+      else if (id === 'hoard') notes.push('Surplus : sa Puissance augmente quand la main est presque pleine.');
+      else if (id === 'omen_break') notes.push('Contre-signe : sa pose a déjà réduit la Poursuite de 1.');
+      else if (id === 'destiny') notes.push('Destin : son effet s’est déclenché au moment de la pioche.');
+      else if (id === 'echo') notes.push('Écho : si elle reste en main au départ, elle préparera +1 Lueur.');
+    }
+    return notes;
+  }
+
+  function combatAttackProjection(unit, lane, sourceSide, battle = run?.battle) {
+    if (!unit || !battle) return { targets:[], targetSide:null, gauge:null, title:'Aucune action', detail:'Cette carte ne peut pas agir dans l’état actuel.', sigilNotes:[], movementLane:null, resourceTargets:[] };
+    const actingSide = sourceSide === 'forecast' ? 'enemy' : sourceSide;
+    const targetSide = actingSide === 'player' ? 'enemy' : 'player';
+    const targetBoard = combatBoardForSide(targetSide, battle);
+    const sourceBoard = actingSide === 'player' ? battle.playerBoard : battle.enemyBoard;
+    const lanes = unit.sigils?.includes('bifurcated')
+      ? [lane - 1, lane + 1].filter(index => index >= 0 && index < BALANCE.lanes)
+      : [lane];
+    const targets = lanes.map(targetLane => {
+      const target = targetBoard[targetLane];
+      const bypass = !!(unit.sigils?.includes('airborne') && target && !target.sigils?.includes('reach'));
+      return {
+        side:targetSide,
+        lane:targetLane,
+        unit:target || null,
+        kind:bypass ? 'bypass' : target ? 'contact' : 'open'
+      };
+    });
+    const direct = targets.filter(target => target.kind !== 'contact');
+    const contacts = targets.filter(target => target.kind === 'contact');
+    const gauge = direct.length ? (actingSide === 'player' ? 'player' : 'enemy') : null;
+    const movementLane = unit.sigils?.includes('sprinter') && sourceSide !== 'forecast'
+      ? projectedSprinterLane(sourceBoard, lane)
+      : null;
+    let title;
+    let detail;
+    if (targets.length > 1) {
+      title = `Aiguillage vers ${targets.map(target => `W${target.lane + 1}`).join(' + ')}`;
+      detail = `${contacts.length ? `${contacts.length} affrontement${contacts.length > 1 ? 's' : ''}` : 'Aucun affrontement'} · ${direct.length ? `${direct.length} passage${direct.length > 1 ? 's' : ''} vers la jauge` : 'la jauge ne sera pas touchée'}.`;
+    } else if (targets[0]?.kind === 'bypass') {
+      title = `Survol du wagon ${targets[0].lane + 1}`;
+      detail = `${getCard(targets[0].unit?.cardId)?.name || 'L’opposant'} sera survolé : +${unit.attack} ${actingSide === 'player' ? 'Progression' : 'Poursuite'}.`;
+    } else if (targets[0]?.kind === 'contact') {
+      const target = targets[0].unit;
+      title = `Affrontement au wagon ${targets[0].lane + 1}`;
+      detail = `${getCard(target?.cardId)?.name || 'La cible'} passera de ${target?.hp ?? 0} à ${Math.max(0, (target?.hp || 0) - unit.attack)} Vie avant ses éventuelles réponses.`;
+    } else {
+      title = `Passage libre au wagon ${targets[0]?.lane + 1 || lane + 1}`;
+      detail = `Cette carte ajoutera +${unit.attack} ${actingSide === 'player' ? 'Progression Moonrail' : 'Poursuite adverse'}.`;
+    }
+    /* L'inspection projette uniquement la prochaine attaque. Les effets
+       conditionnels de mort, chauffe ou tour suivant restent dans les notes. */
+    const projection = { sourceSide, actingSide, lane, targetSide, targets, gauge, movementLane, title, detail, resourceTargets:[] };
+    projection.sigilNotes = combatSigilNotes(unit, projection);
+    return projection;
+  }
+
+  function inspectedCombatProjection() {
+    const inspected = combatPresentation.inspected;
+    if (!inspected || !run?.battle) return null;
+    const unit = combatBoardForSide(inspected.side)[inspected.lane];
+    if (!unit || (inspected.uid && unit.uid !== inspected.uid)) {
+      combatPresentation.inspected = null;
+      return null;
+    }
+    return { inspected, unit, projection:combatAttackProjection(unit, inspected.lane, inspected.side) };
+  }
+
+  function inspectCombatUnit(side, lane) {
+    const battle = run?.battle;
+    const unit = combatBoardForSide(side, battle)[lane];
+    if (!battle || battle.resolving || !unit) return;
+    if (isFirstBattleTutorial(battle)) {
+      nudgeFirstBattleTutorial('Terminez d’abord le geste indiqué. Vous pourrez ensuite inspecter toutes les cartes du plateau.');
+      return;
+    }
+    clearTransientCombatCue();
+    battle.selectedHand = null;
+    combatPresentation.inspected = { side, lane, uid:unit.uid || unit.runUid || null };
+    const projection = combatAttackProjection(unit, lane, side, battle);
+    announceCombatCue({ title:`Inspection de ${ritualUnitName(unit)}`, detail:`${projection.title}. ${projection.detail}` });
+    playCombatCue('target');
+    renderRitualBattle();
+    requestAnimationFrame(() => {
+      document.querySelector(`[data-combat-side="${side}"][data-combat-lane="${lane}"]`)?.focus({ preventScroll:true });
+    });
+  }
+
+  function clearCombatInspection(shouldRender = true) {
+    if (!combatPresentation.inspected) return false;
+    combatPresentation.inspected = null;
+    if (shouldRender) renderRitualBattle();
+    return true;
+  }
+
+  function clearCombatSelection() {
+    const battle = run?.battle;
+    if (!battle || battle.resolving || battle.selectedHand === null) return false;
+    if (isFirstBattleTutorial(battle)) {
+      nudgeFirstBattleTutorial('Gardez la carte demandée sélectionnée pour poursuivre la leçon.');
+      return false;
+    }
+    battle.selectedHand = null;
+    renderRitualBattle();
+    return true;
+  }
+
+  function selectedCombatCardElement() {
+    const battle = run?.battle;
+    if (!battle) return null;
+    if (battle.selectedHand !== null) return document.querySelector(`[data-ritual-hand="${battle.selectedHand}"]`);
+    const inspected = inspectedCombatProjection()?.inspected;
+    if (!inspected) return null;
+    return document.querySelector(`[data-combat-side="${inspected.side}"][data-combat-lane="${inspected.lane}"]`);
+  }
+
+  function showSelectedCombatCardZoom() {
+    const card = selectedCombatCardElement();
+    if (!card) return ritualToast('Sélectionnez une carte en main ou sur le plateau pour la lire en grand.');
+    showCardZoom(card, { readOnly:true });
+  }
+
   function placementPreviewMarkup(lane, side, occupied = false) {
     const selected = selectedPlacementCard();
     if (side !== 'player' || !selected) return { className:'', html:'' };
+    if (!selected.affordable) return {
+      className:' placement-blocked',
+      html:`<em class="placement-preview blocked"><b>Manque ${selected.missing}</b><span>${esc(selected.resource.label)} insuffisante</span></em>`
+    };
     if (occupied) return {
       className:' placement-overwrite',
       html:`<em class="placement-preview overwrite"><b>Remplacer ?</b><span>La carte en place mourra pour la run</span></em>`
     };
-    const state = selected.affordable ? 'ready' : 'blocked';
-    const title = selected.affordable ? 'Poser ici' : `Manque ${selected.missing} ${selected.resource.label}${selected.missing > 1 ? 's' : ''}`;
+    const state = 'ready';
+    const title = 'Poser ici';
     const stats = `${selected.card.attack} Puissance · ${selected.card.health} Vie`;
     return {
       className:` placement-${state}`,
@@ -3745,11 +4130,6 @@
 
   function lanePlacementSignal(battle, lane, selected) {
     if (!selected || battle.resolving) return null;
-    if (battle.playerBoard?.[lane]) {
-      const occupant = battle.playerBoard[lane];
-      const signature = isReturningSignature(occupant.cardId);
-      return { state:'preview overwrite', label:'REMPLACER ?', title:signature ? 'Signature brisée' : 'Mort définitive', text:signature ? `${ritualUnitName(occupant)} reviendra au prochain combat.` : `${ritualUnitName(occupant)} quittera le deck de cette run.` };
-    }
     if (!selected.affordable) {
       return {
         state: 'preview blocked',
@@ -3757,6 +4137,11 @@
         title: `${selected.missing} ${selected.resource.label}${selected.missing > 1 ? 's' : ''}`,
         text: `${selected.card.name} attend encore de l'énergie.`,
       };
+    }
+    if (battle.playerBoard?.[lane]) {
+      const occupant = battle.playerBoard[lane];
+      const signature = isReturningSignature(occupant.cardId);
+      return { state:'preview overwrite', label:'REMPLACER ?', title:signature ? 'Signature brisée' : 'Mort définitive', text:signature ? `${ritualUnitName(occupant)} reviendra au prochain combat.` : `${ritualUnitName(occupant)} quittera le deck de cette run.` };
     }
     const enemy = battle.enemyBoard?.[lane];
     const forecast = battle.forecast?.[lane];
@@ -3792,15 +4177,53 @@
     </section>`;
   }
 
+  function combatRelationForSlot(side, lane) {
+    const cue = combatPresentation.cue;
+    const inspected = inspectedCombatProjection();
+    const sources = cue ? [cue.source, ...(cue.sources || [])].filter(Boolean) : [];
+    const cueSource = sources.some(source => source.side === side && source.lane === lane);
+    const cueTarget = cue?.targets?.find(target => target.side === side && target.lane === lane);
+    const cueResult = cue?.results?.find(result => result.side === side && result.lane === lane);
+    const inspectionSource = inspected?.inspected.side === side && inspected.inspected.lane === lane;
+    const inspectionTarget = inspected?.projection.targets.find(target => target.side === side && target.lane === lane);
+    const movementTarget = inspected?.projection.movementLane === lane && inspected?.projection.actingSide === side;
+    const relationTarget = cueTarget || inspectionTarget || (movementTarget ? { kind:'movement' } : null);
+    const classes = [];
+    if (cueSource || inspectionSource) classes.push('combat-source');
+    if (relationTarget) classes.push('combat-target', `combat-target-${relationTarget.kind || 'contact'}`);
+    if (cueResult) classes.push('combat-result');
+    if (cueResult?.defeated) classes.push('combat-defeated');
+    let label = '';
+    if (cueSource) label = cue?.phase === 'telegraph' ? 'AGIT' : 'SOURCE';
+    else if (inspectionSource) label = 'INSPECTÉE';
+    else if (relationTarget?.kind === 'bypass') label = 'SURVOLÉE';
+    else if (relationTarget?.kind === 'open') label = 'PASSAGE';
+    else if (relationTarget?.kind === 'movement') label = 'APRÈS';
+    else if (relationTarget) label = !cue || cue.phase === 'telegraph' ? 'CIBLE' : 'TOUCHÉE';
+    const delta = cueResult?.label || '';
+    return { classes:classes.join(' '), label, delta, cueSource, cueTarget, inspectionSource, inspectionTarget };
+  }
+
   function ritualSlotMarkup(unit, lane, side) {
-    const attrs = side === 'player' ? `data-ritual-player-slot="${lane}"` : '';
     const fx = run?.battle?.fx;
-    const targeted = fx?.targets?.includes(lane) && fx?.targetSide === side ? ' targeted-lane' : '';
+    const legacyTargeted = !combatPresentation.cue && fx?.targets?.includes(lane) && fx?.targetSide === side ? ' targeted-lane' : '';
+    const relation = combatRelationForSlot(side, lane);
     const placement = placementPreviewMarkup(lane, side, !!unit);
-    if (!unit) return `<button class="ritual-slot empty ${side}${targeted}${placement.className}" ${attrs}><span>${side === 'player' && placement.html ? '' : side === 'player' ? 'PLACER' : side === 'forecast' ? '—' : 'VOIE VIDE'}</span>${placement.html}</button>`;
+    const commonAttrs = `data-combat-side="${side}" data-combat-lane="${lane}"`;
+    const playerAttrs = side === 'player' ? `data-ritual-player-slot="${lane}"` : '';
+    const relationMarkup = `${relation.label ? `<em class="combat-relation-label">${esc(relation.label)}</em>` : ''}${relation.delta ? `<em class="combat-delta">${esc(relation.delta)}</em>` : ''}`;
+    if (!unit) {
+      const copy = side === 'player' && placement.html ? '' : side === 'player' ? 'PLACER' : side === 'forecast' ? '—' : 'VOIE VIDE';
+      if (side === 'player') {
+        return `<button class="ritual-slot empty ${side}${legacyTargeted}${placement.className} ${relation.classes}" ${commonAttrs} ${playerAttrs} aria-label="Wagon ${lane + 1}${placement.className.includes('blocked') ? ', pose impossible' : placement.className ? ', emplacement de pose' : ', voie vide'}" aria-keyshortcuts="${['A','Z','E'][lane]}"><span>${copy}</span>${placement.html}${relationMarkup}</button>`;
+      }
+      return `<div class="ritual-slot empty ${side}${legacyTargeted} ${relation.classes}" ${commonAttrs} aria-hidden="true"><span>${copy}</span>${relationMarkup}</div>`;
+    }
     const card = { ...getCard(unit.cardId), attack:unit.attack, health:unit.maxHp, sigils:unit.sigils };
-    const active = fx?.lane === lane && fx?.side === side ? ' resolving-hit' : '';
-    return `<div class="ritual-slot occupied ${side}${active}${targeted}${placement.className}">${ritualCardMarkup(card, attrs, unit)}${active ? `<em class="lane-fx">${esc(fx.text)}</em>` : ''}${placement.html}</div>`;
+    const legacyActive = !combatPresentation.cue && fx?.lane === lane && fx?.side === side ? ' resolving-hit' : '';
+    const inspected = relation.inspectionSource ? 'true' : 'false';
+    const attrs = `${commonAttrs} ${playerAttrs} aria-pressed="${inspected}" aria-keyshortcuts="I"`;
+    return `<div class="ritual-slot occupied ${side}${legacyActive}${legacyTargeted}${placement.className} ${relation.classes}">${ritualCardMarkup(card, attrs, unit)}${legacyActive ? `<em class="lane-fx">${esc(fx.text)}</em>` : ''}${placement.html}${relationMarkup}</div>`;
   }
 
   function battleHint(selected) {
@@ -3823,7 +4246,25 @@
     const handInfo = `${battle.hand.length}/${currentHandLimit()} cartes en main`;
     const pileInfo = `${battle.deck.length} pioche · ${battle.discard.length} défausse`;
     if (battle.resolving) {
-      return `<section class="battle-coach resolving" data-coach-state="resolving"><i>➤</i><div><b>Résolution en cours</b><span>${esc(hint)}</span></div><em>${esc(pileInfo)}</em></section>`;
+      const cue = combatPresentation.cue;
+      const title = cue?.title || 'Le convoi se met en mouvement';
+      const detail = cue?.detail || hint;
+      const phase = cue?.phase === 'telegraph' ? 'INTENTION' : cue?.phase === 'impact' ? 'IMPACT' : cue?.phase === 'consequence' ? 'CONSÉQUENCE' : 'RÉSOLUTION';
+      return `<section class="battle-coach resolving ${cue ? 'combat-cue' : ''}" data-coach-state="resolving"><i>➤</i><div><b>${esc(phase)}</b><strong>${esc(title)}</strong><span>${esc(detail)}</span></div><aside><small>${combatPresentation.speed === 'fast' ? 'Vitesse rapide' : 'Vitesse normale'}</small><em>${esc(pileInfo)}</em></aside></section>`;
+    }
+    if (combatPresentation.cue) {
+      const cue = combatPresentation.cue;
+      return `<section class="battle-coach combat-cue consequence" data-coach-state="feedback"><i>✦</i><div><b>ACTION CONFIRMÉE</b><strong>${esc(cue.title || 'Le plateau change')}</strong><span>${esc(cue.detail || 'La conséquence est maintenant visible sur le plateau.')}</span></div><em>${esc(handInfo)} · ${esc(pileInfo)}</em></section>`;
+    }
+    const inspected = inspectedCombatProjection();
+    if (inspected) {
+      const { unit, projection } = inspected;
+      const name = getCard(unit.cardId)?.name || 'Carte inspectée';
+      return `<section class="battle-coach inspecting" data-coach-state="inspecting">
+        <i>◎</i>
+        <div><b>PROCHAINE ACTION</b><strong>${esc(name)}</strong><span title="${esc(`${projection.detail}${projection.sigilNotes[0] ? ` · ${projection.sigilNotes[0]}` : ''}`)}">${esc(projection.title)}</span></div>
+        <aside><small>⚔ ${unit.attack}</small><small>♥ ${unit.hp}/${unit.maxHp}</small><small>${projection.targets.length} cible${projection.targets.length > 1 ? 's' : ''}</small><em>${esc(projection.sigilNotes[0] || 'Cliquez ailleurs pour comparer une autre carte.')}</em><div class="combat-coach-actions"><button data-action="ritual-inspect-selected">Lire en grand <kbd>I</kbd></button><button data-action="ritual-clear-inspection">Fermer <kbd>Échap</kbd></button></div></aside>
+      </section>`;
     }
     if (!selected) {
       const action = battle.stokedThisTurn ? 'Posez une carte ou allégez la main.' : `Glissez vers un wagon ou chauffez pour +${BALANCE.stokeGain} Lueurs.`;
@@ -3841,8 +4282,8 @@
       : `Produisez davantage de ${resource.label}${resource.missing > 1 ? 's' : ''} ou choisissez une option moins chère.`;
     return `<section class="battle-coach selected ${state}" data-coach-state="${state}">
       <i class="coach-card-art" style="${cardArtStyle(selected)}"></i>
-      <div><b>${esc(title)}</b><strong>${esc(selected.name)}</strong><span class="coach-effect">${esc(selected.text)}</span><small class="coach-instruction">${esc(hint)}</small></div>
-      <aside><small>${resource.icon}${cost} coût</small><small>⚔ ${selected.attack} · ♥ ${selected.health}</small><small>${esc(sigilNames)}</small><em>${esc(action)}</em></aside>
+      <div><b>${esc(title)}</b><strong>${esc(selected.name)}</strong><span class="coach-effect">Choisissez un wagon ; les trois issues sont marquées sur le plateau.</span></div>
+      <aside><small>${resource.icon}${cost} coût</small><small>⚔ ${selected.attack} · ♥ ${selected.health}</small><small>${esc(sigilNames)}</small><em>${esc(action)}</em><div class="combat-coach-actions"><button data-action="ritual-inspect-selected">Lire en grand <kbd>I</kbd></button><button data-action="ritual-cancel-selection">Annuler <kbd>Échap</kbd></button></div></aside>
     </section>`;
   }
 
@@ -3933,9 +4374,15 @@
     if (!battle || battle.resolving || !battle.hand[index]) return;
     const cardId = cardIdOf(battle.hand[index]);
     if (!firstBattleTutorialExpected('select', { cardId })) return;
+    clearTransientCombatCue();
+    combatPresentation.inspected = null;
     battle.selectedHand = isFirstBattleTutorial(battle) ? index : battle.selectedHand === index ? null : index;
+    playCombatCue('select');
     if (isFirstBattleTutorial(battle)) return advanceFirstBattleTutorialAction('select');
     renderRitualBattle();
+    requestAnimationFrame(() => {
+      document.querySelector(`[data-ritual-hand="${index}"]`)?.focus({ preventScroll:true });
+    });
   }
 
   function interactPlayerLane(lane) {
@@ -3943,6 +4390,8 @@
     if (!battle || battle.resolving || battle.selectedHand === null) return;
     const selectedId = battle.hand[battle.selectedHand], card = getCard(selectedId);
     if (!firstBattleTutorialExpected('place', { lane, cardId:cardIdOf(selectedId) })) return;
+    const resource = cardAffordable(effectiveCard(selectedId) || card, battle);
+    if (!resource.affordable) return ritualToast(`Il manque ${resource.missing} ${resource.label}${resource.missing > 1 ? 's' : ''}.`);
     const occupant = battle.playerBoard[lane];
     if (occupant) {
       const incoming = effectiveCard(selectedId) || card;
@@ -3960,6 +4409,11 @@
     if (!occupant) { closeRitualModal(); return interactPlayerLane(lane); }
     const selectedId = battle.hand[battle.selectedHand];
     const card = getCard(selectedId);
+    const resource = cardAffordable(effectiveCard(selectedId) || card, battle);
+    if (!resource.affordable) {
+      closeRitualModal();
+      return ritualToast(`Il manque ${resource.missing} ${resource.label}${resource.missing > 1 ? 's' : ''}.`);
+    }
     markRunCardDead(occupant.ref || { cardId:occupant.cardId, runUid:occupant.runUid }, 'écrasée par une autre carte');
     battle.ashes = Number(battle.ashes || 0) + 1;
     battle.playerBoard[lane] = null;
@@ -4003,10 +4457,22 @@
     battle.hand.splice(battle.selectedHand, 1);
     battle.selectedHand = null;
     pushCombatEvent('summon', card?.name || 'Passager affecté', `Wagon ${lane + 1} · -${resource.amount} ${resource.label}${resource.amount > 1 ? 's' : ''}`, lane);
-    applySignatureOnSummon(unit, lane, unit.cardId);
+    const signatureFeedback = applySignatureOnSummon(unit, lane, unit.cardId);
     applyTribeSetBonus();
     if (!unit.hp) { resolveZeroHealthArrival(unit, lane); killUnit(unit, lane, 'player'); }
-    persist(); renderRitualBattle(); checkBattleEnd();
+    combatPresentation.inspected = null;
+    persist();
+    showTransientCombatCue({
+      kind:'summon',
+      phase:'consequence',
+      source:{ side:'player', lane },
+      targets:[{ kind:'lane', side:'player', lane }, ...(signatureFeedback?.targets || [])],
+      gauge:signatureFeedback?.gauge || null,
+      title:signatureFeedback ? `${card?.name || 'La Spell Card'} déclenche sa technique` : `${card?.name || 'Le passager'} rejoint le wagon ${lane + 1}`,
+      detail:signatureFeedback ? `-${resource.amount} ${resource.label}${resource.amount > 1 ? 's' : ''} · ${signatureFeedback.detail}` : `-${resource.amount} ${resource.label}${resource.amount > 1 ? 's' : ''} · la prochaine cible est maintenant lisible en inspectant la carte.`,
+      sound:'summon'
+    }, 760);
+    checkBattleEnd();
     if (isFirstBattleTutorial(battle)) advanceFirstBattleTutorialAction('place');
   }
 
@@ -4041,86 +4507,349 @@
     }
     const returnsNextCombat = !grantsLumen && isReturningSignature(id);
     pushCombatEvent(grantsLumen ? 'stoke' : 'burn', card?.name || 'Carte détruite', grantsLumen ? `Chaudière +${BALANCE.stokeGain} Lueurs · +1 Cendre` : returnsNextCombat ? 'Brisée pour ce combat · +1 Cendre' : 'Détruite pour la run · +1 Cendre');
-    battle.selectedHand = null; persist(); renderRitualBattle();
-    ritualToast(grantsLumen
-      ? `${card?.name || 'La carte'} chauffe la chaudière : +${BALANCE.stokeGain} Lueurs et +1 Cendre.`
-      : returnsNextCombat ? `${card?.name || 'La signature'} se reformera au prochain combat : +1 Cendre, aucune Lueur.` : `${card?.name || 'La carte'} est détruite pour la run : +1 Cendre, aucune Lueur.`);
+    battle.selectedHand = null;
+    combatPresentation.inspected = null;
+    persist();
+    showTransientCombatCue({
+      kind:'resource',
+      phase:'consequence',
+      resourceTargets:grantsLumen ? ['lumen','ashes'] : ['ashes'],
+      title:grantsLumen ? `${card?.name || 'La carte'} nourrit la chaudière` : `${card?.name || 'La carte'} quitte la main`,
+      detail:grantsLumen
+        ? `+${BALANCE.stokeGain} Lueurs · +1 Cendre${card?.sigils?.includes('pyre') ? ' · Brasier ajoute 1 Progression' : ''}.`
+        : returnsNextCombat ? '+1 Cendre · la signature se reformera au prochain combat.' : '+1 Cendre · cette carte est perdue pour la run.',
+      sound:'stoke'
+    }, 820);
     if (isFirstBattleTutorial(battle)) advanceFirstBattleTutorialAction('stoke');
+  }
+
+  function combatCueTargets(projection) {
+    return (projection?.targets || []).map(target => ({
+      kind:target.kind,
+      side:target.side,
+      lane:target.lane,
+      uid:target.unit?.uid || target.unit?.runUid || null
+    }));
+  }
+
+  function combatUnitSource(unit, lane, side) {
+    return { kind:'unit', side, lane, uid:unit?.uid || unit?.runUid || null, cardId:unit?.cardId || null };
+  }
+
+  async function presentUnitAction(battle, unit, lane, side) {
+    if (run?.battle !== battle || !unit) return null;
+    const name = getCard(unit.cardId)?.name || (side === 'player' ? 'Un passager' : 'Un ennemi');
+    const projection = combatAttackProjection(unit, lane, side, battle);
+    const source = combatUnitSource(unit, lane, side);
+    const targets = combatCueTargets(projection);
+    setCombatCue({
+      kind:'attack',
+      phase:'telegraph',
+      source,
+      targets,
+      gauge:projection.gauge,
+      title:`${name} prépare son action`,
+      detail:`${projection.title} · ${projection.detail}`
+    });
+    renderRitualBattle();
+    playCombatCue('windup');
+    await waitForCombatPresentation(280);
+    if (run?.battle !== battle) return null;
+
+    const result = attackFrom(unit, lane, side, projection);
+    const impactDetail = result.impacts.length
+      ? result.impacts.map(impact => `${impact.name} ${impact.before}→${Math.max(0, impact.after)} Vie${impact.thorns ? ' · Réplique' : ''}`).join(' · ')
+      : result.progressDelta
+      ? `+${result.progressDelta} Progression Moonrail`
+      : result.pursuitDelta
+      ? `+${result.pursuitDelta} Poursuite adverse`
+      : 'L’action ne modifie aucune jauge.';
+    setCombatCue({
+      kind:result.progressDelta || result.pursuitDelta ? 'score' : 'attack',
+      phase:'impact',
+      source,
+      targets,
+      results:result.results,
+      gauge:result.progressDelta ? 'player' : result.pursuitDelta ? 'enemy' : null,
+      title:result.progressDelta || result.pursuitDelta ? `${name} franchit la ligne` : `${name} frappe`,
+      detail:impactDetail
+    });
+    renderRitualBattle();
+    playCombatCue(result.progressDelta || result.pursuitDelta ? 'progress' : 'hit');
+    await waitForCombatPresentation(410);
+    if (run?.battle !== battle) return result;
+
+    if (result.deaths.length) {
+      const deathNames = result.deaths.map(death => getCard(death.unit.cardId)?.name || 'Une carte');
+      const deathTargets = result.deaths.map(death => ({ kind:'contact', side:death.side, lane:death.lane }));
+      setCombatCue({
+        kind:'defeat',
+        phase:'consequence',
+        source,
+        targets:deathTargets,
+        results:deathTargets.map(target => ({ ...target, defeated:true, label:'0 VIE' })),
+        title:deathNames.length > 1 ? `${deathNames.length} cartes se brisent` : `${deathNames[0]} se brise`,
+        detail:'La carte reste visible un instant, puis ses effets de mort sont résolus.'
+      });
+      renderRitualBattle();
+      playCombatCue('defeat');
+      await waitForCombatPresentation(340);
+      if (run?.battle !== battle) return result;
+      const eventIdBeforeDeaths = Number(battle.eventSeq || 0);
+      const stateBeforeDeaths = {
+        hand:battle.hand.length,
+        deck:battle.deck.length,
+        ashes:Number(battle.ashes || 0),
+        progress:Number(battle.progress || 0),
+        forecast:battle.forecast.map(unit => unit?.uid || unit?.runUid || unit?.cardId || null)
+      };
+      result.deaths.forEach(death => {
+        const board = combatBoardForSide(death.side, battle);
+        if (board[death.lane] === death.unit) killUnit(death.unit, death.lane, death.side);
+      });
+      const aftermath = (battle.timeline || [])
+        .filter(event => Number(event.id || 0) > eventIdBeforeDeaths && event.type !== 'defeat')
+        .reverse();
+      if (aftermath.length) {
+        const aftermathText = aftermath.map(event => [event.title, event.text].filter(Boolean).join(' : ')).join(' · ');
+        const resourceTargets = [
+          ...(battle.ashes > stateBeforeDeaths.ashes ? ['ashes'] : []),
+          ...(battle.hand.length > stateBeforeDeaths.hand ? ['hand'] : []),
+          ...(battle.deck.length > stateBeforeDeaths.deck ? ['deck'] : [])
+        ];
+        const forecastTargets = battle.forecast.flatMap((unit, lane) => {
+          const identity = unit?.uid || unit?.runUid || unit?.cardId || null;
+          return identity && identity !== stateBeforeDeaths.forecast[lane]
+            ? [{ kind:'movement', side:'forecast', lane }]
+            : [];
+        });
+        setCombatCue({
+          kind:'death-effect',
+          phase:'consequence',
+          targets:forecastTargets,
+          resourceTargets,
+          gauge:battle.progress > stateBeforeDeaths.progress ? 'player' : null,
+          title:'Les effets de rupture se résolvent',
+          detail:aftermathText
+        });
+        renderRitualBattle();
+        await waitForCombatPresentation(320);
+      } else {
+        renderRitualBattle();
+        await waitForCombatPresentation(150);
+      }
+    }
+    battle.fx = null;
+    setCombatCue(null);
+    renderRitualBattle();
+    await waitForCombatPresentation(90);
+    return result;
+  }
+
+  async function presentForecastArrivals(battle) {
+    const waiting = battle.forecast.map((unit, lane) => unit && !battle.enemyBoard[lane] ? { unit, lane } : null).filter(Boolean);
+    if (!waiting.length) return [];
+    const sources = waiting.map(item => combatUnitSource(item.unit, item.lane, 'forecast'));
+    setCombatCue({
+      kind:'arrival',
+      phase:'telegraph',
+      sources,
+      targets:waiting.map(item => ({ kind:'movement', side:'forecast', lane:item.lane })),
+      title:`${waiting.length} manœuvre${waiting.length > 1 ? 's' : ''} quitte${waiting.length > 1 ? 'nt' : ''} l’horizon`,
+      detail:`Arrivée annoncée dans ${waiting.map(item => `le wagon ${item.lane + 1}`).join(' et ')}.`
+    });
+    renderRitualBattle();
+    playCombatCue('windup');
+    await waitForCombatPresentation(260);
+    if (run?.battle !== battle) return [];
+    const arrivals = spawnForecast();
+    const healed = arrivals.filter(item => item.guardianHealed && item.healedUnit);
+    setCombatCue({
+      kind:'arrival',
+      phase:'impact',
+      sources,
+      targets:[
+        ...arrivals.map(item => ({ kind:'movement', side:'enemy', lane:item.lane })),
+        ...healed.map(item => ({ kind:'contact', side:'player', lane:item.lane }))
+      ],
+      results:[
+        ...arrivals.map(item => ({ side:'enemy', lane:item.lane, label:'ARRIVÉE' })),
+        ...healed.map(item => ({ side:'player', lane:item.lane, label:'RENFORT +1 VIE' }))
+      ],
+      title:'Les renforts prennent place',
+      detail:arrivals.some(item => item.guardianHealed) ? 'Renfort soigne de 1 Vie le passager opposé.' : 'Le prochain affrontement est maintenant visible.'
+    });
+    renderRitualBattle();
+    playCombatCue('summon');
+    await waitForCombatPresentation(360);
+    return arrivals;
+  }
+
+  async function presentSprinterMoves(battle) {
+    const plan = planSprinterMoves();
+    if (!plan.length) return [];
+    setCombatCue({
+      kind:'move',
+      phase:'telegraph',
+      sources:plan.map(move => combatUnitSource(move.unit, move.from, move.side)),
+      targets:plan.map(move => ({ kind:'movement', side:move.side, lane:move.to })),
+      title:'Correspondance prépare un changement de wagon',
+      detail:plan.map(move => `${ritualUnitName(move.unit)} : ${move.from + 1}→${move.to + 1}`).join(' · ')
+    });
+    renderRitualBattle();
+    playCombatCue('target');
+    await waitForCombatPresentation(240);
+    if (run?.battle !== battle) return [];
+    const moved = moveSprinters(plan);
+    setCombatCue({
+      kind:'move',
+      phase:'impact',
+      sources:plan.map(move => combatUnitSource(move.unit, move.from, move.side)),
+      targets:moved.map(move => ({ kind:'movement', side:move.side, lane:move.to })),
+      results:moved.map(move => ({ side:move.side, lane:move.to, label:'DÉPLACÉE' })),
+      title:'Les correspondances changent de voie',
+      detail:moved.length ? moved.map(move => `Wagon ${move.from + 1}→${move.to + 1}`).join(' · ') : 'Aucun wagon de destination n’était libre.'
+    });
+    renderRitualBattle();
+    await waitForCombatPresentation(320);
+    return moved;
   }
 
   async function resolveRitualTurn() {
     const battle = run?.battle;
-    if (!battle || battle.resolving) return;
+    if (!battle) return;
+    if (battle.resolving) {
+      if (!isFirstBattleTutorial(battle) && combatPresentation.speed !== 'fast') {
+        combatPresentation.speed = 'fast';
+        playCombatCue('select');
+        renderRitualBattle();
+      }
+      return;
+    }
     if (!firstBattleTutorialExpected('depart')) return;
     if (isFirstBattleTutorial(battle)) advanceFirstBattleTutorialAction('depart');
+    combatPresentation.inspected = null;
+    combatPresentation.speed = 'normal';
     pushCombatEvent('start', 'Départ du convoi', 'Résolution des trois wagons de gauche à droite.');
-    battle.resolving = true; renderRitualBattle();
-    await wait(260);
-    if (applyDepartureLastWordSecrets()) { renderRitualBattle(); await wait(180); if (checkBattleEnd()) return; }
+    battle.resolving = true;
+    setCombatCue({ kind:'start', phase:'telegraph', title:'Le convoi prend son départ', detail:'Les passagers agissent d’abord, puis les adversaires, de gauche à droite.' });
+    renderRitualBattle();
+    playCombatCue('windup');
+    await waitForCombatPresentation(320);
+    if (run?.battle !== battle) return;
+    if (applyDepartureLastWordSecrets()) {
+      setCombatCue({ kind:'secret', phase:'consequence', title:'Un Last Word répond au départ', detail:'Son effet secret modifie la situation avant la première attaque.' });
+      renderRitualBattle();
+      await waitForCombatPresentation(330);
+      if (checkBattleEnd()) return;
+    }
     for (let lane = 0; lane < BALANCE.lanes; lane++) {
       const unit = battle.playerBoard[lane];
       if (!unit) continue;
-      attackFrom(unit, lane, 'player');
-      renderRitualBattle(); await wait(220);
-      if (checkBattleEnd()) return;
-      battle.fx = null;
-      renderRitualBattle(); await wait(55);
+      await presentUnitAction(battle, unit, lane, 'player');
+      if (run?.battle !== battle || checkBattleEnd()) return;
     }
     for (let lane = 0; lane < BALANCE.lanes; lane++) {
       const unit = battle.enemyBoard[lane];
       if (!unit) continue;
-      attackFrom(unit, lane, 'enemy');
-      renderRitualBattle(); await wait(220);
-      if (checkBattleEnd()) return;
-      battle.fx = null;
-      renderRitualBattle(); await wait(55);
+      await presentUnitAction(battle, unit, lane, 'enemy');
+      if (run?.battle !== battle || checkBattleEnd()) return;
     }
     battle.fx = null;
     battle.nextLumen = battle.playerBoard.filter(unit => unit?.sigils.includes('bone_digger')).length;
-    spawnForecast(); moveSprinters();
+    await presentForecastArrivals(battle);
+    if (run?.battle !== battle) return;
+    await presentSprinterMoves(battle);
+    if (run?.battle !== battle) return;
     const discarded = discardHandForNewTurn();
     battle.turn++; battle.drawUsed = true; battle.firstCardPlayed = false; battle.selectedHand = null; battle.stokedThisTurn = false;
     battle.lumen = baseLumenForRun() + battle.nextLumen;
     const drawn = drawRitualCards(BALANCE.turnDraw);
     battle.fx = { side:'player', lane:1, text:`${drawn}/${BALANCE.turnDraw} pioche` };
     pushCombatEvent('draw', 'Nouvelle main', `${drawn}/${BALANCE.turnDraw} cartes piochées · ${battle.lumen} Lueurs`);
-    if (discarded) ritualToast(`${discarded} carte${discarded > 1 ? 's' : ''} non jouée${discarded > 1 ? 's' : ''} en défausse · ${drawn} piochée${drawn > 1 ? 's' : ''}.`);
+    setCombatCue({
+      kind:'draw',
+      phase:'consequence',
+      resourceTargets:['deck','hand','lumen'],
+      title:'Une nouvelle main est distribuée',
+      detail:`${discarded} carte${discarded > 1 ? 's' : ''} défaussée${discarded > 1 ? 's' : ''} · ${drawn}/${BALANCE.turnDraw} piochées · ${battle.lumen} Lueurs.`,
+      sound:'draw'
+    });
+    renderRitualBattle();
+    playCombatCue('draw');
+    await waitForCombatPresentation(400);
+    if (run?.battle !== battle) return;
+    generateForecast();
+    const announced = battle.forecast.map((unit, lane) => unit ? { unit, lane } : null).filter(Boolean);
+    if (announced.length) {
+      setCombatCue({
+        kind:'forecast',
+        phase:'telegraph',
+        targets:announced.map(item => ({ kind:'open', side:'forecast', lane:item.lane })),
+        title:'Les prochaines manœuvres sont annoncées',
+        detail:announced.map(item => `${ritualUnitName(item.unit)} · wagon ${item.lane + 1}`).join(' · ')
+      });
+      renderRitualBattle();
+      await waitForCombatPresentation(330);
+    }
+    setCombatCue(null);
     battle.resolving = false;
-    generateForecast(); finishFirstBattleTutorialTurn(); persist(); renderRitualBattle(); enforceHandLimit();
+    finishFirstBattleTutorialTurn();
+    persist();
+    renderRitualBattle();
+    enforceHandLimit();
   }
 
-  function attackFrom(unit, lane, side) {
+  function attackFrom(unit, lane, side, projection = combatAttackProjection(unit, lane, side)) {
     const battle = run.battle;
     const name = getCard(unit.cardId)?.name || (side === 'player' ? 'Un passager' : 'Un ennemi');
     const beforeProgress = battle.progress;
     const beforePursuit = battle.pursuit;
     const ownBoard = side === 'player' ? battle.playerBoard : battle.enemyBoard;
     const targetBoard = side === 'player' ? battle.enemyBoard : battle.playerBoard;
-    const lanes = unit.sigils.includes('bifurcated') ? [lane - 1, lane + 1].filter(index => index >= 0 && index < BALANCE.lanes) : [lane];
-    const targetSide = side === 'player' ? 'enemy' : 'player';
-    battle.fx = { side, lane, targetSide, targets:lanes, text: side === 'player' ? `+${unit.attack} rail` : `+${unit.attack} poursuite` };
+    const targetSide = projection.targetSide;
     let contacted = 0;
-    for (const targetLane of lanes) {
+    const impacts = [];
+    const results = [];
+    const deaths = [];
+    let thornDamage = 0;
+    const addDeath = (deadUnit, deadLane, deadSide, reason) => {
+      if (!deaths.some(item => item.unit === deadUnit)) deaths.push({ unit:deadUnit, lane:deadLane, side:deadSide, reason });
+    };
+    for (const projectedTarget of projection.targets) {
+      const targetLane = projectedTarget.lane;
       const target = targetBoard[targetLane];
-      const fliesOver = unit.sigils.includes('airborne') && target && !target.sigils.includes('reach');
+      const fliesOver = projectedTarget.kind === 'bypass';
       if (!target || fliesOver) {
         if (side === 'player') battle.progress += unit.attack; else battle.pursuit += unit.attack;
+        results.push({ side:targetSide, lane:targetLane, label:fliesOver ? `SURVOL +${unit.attack}` : `+${unit.attack}` });
       } else {
         contacted++;
+        const before = target.hp;
         target.hp -= unit.attack;
         if (target.owner === 'player') syncRunCardHealth(target);
-        if (target.sigils.includes('thorns')) unit.hp--;
+        const thorns = target.sigils.includes('thorns');
+        if (thorns) {
+          unit.hp--;
+          thornDamage++;
+        }
         if (unit.owner === 'player') syncRunCardHealth(unit);
-        if (target.hp <= 0) killUnit(target, targetLane, side === 'player' ? 'enemy' : 'player');
+        impacts.push({ target, name:ritualUnitName(target), lane:targetLane, side:targetSide, before, after:target.hp, damage:unit.attack, thorns });
+        results.push({ side:targetSide, lane:targetLane, label:`−${unit.attack} VIE`, defeated:target.hp <= 0 });
+        if (target.hp <= 0) addDeath(target, targetLane, targetSide, 'combat');
       }
-      if (unit.hp <= 0) killUnit(unit, lane, side);
+      if (unit.hp <= 0) addDeath(unit, lane, side, 'réplique');
+    }
+    if (thornDamage > 0) {
+      results.push({ side, lane, label:`RÉPLIQUE −${thornDamage} VIE`, defeated:unit.hp <= 0 });
     }
     const progressDelta = battle.progress - beforeProgress;
     const pursuitDelta = battle.pursuit - beforePursuit;
     if (progressDelta > 0) pushCombatEvent('progress', name, `+${progressDelta} Progression Moonrail`, lane);
     else if (pursuitDelta > 0) pushCombatEvent('pursuit', name, `+${pursuitDelta} Poursuite adverse`, lane);
     else pushCombatEvent('attack', name, contacted ? `${contacted} cible${contacted > 1 ? 's' : ''} touchée${contacted > 1 ? 's' : ''}` : 'Aucune cible touchée', lane);
-    if (unit.sigils.includes('brittle') && ownBoard[lane] === unit) killUnit(unit, lane, side);
+    if (unit.sigils.includes('brittle') && ownBoard[lane] === unit) addDeath(unit, lane, side, 'usage unique');
+    return { projection, progressDelta, pursuitDelta, contacted, impacts, results, deaths };
   }
 
   function killUnit(unit, lane, side) {
@@ -4173,20 +4902,47 @@
 
   function spawnForecast() {
     const battle = run.battle;
+    const arrivals = [];
     battle.forecast.forEach((unit, lane) => {
       if (!unit || battle.enemyBoard[lane]) return;
       battle.enemyBoard[lane] = unit;
       const opposite = battle.playerBoard[lane];
-      if (opposite?.sigils.includes('guardian')) { opposite.hp++; opposite.maxHp++; syncRunCardHealth(opposite); }
+      const guardianHealed = !!opposite?.sigils.includes('guardian');
+      if (guardianHealed) { opposite.hp++; opposite.maxHp++; syncRunCardHealth(opposite); }
+      arrivals.push({ unit, lane, guardianHealed, healedUnit:guardianHealed ? opposite : null });
     });
+    return arrivals;
   }
 
-  function moveSprinters() {
-    for (const board of [run.battle.playerBoard, run.battle.enemyBoard]) {
-      const moves = [];
-      board.forEach((unit, lane) => { if (unit?.sigils.includes('sprinter')) moves.push([lane, board[(lane + 1) % BALANCE.lanes] ? (lane + 2) % BALANCE.lanes : (lane + 1) % BALANCE.lanes]); });
-      moves.forEach(([from, to]) => { if (board[from] && !board[to]) { board[to] = board[from]; board[from] = null; } });
+  function planSprinterMoves() {
+    const battle = run?.battle;
+    if (!battle) return [];
+    const moves = [];
+    for (const side of ['player','enemy']) {
+      const board = combatBoardForSide(side, battle);
+      const reserved = new Set();
+      board.forEach((unit, lane) => {
+        if (!unit?.sigils.includes('sprinter')) return;
+        const candidates = [(lane + 1) % BALANCE.lanes, (lane + 2) % BALANCE.lanes];
+        const to = candidates.find(candidate => !board[candidate] && !reserved.has(candidate));
+        if (to === undefined) return;
+        reserved.add(to);
+        moves.push({ side, board, unit, from:lane, to });
+      });
     }
+    return moves;
+  }
+
+  function moveSprinters(plan = planSprinterMoves()) {
+    const moved = [];
+    plan.forEach(move => {
+      if (move.board[move.from] === move.unit && !move.board[move.to]) {
+        move.board[move.to] = move.unit;
+        move.board[move.from] = null;
+        moved.push(move);
+      }
+    });
+    return moved;
   }
 
   function checkBattleEnd() {
@@ -5404,7 +6160,7 @@
   }
 
   function showRitualRulebook() {
-    openRitualModal(`<span class="kicker">MANUEL DE CONDUITE</span><h2>Les règles du Moonrail</h2><div class="rulebook-grid"><section><b>①</b><h3>La course</h3><p>Atteignez 10 Progression avant 10 Poursuite. Une unité sans opposant ajoute sa Puissance à la jauge correspondante.</p></section><section><b>②</b><h3>Lueur et Cendres</h3><p>Les coûts ✦ utilisent la Lueur du tour. Les coûts ✹ utilisent les Cendres produites en chauffant, sacrifiant ou perdant des cartes.</p></section><section><b>③</b><h3>Jouer ou remplacer</h3><p>Glissez une carte vers un wagon. Une carte ordinaire écrasée meurt pour la run ; une signature brisée reviendra seulement au prochain combat.</p></section><section><b>④</b><h3>Blessures persistantes</h3><p>La Vie restante est conservée entre les combats. Une carte morte quitte la run et le deck est remonté à 10. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p></section><section><b>⑤</b><h3>Main et chaudière</h3><p>La limite est de 4. La première chauffe de chaque tour donne +2 Lueurs et +1 Cendre sans perdre la carte ; toute autre chauffe du même tour la détruit et donne seulement +1 Cendre.</p></section><section><b>⑥</b><h3>Les manœuvres</h3><p>La rangée du haut annonce les ennemis à venir. Les règles de boss et les deux jauges restent visibles pendant leur activation.</p></section><section><b>⑦</b><h3>Choisir la ligne</h3><p>La carte montre les embranchements futurs, mais seules les étapes reliées au train sont cliquables. Vous choisissez à nouveau après chaque arrêt.</p></section><section><b>⑧</b><h3>Présages et gacha</h3><p>Tous les 3 Présages stellaires ajoutent 2 profondeurs virtuelles au prisme de fin de run. Une victoire ouvre aussi son gacha avant la fin personnelle.</p></section></div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir au plateau</button></div>`, 'rulebook-modal');
+    openRitualModal(`<span class="kicker">MANUEL DE CONDUITE</span><h2>Les règles du Moonrail</h2><div class="rulebook-grid"><section><b>①</b><h3>La course</h3><p>Atteignez 10 Progression avant 10 Poursuite. Une unité sans opposant ajoute sa Puissance à la jauge correspondante.</p></section><section><b>②</b><h3>Lueur et Cendres</h3><p>Les coûts ✦ utilisent la Lueur du tour. Les coûts ✹ utilisent les Cendres produites en chauffant, sacrifiant ou perdant des cartes.</p></section><section><b>③</b><h3>Jouer ou remplacer</h3><p>Glissez une carte vers un wagon. Une carte ordinaire écrasée meurt pour la run ; une signature brisée reviendra seulement au prochain combat.</p></section><section><b>④</b><h3>Blessures persistantes</h3><p>La Vie restante est conservée entre les combats. Une carte morte quitte la run et le deck est remonté à 10. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p></section><section><b>⑤</b><h3>Main et chaudière</h3><p>La limite est de 4. La première chauffe de chaque tour donne +2 Lueurs et +1 Cendre sans perdre la carte ; toute autre chauffe du même tour la détruit et donne seulement +1 Cendre.</p></section><section><b>⑥</b><h3>Les manœuvres</h3><p>La rangée du haut annonce les ennemis à venir. Les règles de boss et les deux jauges restent visibles pendant leur activation.</p></section><section><b>⑦</b><h3>Choisir la ligne</h3><p>La carte montre les embranchements futurs, mais seules les étapes reliées au train sont cliquables. Vous choisissez à nouveau après chaque arrêt.</p></section><section><b>⑧</b><h3>Présages et gacha</h3><p>Tous les 3 Présages stellaires ajoutent 2 profondeurs virtuelles au prisme de fin de run. Une victoire ouvre aussi son gacha avant la fin personnelle.</p></section><section><b>⑨</b><h3>Lire le plateau</h3><p>Cliquez une carte posée pour voir sa cible, sa Vie réelle et ses sigils. « Lire en grand » ou la touche I ouvre son inspection détaillée ; Échap revient au combat. Pendant un départ, un second clic sur la cloche accélère seulement les animations.</p></section></div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir au plateau</button></div>`, 'rulebook-modal');
   }
 
   function guardianStoryProgress(guardianId) {
@@ -5518,6 +6274,11 @@
       if (button.dataset.ritualPath) return choosePath(button.dataset.ritualPath);
       if (button.dataset.ritualDraw) return drawRitualCard(button.dataset.ritualDraw);
       if (button.dataset.ritualHand !== undefined) return selectHand(Number(button.dataset.ritualHand));
+      if (button.dataset.combatSide) {
+        const lane = Number(button.dataset.combatLane);
+        if (button.dataset.combatSide === 'player' && run?.battle?.selectedHand !== null) return interactPlayerLane(lane);
+        return inspectCombatUnit(button.dataset.combatSide, lane);
+      }
       if (button.dataset.ritualPlayerSlot !== undefined) return interactPlayerLane(Number(button.dataset.ritualPlayerSlot));
       if (button.dataset.ritualOverwrite !== undefined) return confirmLaneOverwrite(Number(button.dataset.ritualOverwrite));
       if (button.dataset.ritualReward) return takeReward(button.dataset.ritualReward);
@@ -5561,6 +6322,9 @@
         'ritual-card-type-tutorial-close': closeRitualModal,
         'ritual-end-turn': resolveRitualTurn,
         'ritual-stoke': stokeSelectedCard,
+        'ritual-inspect-selected': showSelectedCombatCardZoom,
+        'ritual-clear-inspection': clearCombatInspection,
+        'ritual-cancel-selection': clearCombatSelection,
         'ritual-first-tutorial-next': advanceFirstBattleTutorialInfo,
         'ritual-first-tutorial-restart': restartFirstBattleTutorial,
         'ritual-first-tutorial-reward': () => { closeRitualModal(); showCardReward('opening'); },
@@ -5601,6 +6365,45 @@
     }
   }
 
+  function clearDragTargetAffordances() {
+    $('#screen-ritual-battle')?.classList.remove('combat-dragging');
+    document.querySelectorAll('.drag-placement-ready, .drag-placement-blocked, .drag-placement-overwrite').forEach(slot => {
+      slot.classList.remove('drag-placement-ready', 'drag-placement-blocked', 'drag-placement-overwrite');
+    });
+    document.querySelectorAll('.drag-placement-label').forEach(label => label.remove());
+  }
+
+  function showDragTargetAffordances(index) {
+    const battle = run?.battle;
+    const ref = battle?.hand?.[index];
+    const card = effectiveCard(ref) || getCard(ref);
+    if (!battle || !card) return;
+    clearTransientCombatCue();
+    battle.selectedHand = index;
+    combatPresentation.inspected = null;
+    const resource = cardAffordable(card, battle);
+    $('#screen-ritual-battle')?.classList.add('combat-dragging');
+    const seen = new Set();
+    document.querySelectorAll('[data-ritual-player-slot]').forEach(element => {
+      const lane = Number(element.dataset.ritualPlayerSlot);
+      const slot = element.closest('.ritual-slot') || element;
+      if (seen.has(slot)) return;
+      seen.add(slot);
+      const occupied = !!battle.playerBoard[lane];
+      const state = !resource.affordable ? 'blocked' : occupied ? 'overwrite' : 'ready';
+      const copy = state === 'blocked'
+        ? `MANQUE ${resource.missing}`
+        : state === 'overwrite'
+        ? 'REMPLACER'
+        : 'POSER ICI';
+      slot.classList.add(`drag-placement-${state}`);
+      const label = document.createElement('span');
+      label.className = 'drag-placement-label';
+      label.textContent = copy;
+      slot.appendChild(label);
+    });
+  }
+
   function handleDragStart(event) {
     const card = event.target.closest('[data-ritual-hand]');
     if (!card || !run?.battle || run.battle.resolving) return;
@@ -5614,6 +6417,7 @@
     event.dataTransfer.setData('text/plain', card.dataset.ritualHand);
     event.dataTransfer.effectAllowed = 'move';
     run.battle.selectedHand = Number(card.dataset.ritualHand);
+    showDragTargetAffordances(Number(card.dataset.ritualHand));
   }
 
   function handleDragOver(event) {
@@ -5625,6 +6429,7 @@
 
   function handleDragEnd() {
     const battle = run?.battle;
+    clearDragTargetAffordances();
     if (!isFirstBattleTutorial(battle) || battle.resolving) return;
     if (['select_cloud','select_crane','select_fox'].includes(battle.tutorial.step) && battle.selectedHand !== null) {
       battle.selectedHand = null;
@@ -5636,6 +6441,7 @@
     const slot = event.target.closest('[data-ritual-player-slot]');
     if (!slot || !run?.battle || run.battle.resolving) return;
     event.preventDefault();
+    clearDragTargetAffordances();
     const index = Number(event.dataTransfer.getData('text/plain'));
     if (Number.isInteger(index) && !prepareFirstBattleTutorialDrop(index)) return;
     if (Number.isInteger(index)) run.battle.selectedHand = index;
@@ -5645,11 +6451,12 @@
   function handlePointerDown(event) {
     const card = event.target.closest('[data-ritual-hand]');
     if (!card || !run?.battle || run.battle.resolving || (event.button && event.button !== 0)) return;
-    ritualPointerDrag = { index:Number(card.dataset.ritualHand), startX:event.clientX, startY:event.clientY, dragging:false, ghost:null };
+    ritualPointerDrag = { index:Number(card.dataset.ritualHand), pointerId:event.pointerId, startX:event.clientX, startY:event.clientY, dragging:false, ghost:null };
+    try { card.setPointerCapture?.(event.pointerId); } catch {}
   }
 
   function handlePointerMove(event) {
-    if (!ritualPointerDrag || !run?.battle || run.battle.resolving) return;
+    if (!ritualPointerDrag || ritualPointerDrag.pointerId !== event.pointerId || !run?.battle || run.battle.resolving) return;
     const dx = event.clientX - ritualPointerDrag.startX;
     const dy = event.clientY - ritualPointerDrag.startY;
     if (!ritualPointerDrag.dragging && Math.hypot(dx, dy) < 8) return;
@@ -5661,6 +6468,7 @@
       }
       ritualPointerDrag.dragging = true;
       run.battle.selectedHand = ritualPointerDrag.index;
+      showDragTargetAffordances(ritualPointerDrag.index);
       source?.classList.add('pointer-drag-source');
       const ghost = source?.cloneNode(true);
       if (ghost) {
@@ -5738,9 +6546,11 @@
 
   function finishRitualPointerDrag(event, cancelled = false) {
     if (!ritualPointerDrag) return;
+    if (event.pointerId !== undefined && ritualPointerDrag.pointerId !== undefined && event.pointerId !== ritualPointerDrag.pointerId) return;
     const drag = ritualPointerDrag;
     document.querySelector(`[data-ritual-hand="${drag.index}"]`)?.classList.remove('pointer-drag-source');
     drag.ghost?.remove();
+    clearDragTargetAffordances();
     ritualPointerDrag = null;
     if (!drag.dragging) return;
     const suppressed = {
@@ -5769,15 +6579,37 @@
       event.preventDefault();
       return closeCodexPortraitZoom();
     }
-    if (document.querySelector('.card-zoom-layer') && event.key === 'Escape') {
+    const cardZoomLayer = document.querySelector('.card-zoom-layer');
+    if (cardZoomLayer) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        return closeCardZoom();
+      }
+      if (event.key === 'Tab') {
+        const focusables = [...cardZoomLayer.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')];
+        if (focusables.length) {
+          const first = focusables[0], last = focusables[focusables.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+          else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+        return;
+      }
       event.preventDefault();
-      return closeCardZoom();
+      return;
     }
     if (document.querySelector('#modal-layer.open .night-album-modal') && event.key === 'Escape') {
       event.preventDefault();
       return closeRitualModal();
     }
     if (!run?.battle || $('#modal-layer')?.classList.contains('open')) return;
+    if (event.key === 'Escape') {
+      if (clearCombatInspection()) return event.preventDefault();
+      if (clearCombatSelection()) return event.preventDefault();
+    }
+    if (event.key.toLowerCase() === 'i') {
+      event.preventDefault();
+      return showSelectedCombatCardZoom();
+    }
     if (event.key.toLowerCase() === 'q') drawRitualCard('deck');
     if (event.key.toLowerCase() === 'w') stokeSelectedCard();
     if (event.code === 'Space') { event.preventDefault(); resolveRitualTurn(); }

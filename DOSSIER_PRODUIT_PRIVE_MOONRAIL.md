@@ -417,6 +417,13 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - Les deux jauges de combat restent toujours visibles sous forme de compteurs `/10` accompagnés d’une barre de progression animée et strictement synchronisée : Moonrail pour le joueur, Poursuite pour l’adversaire. Une valeur de `n/10` doit occuper visuellement `n × 10 %` de la piste. Le bandeau qui les contient doit commencer au-dessous de la barre globale et ne peut jamais passer derrière elle, même lors d’une animation ou d’un changement de résolution.
 - Les manœuvres annoncées utilisent des aperçus horizontaux compacts : illustration, nom, effet court, coût et statistiques restent identifiables sans afficher une carte entière réduite et coupée. La lecture des trois wagons occupe sa propre rangée et réduit son détail textuel sur un écran bas au lieu de le tronquer.
 - Le bloc Lueurs/Cendres est aligné comme une colonne de ressources indépendante et ne peut pas chevaucher les boutons de pioche/chauffe à gauche. L’aide contextuelle basse reste lisible même quand l’écran est compact.
+- Le combat suit une grammaire visuelle stable : sélection persistante, cibles nommées, intention, impact chiffré, puis conséquence. Une animation ne remplace jamais l’information textuelle et une action ne produit qu’une seule impulsion principale.
+- Sélectionner une carte de main révèle simultanément l’état des trois wagons : pose possible, coût insuffisant ou remplacement définitif. Le glisser-déposer emploie exactement les mêmes états et les mêmes libellés.
+- Cliquer une carte déjà posée ou annoncée ouvre une inspection tactique non destructive. La source, ses cibles réelles, la jauge ou la ressource concernée, sa Vie actuelle et l’effet conditionnel pertinent sont mis en évidence. Les effets déjà consommés à la pioche ou à la pose ne sont jamais présentés comme une prochaine cible.
+- La touche `I` ou le bouton « Lire en grand » ouvre un dialogue de carte sans modifier la sélection ni le combat. Le zoom emploie l’exemplaire exact, y compris sa Vie actuelle et ses améliorations, annonce correctement son coût en Lueurs ou en Cendres, piège le focus, se ferme avec Échap et restitue le focus au contrôle d’origine.
+- Une résolution est séquencée source → cibles → effet métier → deltas → mort/retour/ressource. Réplique, Renfort, Correspondance, Aiguillage, attaques libres, jauges, arrivées et effets de rupture désignent toujours l’élément réellement affecté.
+- Un second clic sur Départ accélère uniquement les attentes visuelles ; il ne saute ni ne répète aucune règle métier. Le tutoriel conserve sa cadence normale. Le mode « mouvement réduit » retire mouvements et pulsations, mais maintient les contours, libellés et temps de lecture.
+- Les annonces de combat utilisent une seule région vocale dédiée. Le journal reste consultable sans répéter chaque événement au lecteur d’écran ; les deux jauges exposent leurs valeurs minimales, maximales et courantes comme barres de progression.
 - Toute modification, perte, fusion, réglage, déblocage ou remplacement de carte montre la carte concernée et explique l’effet durable.
 - En combat, le nom d’une carte dispose de sa zone réservée avant troncature et son texte court reste lisible sans changer le zoom du navigateur. Les cartes de main conservent un ratio compris entre 0,70 et 0,82 au lieu d’être comprimées indépendamment en largeur ou en hauteur ; leur texte ne peut jamais empiéter sur les statistiques. L’aperçu détaillé conserve toujours le nom et l’effet complets.
 - Les statistiques, sigils et micro-libellés utiles des cartes restent lisibles, y compris dans le centre de test, le Grimoire, les cartes posées et le récapitulatif de run. Sur un écran de combat bas, les sigils des unités posées sont conservés sous forme de badges compacts plutôt que supprimés.
@@ -449,11 +456,12 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - Cartes et statistiques : [data/ritual_cards.json](./data/ritual_cards.json)
 - Vérités, secrets et récompenses : [data/ritual_story.json](./data/ritual_story.json)
 - Gameplay, déblocages, dialogues et gacha : [app/ritual.js](./app/ritual.js)
-- Interface : [app/index.html](./app/index.html) et [app/styles.css](./app/styles.css)
+- Interface : [app/index.html](./app/index.html), [app/styles.css](./app/styles.css) et [app/combat-feedback.css](./app/combat-feedback.css)
 - Tests produit : [tests/test_ritual.py](./tests/test_ritual.py)
 - Audit d’équilibrage : [tools/balance_ritual.py](./tools/balance_ritual.py)
 - Audit UI automatisé : [tools/ui_smoke.cjs](./tools/ui_smoke.cjs)
 - Audit ciblé combat : [tools/combat_fit_smoke.cjs](./tools/combat_fit_smoke.cjs)
+- Audit sémantique des actions de combat : [tools/combat_feedback_smoke.cjs](./tools/combat_feedback_smoke.cjs)
 - Parcours complet de première nuit : [tools/first_tutorial_smoke.cjs](./tools/first_tutorial_smoke.cjs)
 
 ## 15. Discipline de maintenance
@@ -463,6 +471,8 @@ Cette bible est un contrat vivant. Toute modification de règle, contenu, progre
 Le smoke test UI considère désormais comme bloquants tout texte dont la taille CSS source passe sous 8,8 px avant l’échelle globale du combat, tout bouton ou titre dont le contenu dépasse son cadre, et toute carte de main qui perd ses proportions. Cette règle complète le contrôle visuel manuel de 1280×600 à 1920×1080.
 
 Le smoke ciblé combat démarre une partie neuve à 1366×768, atteint le combat-prologue d’Ayame, pose une carte et résout un vrai départ. Il vérifie ensuite de 1280×600 à 1920×1080, ainsi qu’en 1024×768, que la table reste dans le viewport, que les cartes de main gardent leurs proportions, qu’aucun élément tactique ne déborde et que chaque remplissage de jauge correspond réellement à son compteur `/10`. Une sonde responsive séparée contrôle aussi le ratio des cartes proposées après combat sur écran bas.
+
+Le smoke sémantique de combat contrôle les trois affordances de pose, le zoom clavier et sa fermeture sans action parasite, l’inspection des cartes joueur/ennemi/annoncée, le glisser-déposer, le mode mouvement réduit et les quatre résolutions de référence. Il exige une vraie télégraphie possédant source et cible, puis un impact possédant un delta ; il vérifie aussi qu’une accélération répétée ne crée jamais un second tour.
 
 Le smoke de première nuit repart d’un stockage vierge, vérifie qu’Ayame est imposée et que la sélection des conductrices est absente, puis contrôle le coach et sa cible en 1280×600, 1024×768, 1366×768 et 1920×1080. Il tente une mauvaise carte et un drop invalide, pose ensuite l’Ogre par drag & drop, vérifie qu’un clic immédiat sur la Grue n’est pas absorbé, exécute les trois départs et traverse la victoire, la récompense et l’introduction de la carte. Il recharge volontairement les trois états de résolution et la phase de carte, exige une preuve visuelle de blessure, contrôle l’insertion atomique de la récompense, interdit le gacha d’abandon et exécute un vrai redémarrage sans nouvelle tentative ni progression permanente, puis confirme que la sélection des conductrices revient à la tentative suivante.
 
