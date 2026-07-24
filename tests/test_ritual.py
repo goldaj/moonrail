@@ -561,6 +561,19 @@ class RitualProductTests(unittest.TestCase):
         self.assertNotIn("const pool = profile.unlockedCards.map(getCard)", self.source)
         self.assertNotIn("order.slice(0, unlockedCount)", self.source)
 
+    def test_deck_reinforcement_uses_starter_deck_commons_and_rare_new_common_unlocks(self):
+        self.assertIn("const UNSEEN_COMMON_REINFORCEMENT_CHANCE = 0.04", self.source)
+        self.assertIn("function deckReinforcementPool()", self.source)
+        self.assertIn("function drawDeckReinforcement()", self.source)
+        self.assertIn("starterDeckForGuardian(run.guardianId)", self.source)
+        self.assertIn("card.rarity === 'common'", self.source)
+        self.assertIn("source:'unlocked_common'", self.source)
+        self.assertIn("source:'unseen_common'", self.source)
+        self.assertIn("ritualRandom() < UNSEEN_COMMON_REINFORCEMENT_CHANCE", self.source)
+        self.assertIn("profile.unlockedCards.push(card.id)", self.source)
+        self.assertIn("NOUVELLE COMMUNE DÉCOUVERTE", self.source)
+        self.assertNotIn("const pool = (profile.unlockedCards || []).map(getCard).filter(card => card && card.rarity !== 'offering'", self.source)
+
     def test_collection_observatory_milestones_and_story_depth_exist(self):
         self.assertGreaterEqual(len(self.story["truths"]), 64)
         self.assertGreaterEqual(sum(1 for truth in self.story["truths"] if "condition" in truth), 10)

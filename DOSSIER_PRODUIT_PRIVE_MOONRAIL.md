@@ -47,7 +47,7 @@ Les anciennes « cartes osseuses » sont désormais les Cartes de Cendres. Chauf
 
 ### Attrition et blessures persistantes
 
-La Vie restante d’une carte persiste entre les combats. Une carte ordinaire morte quitte la run. Sous 10 cartes vivantes, le Moonrail tire aléatoirement des renforts dans le pool permanent déjà débloqué. Spell Cards et Last Words constituent l’unique exception : détruites, elles restent absentes jusqu’à la fin du combat puis reviennent à pleine Vie. Cette stratégie accepte des pertes contrôlées pour renouveler un deck, mais devient dangereuse si la collection est trop hétérogène.
+La Vie restante d’une carte persiste entre les combats. Une carte ordinaire morte quitte la run. Sous 10 cartes vivantes, le Moonrail tire aléatoirement des renforts dans le deck de départ actuel de la conductrice et dans les cartes communes déjà débloquées par le joueur. Très rarement, un renfort peut être une carte commune encore inconnue : elle rejoint alors immédiatement la collection. Spell Cards et Last Words constituent l’unique exception : détruites, elles restent absentes jusqu’à la fin du combat puis reviennent à pleine Vie. Cette stratégie accepte des pertes contrôlées pour renouveler un deck, mais devient dangereuse si la collection est trop hétérogène.
 
 ### Écrasement volontaire
 
@@ -168,7 +168,7 @@ Score de prisme = profondeur de route + boss vaincus + 2 par tranche de 3 Présa
 | Stellaire | 12–18 | 34 % | 36 % | 24 % | 6 % | 0 % | Last Words possibles si leur Spell Card est gravée. |
 | Souverain | 19+ | 20 % | 32 % | 31 % | 14 % | 3 % | Vespera peut tomber après au moins une victoire ou cinq tentatives. |
 
-Pitié rare : 10 tirages en Crépusculaire, 8 en Lunaire, 6 en Stellaire, 5 en Souverain. Le gacha débloque les cartes pour les prochains pools de run ; il ne donne jamais deux fois la même récompense. Au tout début, les runs ne reforment le deck qu’avec le pool de départ ; les nouveaux renforts aléatoires deviennent possibles uniquement après leur acquisition permanente.
+Pitié rare : 10 tirages en Crépusculaire, 8 en Lunaire, 6 en Stellaire, 5 en Souverain. Le gacha débloque les cartes pour les prochains pools de run ; il ne donne jamais deux fois la même récompense. Au tout début, les runs reforment le deck avec le deck de départ et les communes déjà connues. La perte de cartes peut aussi découvrir très rarement une commune inconnue, mais les cartes uncommon, rare, secret et unique restent dépendantes des récompenses, secrets et gachas.
 
 Après le reveal du prisme, toute run ouvre un récapitulatif durable avant la fin personnelle ou le retour au menu. Il compare un instantané du profil pris au départ avec l’état final : nouvelles cartes, conductrices, Spell Cards, Last Words, vérités, fins, archives, souvenirs, fils, dossiers, verdicts, constellations, murmures et défis. Les nouvelles cartes glissent une à une dans l’Album de la nuit avec le compteur de collection avant/après. Les cartes seulement obtenues temporairement pendant la run ne sont jamais présentées comme permanentes.
 

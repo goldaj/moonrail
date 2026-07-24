@@ -14,6 +14,7 @@
     stopsPerControl: 5,
     rewardChoices: 3
   });
+  const UNSEEN_COMMON_REINFORCEMENT_CHANCE = 0.04;
   const FIRST_BATTLE_TUTORIAL_ID = 'ayame-quai-zero-v1';
   const FIRST_BATTLE_TUTORIAL_STEPS = Object.freeze({
     welcome: {
@@ -1976,6 +1977,47 @@
     return state;
   }
 
+  function isDeckReinforcementEligible(card) {
+    return card && card.rarity !== 'offering' && card.rarity !== 'unique' && card.tribe !== 'signature';
+  }
+
+  function isCommonDeckReinforcement(card) {
+    return isDeckReinforcementEligible(card) && card.rarity === 'common';
+  }
+
+  function deckReinforcementPool() {
+    if (!run) return { known:[], unseen:[] };
+    const originalIds = starterDeckForGuardian(run.guardianId).filter(id => isDeckReinforcementEligible(getCard(id)));
+    const originalSet = new Set(originalIds);
+    const known = [
+      ...originalIds.map(id => ({ card:getCard(id), source:'starter' })),
+      ...(profile.unlockedCards || [])
+        .filter(id => !originalSet.has(id))
+        .map(getCard)
+        .filter(isCommonDeckReinforcement)
+        .map(card => ({ card, source:'unlocked_common' }))
+    ].filter(entry => entry.card);
+    const unseen = cards
+      .filter(isCommonDeckReinforcement)
+      .filter(card => !(profile.unlockedCards || []).includes(card.id) && !originalSet.has(card.id))
+      .map(card => ({ card, source:'unseen_common' }));
+    return { known, unseen };
+  }
+
+  function drawDeckReinforcement() {
+    const pool = deckReinforcementPool();
+    const shouldDiscover = pool.unseen.length && ritualRandom() < UNSEEN_COMMON_REINFORCEMENT_CHANCE;
+    const candidates = shouldDiscover ? pool.unseen : (pool.known.length ? pool.known : pool.unseen);
+    if (!candidates.length) return null;
+    const entry = candidates[Math.floor(ritualRandom() * candidates.length)];
+    const card = entry.card;
+    const discovered = entry.source === 'unseen_common' && !(profile.unlockedCards || []).includes(card.id);
+    if (discovered) profile.unlockedCards.push(card.id);
+    if (discovered && !profile.discoveredCards.includes(card.id)) profile.discoveredCards.push(card.id);
+    addRunCard(card.id);
+    return { cardId:card.id, source:entry.source, discovered };
+  }
+
   function grantCardToProfile(cardId, addToRun = false) {
     const card = getCard(cardId);
     if (!card) return null;
@@ -2599,7 +2641,7 @@
       : '';
     openRitualModal(`<span class="kicker">PREMIER SCEAU FRANCHI</span><h2>Ce que la nuit conserve</h2>
       <div class="first-victory-lessons">
-        <article><i>♥</i><div><strong>Les blessures restent</strong><span>Une carte blessée conserve sa Vie entre les combats. À zéro, elle quitte cette run ; le deck reçoit un renfort s’il passe sous 10 cartes.</span></div>${woundProof}</article>
+        <article><i>♥</i><div><strong>Les blessures restent</strong><span>Une carte blessée conserve sa Vie entre les combats. À zéro, elle quitte cette run ; sous 10 cartes, le deck reprend un renfort lié au départ ou aux communes débloquées.</span></div>${woundProof}</article>
         <article><i>✦</i><div><strong>Les ressources du trajet</strong><span>Cette victoire a donné des Éclats et un Présage stellaire. Les Éclats servent aux haltes ; les Présages renforcent le prisme de fin de run.</span></div></article>
         <article><i>▣</i><div><strong>Le deck évolue pendant la run</strong><span>La récompense suivante peut ajouter une carte. Refuser reste une vraie décision : la précision d’un petit deck a de la valeur.</span></div></article>
       </div>
@@ -4971,11 +5013,10 @@
     run.cardStates = states.filter(state => !state.dead);
     run.deck = run.cardStates.map(state => state.cardId);
     const replacements = [];
-    const pool = (profile.unlockedCards || []).map(getCard).filter(card => card && card.rarity !== 'offering' && card.rarity !== 'unique' && card.tribe !== 'signature');
-    while (run.deck.length < 10 && pool.length) {
-      const card = pool[Math.floor(ritualRandom() * pool.length)];
-      addRunCard(card.id);
-      replacements.push({ cardId:card.id });
+    while (run.deck.length < 10) {
+      const replacement = drawDeckReinforcement();
+      if (!replacement) break;
+      replacements.push(replacement);
     }
     return { lost, returned, replacements };
   }
@@ -4985,14 +5026,19 @@
     run.pendingCasualtyReport = report;
     const lostMarkup = report.lost.map(item => `<div><small>MORTE POUR LA RUN · ${esc(item.reason)}</small>${ritualCardDisplayMarkup(getCard(item.cardId))}</div>`).join('');
     const returnedMarkup = (report.returned || []).map(item => `<div class="signature-return-card"><small>SIGNATURE REFORMÉE · ${item.hp}/${item.hp} VIE</small>${ritualCardDisplayMarkup(effectiveCard({ cardId:item.cardId, runUid:item.uid }) || getCard(item.cardId))}</div>`).join('');
-    const replacementMarkup = report.replacements.map(item => `<div><small>RENFORT ALÉATOIRE · POOL DÉBLOQUÉ</small>${ritualCardDisplayMarkup(getCard(item.cardId))}</div>`).join('');
+    const replacementLabels = {
+      starter:'RENFORT · DECK DE DÉPART',
+      unlocked_common:'RENFORT · COMMUNE DÉBLOQUÉE',
+      unseen_common:'NOUVELLE COMMUNE DÉCOUVERTE'
+    };
+    const replacementMarkup = report.replacements.map(item => `<div><small>${esc(replacementLabels[item.source] || 'RENFORT ALÉATOIRE')}${item.discovered ? ' · ajoutée à la collection' : ''}</small>${ritualCardDisplayMarkup(getCard(item.cardId))}</div>`).join('');
     const lossSection = report.lost.length ? `<section class="casualty-losses"><h3>Pertes définitives de la run</h3><div>${lostMarkup}</div></section>` : '';
     const returnSection = (report.returned || []).length ? `<section class="signature-returns"><h3>Spell Cards reformées</h3><p>Leur présence est personnelle : elles seules reviennent au prochain combat, à pleine Vie.</p><div>${returnedMarkup}</div></section>` : '';
     const replacementSection = report.replacements.length ? `<section class="casualty-replacements"><h3>Renforts · deck remonté à ${run.deck.length}</h3><div>${replacementMarkup}</div></section>` : '';
     const headline = report.lost.length
       ? `${report.lost.length} carte${report.lost.length > 1 ? 's ont' : ' a'} quitté le convoi`
       : `${report.returned.length} signature${report.returned.length > 1 ? 's se sont' : ' s’est'} reformée${report.returned.length > 1 ? 's' : ''}`;
-    openRitualModal(`<span class="kicker">APRÈS LE COMBAT</span><h2>${headline}</h2><p>Les blessures ordinaires persistent. Les pertes quittent la run et sont remplacées sous 10 cartes ; les Spell Cards et Last Words constituent l’unique exception.</p><div class="casualty-ledger casualty-ledger-detailed">${lossSection}${returnSection}${replacementSection}</div><div class="modal-actions"><button class="primary-button large" data-action="ritual-casualty-continue">Continuer</button></div>`, 'casualty-modal');
+    openRitualModal(`<span class="kicker">APRÈS LE COMBAT</span><h2>${headline}</h2><p>Les blessures ordinaires persistent. Les pertes quittent la run ; sous 10 cartes, le convoi reprend d’abord dans le deck de départ et les communes débloquées, avec parfois une commune inconnue qui rejoint la collection. Spell Cards et Last Words constituent l’unique exception.</p><div class="casualty-ledger casualty-ledger-detailed">${lossSection}${returnSection}${replacementSection}</div><div class="modal-actions"><button class="primary-button large" data-action="ritual-casualty-continue">Continuer</button></div>`, 'casualty-modal');
   }
 
   function continueAfterRunCasualties() {
@@ -6156,11 +6202,11 @@
       return `<div class="run-card-state ${reforms ? 'returning-signature' : dead ? 'dead' : currentHp < card.health ? 'wounded' : 'healthy'}">${ritualCardDisplayMarkup(card)}<b>${esc(status)}</b>${run.cardInstanceMods?.[state.uid]?.tuned ? '<small>RÉGLÉE</small>' : ''}</div>`;
     }).join('');
     const battleState = battle ? `<div class="deck-pile-summary"><span><b>${battle.deck.length}</b> à piocher</span><span><b>${battle.hand.length}</b> en main</span><span><b>${battle.discard.length}</b> en défausse</span><span><b>${battle.playerBoard.filter(Boolean).length}</b> posées</span></div>` : '';
-    openRitualModal(`<span class="kicker">DECK DE LA NUIT</span><h2>${alive.length} cartes actives · ${wounded.length} blessée${wounded.length > 1 ? 's' : ''}${returning.length ? ` · ${returning.length} signature${returning.length > 1 ? 's' : ''} en reformation` : ''}</h2><p class="deck-modal-hint">La Vie affichée persiste entre les combats. Une carte morte est retirée puis remplacée sous 10 cartes. Seules les Spell Cards et Last Words se reforment à pleine Vie pour le combat suivant.</p>${battleState}<div class="ritual-deck-grid run-state-deck-grid">${cardsMarkup}</div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir</button></div>`, 'deck-modal run-deck-state-modal');
+    openRitualModal(`<span class="kicker">DECK DE LA NUIT</span><h2>${alive.length} cartes actives · ${wounded.length} blessée${wounded.length > 1 ? 's' : ''}${returning.length ? ` · ${returning.length} signature${returning.length > 1 ? 's' : ''} en reformation` : ''}</h2><p class="deck-modal-hint">La Vie affichée persiste entre les combats. Une carte morte est retirée ; sous 10 cartes, les renforts viennent du deck de départ, des communes débloquées ou, très rarement, d’une commune inconnue. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p>${battleState}<div class="ritual-deck-grid run-state-deck-grid">${cardsMarkup}</div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir</button></div>`, 'deck-modal run-deck-state-modal');
   }
 
   function showRitualRulebook() {
-    openRitualModal(`<span class="kicker">MANUEL DE CONDUITE</span><h2>Les règles du Moonrail</h2><div class="rulebook-grid"><section><b>①</b><h3>La course</h3><p>Atteignez 10 Progression avant 10 Poursuite. Une unité sans opposant ajoute sa Puissance à la jauge correspondante.</p></section><section><b>②</b><h3>Lueur et Cendres</h3><p>Les coûts ✦ utilisent la Lueur du tour. Les coûts ✹ utilisent les Cendres produites en chauffant, sacrifiant ou perdant des cartes.</p></section><section><b>③</b><h3>Jouer ou remplacer</h3><p>Glissez une carte vers un wagon. Une carte ordinaire écrasée meurt pour la run ; une signature brisée reviendra seulement au prochain combat.</p></section><section><b>④</b><h3>Blessures persistantes</h3><p>La Vie restante est conservée entre les combats. Une carte morte quitte la run et le deck est remonté à 10. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p></section><section><b>⑤</b><h3>Main et chaudière</h3><p>La limite est de 4. La première chauffe de chaque tour donne +2 Lueurs et +1 Cendre sans perdre la carte ; toute autre chauffe du même tour la détruit et donne seulement +1 Cendre.</p></section><section><b>⑥</b><h3>Les manœuvres</h3><p>La rangée du haut annonce les ennemis à venir. Les règles de boss et les deux jauges restent visibles pendant leur activation.</p></section><section><b>⑦</b><h3>Choisir la ligne</h3><p>La carte montre les embranchements futurs, mais seules les étapes reliées au train sont cliquables. Vous choisissez à nouveau après chaque arrêt.</p></section><section><b>⑧</b><h3>Présages et gacha</h3><p>Tous les 3 Présages stellaires ajoutent 2 profondeurs virtuelles au prisme de fin de run. Une victoire ouvre aussi son gacha avant la fin personnelle.</p></section><section><b>⑨</b><h3>Lire le plateau</h3><p>Cliquez une carte posée pour voir sa cible, sa Vie réelle et ses sigils. « Lire en grand » ou la touche I ouvre son inspection détaillée ; Échap revient au combat. Pendant un départ, un second clic sur la cloche accélère seulement les animations.</p></section></div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir au plateau</button></div>`, 'rulebook-modal');
+    openRitualModal(`<span class="kicker">MANUEL DE CONDUITE</span><h2>Les règles du Moonrail</h2><div class="rulebook-grid"><section><b>①</b><h3>La course</h3><p>Atteignez 10 Progression avant 10 Poursuite. Une unité sans opposant ajoute sa Puissance à la jauge correspondante.</p></section><section><b>②</b><h3>Lueur et Cendres</h3><p>Les coûts ✦ utilisent la Lueur du tour. Les coûts ✹ utilisent les Cendres produites en chauffant, sacrifiant ou perdant des cartes.</p></section><section><b>③</b><h3>Jouer ou remplacer</h3><p>Glissez une carte vers un wagon. Une carte ordinaire écrasée meurt pour la run ; une signature brisée reviendra seulement au prochain combat.</p></section><section><b>④</b><h3>Blessures persistantes</h3><p>La Vie restante est conservée entre les combats. Une carte morte quitte la run ; sous 10 cartes, le train tire dans le départ, les communes débloquées, puis très rarement une commune inconnue. Seules les Spell Cards et Last Words se reforment à pleine Vie.</p></section><section><b>⑤</b><h3>Main et chaudière</h3><p>La limite est de 4. La première chauffe de chaque tour donne +2 Lueurs et +1 Cendre sans perdre la carte ; toute autre chauffe du même tour la détruit et donne seulement +1 Cendre.</p></section><section><b>⑥</b><h3>Les manœuvres</h3><p>La rangée du haut annonce les ennemis à venir. Les règles de boss et les deux jauges restent visibles pendant leur activation.</p></section><section><b>⑦</b><h3>Choisir la ligne</h3><p>La carte montre les embranchements futurs, mais seules les étapes reliées au train sont cliquables. Vous choisissez à nouveau après chaque arrêt.</p></section><section><b>⑧</b><h3>Présages et gacha</h3><p>Tous les 3 Présages stellaires ajoutent 2 profondeurs virtuelles au prisme de fin de run. Une victoire ouvre aussi son gacha avant la fin personnelle.</p></section><section><b>⑨</b><h3>Lire le plateau</h3><p>Cliquez une carte posée pour voir sa cible, sa Vie réelle et ses sigils. « Lire en grand » ou la touche I ouvre son inspection détaillée ; Échap revient au combat. Pendant un départ, un second clic sur la cloche accélère seulement les animations.</p></section></div><div class="modal-actions"><button class="primary-button" data-action="ritual-modal-close">Revenir au plateau</button></div>`, 'rulebook-modal');
   }
 
   function guardianStoryProgress(guardianId) {
