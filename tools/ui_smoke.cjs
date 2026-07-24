@@ -301,6 +301,15 @@ async function auditViewport(browser, viewport) {
   }
   await clickDom(page, '[data-action="ritual-modal-close"]');
   await dismissOnboarding(page);
+  await page.evaluate(() => {
+    const key = 'moonrail.ritual.profile.v1';
+    const profile = JSON.parse(localStorage.getItem(key) || '{}');
+    profile.attempts = Math.max(1, Number(profile.attempts || 0));
+    profile.firstBattleTutorialCompleted = true;
+    localStorage.setItem(key, JSON.stringify(profile));
+  });
+  await page.reload({ waitUntil:'load' });
+  await page.locator('[data-action="ritual-new"]').waitFor({ state:'visible', timeout:10000 });
 
   await clickDom(page, '[data-action="ritual-new"]');
   results.push(await inspectScreen(page, 'prologue', viewport, errors));

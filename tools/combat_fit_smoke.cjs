@@ -294,6 +294,7 @@ async function main() {
     await page.goto(baseUrl, { waitUntil:'load', timeout:15000 });
     await page.evaluate(() => {
       for (const key of Object.keys(localStorage)) if (key.startsWith('moonrail.')) localStorage.removeItem(key);
+      localStorage.setItem('moonrail.ritual.profile.v1', JSON.stringify({ attempts:1, firstBattleTutorialCompleted:true }));
     });
     await page.reload({ waitUntil:'load' });
     await page.locator('[data-action="ritual-new"]').waitFor({ state:'visible', timeout:10000 });

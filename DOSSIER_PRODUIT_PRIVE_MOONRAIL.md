@@ -108,7 +108,20 @@ Le pool contient des murs gratuits, des effets instantanés à 0 Vie, des cartes
 - Les pertes de Vie persistent entre les combats ; le rapport de fin de combat sépare les pertes définitives, les renforts tirés pour revenir à 10 et les signatures reformées.
 - Le deck peut être consulté pendant toute la run avec l’état sain, blessé, mort, réglé, main, pioche, défausse et plateau.
 - L’abandon volontaire reste accessible depuis la carte et discrètement depuis le combat ; il demande confirmation puis suit le même gacha et le même récapitulatif qu’une défaite.
-- Après validation de la conductrice, la run démarre par une animation de départ du Moonrail puis un combat-prologue obligatoire. La carte de route n’apparaît qu’après la réussite de ce premier combat et sa récompense éventuelle ; ce combat ne consomme pas encore d’embranchement.
+- Une run démarre par une animation de départ du Moonrail puis un combat-prologue obligatoire. La carte de route n’apparaît qu’après la réussite de ce premier combat et sa récompense éventuelle ; ce combat ne consomme pas encore d’embranchement.
+
+### Première nuit et apprentissage scénarisé
+
+La toute première entrée dans la Centième Nuit constitue un parcours distinct :
+
+- Ayame est affectée automatiquement. Le joueur ne voit ni la sélection des conductrices ni la confirmation de deck pendant cette première expérience. Dès que le tutoriel a été réellement terminé, toutes les tentatives suivantes reprennent le choix de conductrice habituel.
+- La condition canonique est `firstBattleTutorialCompleted`, pas le nombre de tentatives. Abandonner, fermer ou interrompre la première nuit ne permet donc pas de sauter l’apprentissage : Ayame et le combat tutoriel reviennent jusqu’à sa complétion. Un ancien profil ayant déjà tenté une run est migré comme déjà formé.
+- Le Guetteur du quai zéro, sa main d’ouverture, sa pioche et ses manœuvres sont déterministes. Le joueur peut apprendre sans subir un mauvais tirage.
+- La visite explique successivement les jauges `/10`, les manœuvres annoncées, les trois colonnes de duel, l’anatomie d’une carte, la limite de main, la Lueur, les Cendres et la chaudière. Les explications sont affichées près de la zone concernée, avec un halo animé sur le plateau.
+- L’apprentissage actif demande ensuite onze gestes : sélectionner et poser deux passagers, lancer un départ, constater la pioche automatique, chauffer une carte, défendre la voie exposée et utiliser deux nouveaux départs pour gagner. Chaque popup n’avance qu’après l’action attendue. Un clic hors consigne conserve l’état du combat et rappelle le repère utile ; la pose guidée accepte le clic ou le drag & drop.
+- La résolution reste celle du vrai jeu : les cartes agissent de gauche à droite, les jauges se remplissent, la main est défaussée puis repiochée et les passagers restent sur le plateau. Le tutoriel ne remplace donc pas le moteur par une simulation décorative.
+- Après la victoire, un récapitulatif explique les blessures persistantes, les pertes de run, les Éclats, les Présages et la valeur d’un deck précis. Le joueur reçoit ensuite une vraie récompense à trois cartes avec refus possible, puis une dernière explication introduit la carte, ses embranchements, le miniboss et le contrôle céleste.
+- Les briefings de rareté, de type et de sigil sont suspendus pendant tout ce parcours. Ils sont regroupés et présentés seulement après l’arrivée effective sur la carte, afin de ne jamais recouvrir le guidage principal.
 
 Longueur cible actuelle : cinq haltes entre chaque contrôle divin. Chaque tronçon contient une bifurcation de contraintes évitable en amont, au moins deux propositions de combat normal et un Prévôt obligatoire avant le boss. Une run complète demande donc plusieurs cycles de combat, pas seulement une succession de cadeaux.
 
@@ -415,7 +428,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - Dans la confirmation d’une conductrice, le libellé d’action et le nom de la conductrice sont sur une même ligne quand l’espace le permet, pour préserver la hauteur utile réservée au deck de départ.
 - Dans la confirmation d’une conductrice, chaque nom de carte dispose de trois lignes ; les indices des conductrices verrouillées restent lisibles tandis que leur portrait seul porte le traitement visuel de verrouillage.
 - Dans cette confirmation, l’effet court est limité proprement à deux lignes et ne peut jamais empiéter sur les statistiques ; le zoom conserve l’effet complet.
-- Le premier départ n’affiche plus de titre chronométré artificiel. Si le Manuel est ouvert depuis cette popup, son bouton retour revient à la popup de premier départ. Les briefings de type de carte ou de sigil attendent la fermeture des instructions de première run avant de s’afficher.
+- Le premier départ n’affiche aucun titre chronométré artificiel. Son guidage est ancré au plateau, explique une seule notion à la fois et bloque seulement les actions qui pourraient casser le combat scénarisé. Les briefings de type de carte ou de sigil attendent l’arrivée sur la carte avant de s’afficher.
 - Les cartes annoncées du prochain départ sont des miniatures d’illustration sans faux micro-texte ; les cartes posées, la main et le Grimoire disposent chacun d’un gabarit dédié qui réserve physiquement la zone des statistiques.
 - En combat, les toasts se placent dans l’espace libre entre les ressources et la main : ils ne peuvent recouvrir ni les jauges, ni les cartes, ni les ressources, ni le bouton de départ.
 - Le smoke test force un toast de ressource sur un écran dédié afin que cette règle soit contrôlée indépendamment du tirage aléatoire de la main.
@@ -439,6 +452,7 @@ Les scénarios QA ignorent volontairement les prérequis et appliquent réelleme
 - Audit d’équilibrage : [tools/balance_ritual.py](./tools/balance_ritual.py)
 - Audit UI automatisé : [tools/ui_smoke.cjs](./tools/ui_smoke.cjs)
 - Audit ciblé combat : [tools/combat_fit_smoke.cjs](./tools/combat_fit_smoke.cjs)
+- Parcours complet de première nuit : [tools/first_tutorial_smoke.cjs](./tools/first_tutorial_smoke.cjs)
 
 ## 15. Discipline de maintenance
 
@@ -447,6 +461,8 @@ Cette bible est un contrat vivant. Toute modification de règle, contenu, progre
 Le smoke test UI considère désormais comme bloquants tout texte dont la taille CSS source passe sous 8,8 px avant l’échelle globale du combat, tout bouton ou titre dont le contenu dépasse son cadre, et toute carte de main qui perd ses proportions. Cette règle complète le contrôle visuel manuel de 1280×600 à 1920×1080.
 
 Le smoke ciblé combat démarre une partie neuve à 1366×768, atteint le combat-prologue d’Ayame, pose une carte et résout un vrai départ. Il vérifie ensuite de 1280×600 à 1920×1080, ainsi qu’en 1024×768, que la table reste dans le viewport, que les cartes de main gardent leurs proportions, qu’aucun élément tactique ne déborde et que chaque remplissage de jauge correspond réellement à son compteur `/10`. Une sonde responsive séparée contrôle aussi le ratio des cartes proposées après combat sur écran bas.
+
+Le smoke de première nuit repart d’un stockage vierge, vérifie qu’Ayame est imposée et que la sélection des conductrices est absente, parcourt la visite de l’interface, tente volontairement une mauvaise carte, pose ensuite l’Ogre par drag & drop, exécute les trois départs, traverse la victoire, la récompense et l’introduction de la carte. Il contrôle enfin la persistance de la complétion et confirme que la sélection des conductrices redevient disponible à la tentative suivante.
 
 Le démarrage du smoke attend le chargement de la page puis la présence visible du CTA principal `[data-action="ritual-new"]` ; il ne dépend pas d’un état `networkidle`, trop fragile pour une application riche en assets et animations.
 

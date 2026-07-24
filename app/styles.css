@@ -8385,3 +8385,208 @@ button:focus-visible,
   #modal-layer .route-choice-actions button{min-height:42px!important}
 }
 
+/* Première nuit : tutoriel contextuel, lisible et directement ancré au plateau. */
+.first-guide-introduction{
+  display:grid;
+  grid-template-columns:96px minmax(0,1fr);
+  align-items:center;
+  gap:16px;
+  margin:18px 0 6px;
+  padding:14px 16px;
+  border:1px solid rgba(203,166,255,.34);
+  border-radius:15px;
+  background:linear-gradient(135deg,rgba(94,59,126,.24),rgba(255,216,148,.06));
+  text-align:left;
+}
+.first-guide-introduction .first-guide-portrait{
+  width:96px;
+  height:96px;
+  border-radius:12px;
+  border:1px solid rgba(255,225,171,.38);
+  background-color:#171020;
+}
+.first-guide-introduction small,
+.first-guide-introduction strong,
+.first-guide-introduction span{display:block}
+.first-guide-introduction small{color:#d5b5ff;font-size:10px;letter-spacing:.14em}
+.first-guide-introduction strong{margin:5px 0;font:22px/1.1 var(--display);color:#fff2d2}
+.first-guide-introduction span{font-size:13px;line-height:1.45;color:#d2c8d8}
+
+#screen-ritual-battle.first-battle-guided .first-tutorial-focus{
+  position:relative!important;
+  z-index:91!important;
+  outline:3px solid #f7d486!important;
+  outline-offset:5px!important;
+  border-radius:12px!important;
+  filter:brightness(1.16) saturate(1.08)!important;
+  box-shadow:0 0 0 8px rgba(156,105,203,.25),0 0 34px rgba(255,214,134,.78)!important;
+  animation:firstTutorialFocus 1.35s ease-in-out infinite!important;
+}
+#screen-ritual-battle.first-battle-guided [data-ritual-card-id].first-tutorial-focus{
+  transform:translateY(-9px)!important;
+}
+.first-battle-tutorial-layer{
+  position:fixed;
+  inset:0;
+  z-index:95;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .22s ease;
+}
+.first-battle-tutorial-layer.visible{opacity:1}
+.first-battle-coach{
+  position:absolute;
+  width:min(410px,calc(100vw - 32px));
+  padding:18px 19px 17px;
+  border:1px solid rgba(255,220,153,.58);
+  border-radius:16px;
+  background:
+    linear-gradient(135deg,rgba(44,24,58,.985),rgba(11,12,24,.985)),
+    url('../assets/ritual-table-v1.png') center/cover;
+  box-shadow:0 22px 70px rgba(0,0,0,.72),inset 0 0 38px rgba(168,101,204,.12);
+  color:#f8f1ff;
+  pointer-events:auto;
+}
+.coach-top .first-battle-coach{top:86px}
+.coach-bottom .first-battle-coach{bottom:24px}
+.coach-left .first-battle-coach{left:24px}
+.coach-right .first-battle-coach{right:24px}
+.first-battle-coach::before{
+  content:'';
+  position:absolute;
+  top:14px;
+  bottom:14px;
+  width:3px;
+  left:0;
+  border-radius:3px;
+  background:linear-gradient(#e2b8ff,#ffd886);
+}
+.first-coach-kicker{
+  display:block;
+  color:#e0bdff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.first-battle-coach h3{
+  margin:5px 0 8px;
+  color:#fff0c9;
+  font:26px/1.08 var(--display);
+}
+.first-battle-coach p{
+  margin:0;
+  color:#e0d7e5;
+  font-size:14px;
+  line-height:1.5;
+}
+.first-battle-coach .primary-button{
+  min-height:44px;
+  margin-top:14px;
+  padding:10px 16px;
+  font-size:13px;
+}
+.first-coach-action{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-top:14px;
+  color:#ffd98b;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+.first-coach-action i{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#ffd98b;
+  box-shadow:0 0 0 0 rgba(255,217,139,.6);
+  animation:firstTutorialAction 1.35s ease-out infinite;
+}
+.first-battle-coach.nudge{animation:firstTutorialNudge .3s ease-in-out 2}
+
+#modal-layer .first-tutorial-victory-modal,
+#modal-layer .first-tutorial-map-modal{max-width:900px}
+.first-victory-lessons,
+.first-map-lessons{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin:18px 0;
+  text-align:left;
+}
+.first-victory-lessons article,
+.first-map-lessons article{
+  min-height:142px;
+  padding:15px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+}
+.first-victory-lessons i,
+.first-map-lessons b{
+  display:grid;
+  place-items:center;
+  width:38px;
+  height:38px;
+  margin-bottom:10px;
+  border-radius:50%;
+  background:rgba(189,137,235,.16);
+  color:#ffe09b;
+  font:20px var(--display);
+}
+.first-victory-lessons strong,
+.first-victory-lessons span,
+.first-map-lessons strong,
+.first-map-lessons span{display:block}
+.first-victory-lessons strong,
+.first-map-lessons strong{margin-bottom:6px;color:#fff1d0;font:18px/1.1 var(--display)}
+.first-victory-lessons span,
+.first-map-lessons span{color:#ccc2d1;font-size:12px;line-height:1.45}
+.first-ayame-line{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+  border-left:3px solid #d0a6f3;
+  background:rgba(139,90,174,.1);
+  text-align:left;
+}
+.first-ayame-line .first-guide-portrait{width:64px;height:64px;border-radius:10px}
+.first-ayame-line p{margin:0!important;font-size:13px!important}
+.first-ayame-line b{display:block;margin-bottom:3px;color:#f0ccff}
+.first-map-footnote{font-size:12px!important;text-align:center;color:#cfc2d3!important}
+
+@keyframes firstTutorialFocus{
+  0%,100%{box-shadow:0 0 0 6px rgba(156,105,203,.18),0 0 24px rgba(255,214,134,.48)}
+  50%{box-shadow:0 0 0 11px rgba(156,105,203,.3),0 0 42px rgba(255,214,134,.88)}
+}
+@keyframes firstTutorialAction{
+  0%{box-shadow:0 0 0 0 rgba(255,217,139,.62)}
+  100%{box-shadow:0 0 0 11px rgba(255,217,139,0)}
+}
+@keyframes firstTutorialNudge{
+  0%,100%{transform:translateX(0)}
+  35%{transform:translateX(-7px)}
+  70%{transform:translateX(7px)}
+}
+@media(max-width:760px){
+  .first-guide-introduction{grid-template-columns:70px minmax(0,1fr)}
+  .first-guide-introduction .first-guide-portrait{width:70px;height:70px}
+  .first-guide-introduction strong{font-size:19px}
+  .first-victory-lessons,.first-map-lessons{grid-template-columns:1fr}
+  .first-victory-lessons article,.first-map-lessons article{min-height:0}
+  .first-battle-coach{padding:15px 16px}
+  .first-battle-coach h3{font-size:22px}
+  .first-battle-coach p{font-size:12.5px}
+  .coach-top .first-battle-coach{top:76px}
+  .coach-bottom .first-battle-coach{bottom:12px}
+  .coach-left .first-battle-coach,.coach-right .first-battle-coach{left:12px;right:auto}
+}
+@media(prefers-reduced-motion:reduce){
+  #screen-ritual-battle.first-battle-guided .first-tutorial-focus,
+  .first-coach-action i,
+  .first-battle-coach.nudge{animation:none!important}
+}
+

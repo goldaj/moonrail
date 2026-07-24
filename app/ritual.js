@@ -14,6 +14,157 @@
     stopsPerControl: 5,
     rewardChoices: 3
   });
+  const FIRST_BATTLE_TUTORIAL_ID = 'ayame-quai-zero-v1';
+  const FIRST_BATTLE_TUTORIAL_STEPS = Object.freeze({
+    welcome: {
+      eyebrow:'PREMIER DÉPART · AYAME',
+      title:'Le Moonrail vous montre ses commandes',
+      text:'Ce combat est sans surprise : le guetteur répétera toujours la même manœuvre. Prenez le temps de lire le plateau, puis vous effectuerez vous-même chaque geste.',
+      target:'.ritual-battle-header',
+      button:'Commencer la visite',
+      next:'goal'
+    },
+    goal: {
+      eyebrow:'REPÈRE 1 SUR 5',
+      title:'Deux jauges, une seule course',
+      text:'Vos passagers font avancer Moonrail lorsqu’aucun ennemi ne les bloque. Atteignez 10 avant que la Poursuite adverse n’atteigne 10.',
+      target:'#ritual-balance',
+      button:'Voir les intentions',
+      next:'forecast'
+    },
+    forecast: {
+      eyebrow:'REPÈRE 2 SUR 5',
+      title:'Le danger est annoncé',
+      text:'Cette rangée montre les ennemis qui entreront au prochain départ. Lisez-la avant de choisir vos wagons : une silhouette annoncée n’attaque pas encore.',
+      target:'#ritual-enemy-forecast',
+      button:'Lire les wagons',
+      next:'lanes'
+    },
+    lanes: {
+      eyebrow:'REPÈRE 3 SUR 5',
+      title:'Chaque colonne est un duel',
+      text:'Un passager et un ennemi face à face se blessent. Sans opposant, leur Puissance remplit directement leur jauge. Les encarts centraux résument le risque de chaque wagon.',
+      target:'#ritual-lane-readout',
+      button:'Examiner la main',
+      next:'hand'
+    },
+    hand: {
+      eyebrow:'REPÈRE 4 SUR 5',
+      title:'Une carte se lit en quatre endroits',
+      text:'Le médaillon indique son coût, ⚔ sa Puissance, ♥ sa Vie et les petits sigils son effet spécial. La main est piochée automatiquement et ne dépasse normalement pas 4 cartes.',
+      target:'#ritual-hand',
+      button:'Voir les ressources',
+      next:'resources'
+    },
+    resources: {
+      eyebrow:'REPÈRE 5 SUR 5',
+      title:'Lueur, Cendres et chaudière',
+      text:'La Lueur ✦ revient à chaque tour. La première chauffe du tour donne +2 Lueurs et +1 Cendre ✹ ; chauffer encore détruit la carte pour la run et ne donne plus de Lueur.',
+      target:'.ritual-battle-controls',
+      button:'Jouer pour de vrai',
+      next:'select_cloud'
+    },
+    select_cloud: {
+      eyebrow:'GESTE 1',
+      title:'Choisissez l’Ogre des nuages',
+      text:'Cliquez sur sa carte. Son coût de 2 Lueurs laisse juste assez d’énergie pour un second passager.',
+      target:'[data-ritual-card-id="cloud_oni"]'
+    },
+    place_cloud: {
+      eyebrow:'GESTE 2',
+      title:'Ouvrez la voie de gauche',
+      text:'Cliquez sur le wagon 1 — ou glissez-y la carte. Sans ennemi en face, les 3 Puissances de l’Ogre feront avancer Moonrail.',
+      target:'[data-ritual-player-slot="0"]'
+    },
+    select_crane: {
+      eyebrow:'GESTE 3',
+      title:'Sélectionnez la Grue talisman',
+      text:'Son sigil Aérien lui permet de survoler les ennemis sans Vigie et de continuer à faire avancer le train.',
+      target:'[data-ritual-card-id="paper_crane"]'
+    },
+    place_crane: {
+      eyebrow:'GESTE 4',
+      title:'Placez la Grue au centre',
+      text:'Posez-la dans le wagon 2. La manœuvre annoncée y arrivera après le départ, mais la Grue pourra la survoler.',
+      target:'[data-ritual-player-slot="1"]'
+    },
+    depart_one: {
+      eyebrow:'GESTE 5',
+      title:'Faites partir le convoi',
+      text:'Cliquez sur DÉPART. Les trois wagons agiront de gauche à droite, puis les ennemis répondront et une nouvelle main sera piochée.',
+      target:'#ritual-bell'
+    },
+    resolving_one: {
+      eyebrow:'OBSERVEZ',
+      title:'Les actions se résolvent une par une',
+      text:'Suivez les impacts et les deux jauges. La Grue survole, tandis que la voie droite laissée vide ajoute de la Poursuite.',
+      target:'#ritual-balance'
+    },
+    after_one: {
+      eyebrow:'NOUVEAU TOUR',
+      title:'Le plateau reste, la main change',
+      text:'Vos passagers restent en place. Les cartes non jouées sont parties en défausse et trois nouvelles cartes ont été piochées automatiquement.',
+      target:'#ritual-hand',
+      button:'Apprendre à chauffer',
+      next:'select_wisp'
+    },
+    select_wisp: {
+      eyebrow:'GESTE 6',
+      title:'Sélectionnez le Feu-follet scribe',
+      text:'Nous allons le chauffer : il quittera la main pour cette rotation, sans être détruit.',
+      target:'[data-ritual-card-id="wisp_scribe"]'
+    },
+    stoke: {
+      eyebrow:'GESTE 7',
+      title:'Alimentez la chaudière',
+      text:'Cliquez sur CHAUFFER. Observez la Lueur augmenter et la première Cendre apparaître.',
+      target:'[data-action="ritual-stoke"]'
+    },
+    select_fox: {
+      eyebrow:'GESTE 8',
+      title:'Choisissez la Renarde du sanctuaire',
+      text:'Sa Vie élevée lui permet de tenir la voie droite et d’empêcher le guetteur d’ajouter encore de la Poursuite.',
+      target:'[data-ritual-card-id="shrine_fox"]'
+    },
+    place_fox: {
+      eyebrow:'GESTE 9',
+      title:'Fermez la voie de droite',
+      text:'Posez la Renarde dans le wagon 3, face au Feu-follet ennemi.',
+      target:'[data-ritual-player-slot="2"]'
+    },
+    depart_two: {
+      eyebrow:'GESTE 10',
+      title:'Confirmez votre défense',
+      text:'Lancez un deuxième départ. Les voies libres accélèrent le train pendant que la Renarde retient la menace.',
+      target:'#ritual-bell'
+    },
+    resolving_two: {
+      eyebrow:'OBSERVEZ',
+      title:'Attaque libre ou affrontement',
+      text:'Les cartes sans opposant remplissent la jauge. Celles qui se font face perdent de la Vie sans marquer directement de points.',
+      target:'#ritual-player-board'
+    },
+    after_two: {
+      eyebrow:'DERNIÈRE LEÇON',
+      title:'Un passager posé agit à chaque départ',
+      text:'Vous n’avez pas besoin de remplir le plateau à nouveau. Vos deux voies libres suffisent désormais à atteindre 10.',
+      target:'#ritual-player-board',
+      button:'Terminer le combat',
+      next:'depart_final'
+    },
+    depart_final: {
+      eyebrow:'GESTE 11',
+      title:'Donnez le dernier départ',
+      text:'Cliquez sur DÉPART. Après la victoire, Ayame vous expliquera ce qui persiste et comment choisir la suite de la route.',
+      target:'#ritual-bell'
+    },
+    resolving_final: {
+      eyebrow:'À VOUS',
+      title:'Moonrail franchit le premier sceau',
+      text:'La jauge atteint 10. Les prochains combats vous laisseront entièrement libre de vos décisions.',
+      target:'#ritual-balance'
+    }
+  });
   const ROUTE_GRAPH_VERSION = 2;
   const STARTER_POOLS = {
     controleur: ['moon_hare','moon_hare','paper_crane','shrine_fox','shrine_fox','bell_toad','wisp_scribe','bone_sparrow','cloud_oni','thorn_oracle'],
@@ -205,7 +356,7 @@
     unlockedGuardians: ['controleur','mecano'], unlockedSpellCards: [], unlockedAwakenings: [], characterClears: {}, starterOverrides: {}, ritualGachaHistory: [], ritualPity: 0, gachaUnlockedCards: [],
     seenCardTypeTutorials: [], pendingCardTypeTutorials: [], cardTutorialScopeVersion: 'deck-v2',
     unlockedCards: ['moon_hare','paper_crane','shrine_fox','bell_toad','lantern_moth','ink_tanuki','clock_harpy','cloud_oni','porcelain_golem','star_kappa','wisp_scribe','rail_cat','thorn_oracle','bone_sparrow','skull_mochi','ember_ticket','mirror_mouse','omen_lantern'],
-    lifetimeSacrifices: 0, lifetimeStokes: 0, lifetimeHandSacrifices: 0, secretVisits: 0, tutorialSeen: false, nextRunMurmur: null,
+    lifetimeSacrifices: 0, lifetimeStokes: 0, lifetimeHandSacrifices: 0, secretVisits: 0, tutorialSeen: false, firstBattleTutorialCompleted: false, nextRunMurmur: null,
     discoveredCards: [], milestones: [], lessons: [], bestStreak: 0, lifetimeTeeth: 0, maxRunDepth: 0, metaRewrites: 0,
     lastOpeningRouteSignature: null
   };
@@ -596,6 +747,7 @@
 
   function normalizeProfile(raw) {
     const result = { ...structuredClone(DEFAULT_PROFILE), ...(raw || {}) };
+    if (typeof raw?.firstBattleTutorialCompleted !== 'boolean') result.firstBattleTutorialCompleted = Number(raw?.attempts || 0) > 0;
     for (const key of ['truths','endings','memories','constellations','dialogueArchive','dialogueRewards','relationshipMemories','secretThreads','routeSecrets','secretVerdicts','secretThreadHints','resolvedMurmurs','unlockedGuardians','unlockedSpellCards','unlockedAwakenings','ritualGachaHistory','unlockedCards','gachaUnlockedCards','seenCardTypeTutorials','pendingCardTypeTutorials','discoveredCards','milestones','lessons']) if (!Array.isArray(result[key])) result[key] = [];
     if (!result.characterClears || Array.isArray(result.characterClears) || typeof result.characterClears !== 'object') result.characterClears = {};
     if (!result.starterOverrides || Array.isArray(result.starterOverrides) || typeof result.starterOverrides !== 'object') result.starterOverrides = {};
@@ -810,7 +962,10 @@
     layer.classList.remove('open');
     resetRitualViewportScroll();
     setTimeout(() => { if (!layer.classList.contains('open')) { layer.innerHTML = ''; resetRitualViewportScroll(); } }, 220);
-    setTimeout(() => { if (!layer.classList.contains('open')) showPendingCardTypeTutorial(); }, 260);
+    setTimeout(() => {
+      const firstLessonInProgress = run?.firstBattleTutorial && !profile.firstBattleTutorialCompleted;
+      if (!layer.classList.contains('open') && !firstLessonInProgress) showPendingCardTypeTutorial();
+    }, 260);
   }
 
   function ritualToast(message) {
@@ -929,11 +1084,12 @@
 
   function beginRitual() {
     if (!ritualReady) return ritualToast('Le rituel charge encore ses cartes.');
-    const first = profile.attempts === 0;
+    const first = !profile.firstBattleTutorialCompleted;
     openRitualModal(`<span class="kicker">${first ? 'PROLOGUE' : 'UNE AUTRE NUIT'}</span><h2>${first ? 'Le matin n’est pas venu' : 'Le train se souvient de vous'}</h2>
       <p>${first ? esc(story.premise) : 'La voie a changé, les dieux aussi. Une carte porte encore la marque de votre dernière mort.'}</p>
       <div class="story-vow"><small>VOTRE BUT</small><strong>${esc(story.surface_goal)}</strong></div>
-      <div class="modal-actions"><button class="primary-button large" data-action="ritual-choose-guardian">Choisir qui conduit <b>→</b></button></div>`, 'story-modal');
+      ${first ? `<div class="first-guide-introduction">${guardianPortraitMarkup('controleur', 'first-guide-portrait')}<div><small>PREMIÈRE CONDUCTRICE</small><strong>Ayame Tsukino vous attend au quai zéro</strong><span>Pour ce premier départ, elle conduit et vous apprend les commandes. Les conductrices pourront être choisies dès la tentative suivante.</span></div></div>` : ''}
+      <div class="modal-actions"><button class="primary-button large" data-action="${first ? 'ritual-start-first-night' : 'ritual-choose-guardian'}">${first ? 'Rejoindre Ayame' : 'Choisir qui conduit'} <b>→</b></button></div>`, 'story-modal');
   }
 
   function showGuardianChoice() {
@@ -995,15 +1151,16 @@
       <section><div class="guardian-preview-toolbar"><div class="guardian-deck-summary"><span><b>${deck.length}</b> cartes de départ</span>${secretSummaries}</div><div class="modal-actions sticky-actions"><button class="secondary-button" data-action="ritual-choose-guardian">Revenir</button><button class="primary-button large" data-action="ritual-confirm-guardian">Lancer la run <b>→</b></button></div></div><div class="ritual-deck-grid guardian-start-deck">${cardsMarkup}</div></section></div>`, 'guardian-preview-modal deck-modal');
   }
 
-  async function startRitual(guardianId) {
+  async function startRitual(guardianId, options = {}) {
     if (!profile.unlockedGuardians.includes(guardianId)) return;
     const seed = Date.now();
-    const deck = guardianDeckForStart(guardianId);
+    const deck = options.firstBattleTutorial ? [...STARTER_POOLS.controleur] : guardianDeckForStart(guardianId);
     for (const id of deck) if (!profile.discoveredCards.includes(id)) profile.discoveredCards.push(id);
     run = {
       id: `night-${seed}`, seed, rngState: seed >>> 0, guardianId, act: 0, daysLeft: BALANCE.stopsPerControl, step: 0,
       deck, cardMods: {}, teeth: 0, omens: 0, battle: null, pathChoices: [], pendingAfterReward: null, maluses: [], endGachaTaken:false,
-      secretVisits: 0, stokes: 0, streak: 0, startedAt: new Date().toISOString()
+      secretVisits: 0, stokes: 0, streak: 0, startedAt: new Date().toISOString(),
+      firstBattleTutorial: !!options.firstBattleTutorial
     };
     run.progressionBaseline = progressionSnapshot();
     run.hunterOrder = shuffle((story?.hunters || []).filter(hunter => hunter.id !== guardianId).map(hunter => hunter.id));
@@ -1019,8 +1176,10 @@
       text:'Le Moonrail s’arrache à la gare avant que la carte ne consente à se dessiner.'
     });
     startBattle(false, false, true);
-    queueCurrentDeckTutorials();
-    if (!$('#modal-layer')?.classList.contains('open')) showPendingCardTypeTutorial();
+    if (!run.firstBattleTutorial) {
+      queueCurrentDeckTutorials();
+      if (!$('#modal-layer')?.classList.contains('open')) showPendingCardTypeTutorial();
+    }
   }
 
   function availableHunters() {
@@ -2171,7 +2330,8 @@
     run.pendingAfterReward = after;
     run.rewardChoices = pool.map(card => card.id);
     persist();
-    openRitualModal(`<span class="kicker">${premium ? 'BUTIN DU PRÉVÔT' : 'LE BOSQUET VOUS A REMARQUÉ'}</span><h2>${premium ? 'Une carte renforcée échappe au Tribunal' : 'Une créature accepte de monter'}</h2><p>Choisissez une carte. Refuser garde votre deck plus précis.</p><div class="ritual-reward-grid">${pool.map(rewardChoiceMarkup).join('')}</div><div class="modal-actions"><button class="text-button" data-action="ritual-skip-reward">Ne rien prendre</button></div>`, 'reward-modal');
+    const firstLesson = after === 'opening' && run.firstBattleTutorial && !profile.firstBattleTutorialCompleted;
+    openRitualModal(`<span class="kicker">${firstLesson ? 'PREMIÈRE RÉCOMPENSE' : premium ? 'BUTIN DU PRÉVÔT' : 'LE BOSQUET VOUS A REMARQUÉ'}</span><h2>${firstLesson ? 'Un passager peut rejoindre cette tentative' : premium ? 'Une carte renforcée échappe au Tribunal' : 'Une créature accepte de monter'}</h2><p>${firstLesson ? 'Choisissez une carte pour l’ajouter au deck de cette run. Vous pouvez aussi refuser : un deck plus petit repioche plus souvent ses cartes essentielles.' : 'Choisissez une carte. Refuser garde votre deck plus précis.'}</p><div class="ritual-reward-grid">${pool.map(rewardChoiceMarkup).join('')}</div><div class="modal-actions"><button class="text-button" data-action="ritual-skip-reward">Ne rien prendre</button></div>`, `reward-modal${firstLesson ? ' first-tutorial-reward-modal' : ''}`);
   }
 
   function takeReward(id) {
@@ -2187,10 +2347,49 @@
 
   function finishPendingReward() {
     const after = run?.pendingAfterReward;
+    const finishesFirstLesson = after === 'opening' && run?.firstBattleTutorial && !profile.firstBattleTutorialCompleted;
     if (run) { run.pendingAfterReward = null; run.rewardChoices = null; }
     closeRitualModal();
+    if (finishesFirstLesson) return showFirstBattleMapLesson();
     if (after === 'opening') return showRitualMap();
     if (after === 'boss') advanceAfterHunter(); else completeNode();
+  }
+
+  function showFirstBattleVictoryLesson() {
+    if (!run) return;
+    clearFirstBattleTutorialVisuals();
+    $('#toast')?.classList.remove('show');
+    openRitualModal(`<span class="kicker">PREMIER SCEAU FRANCHI</span><h2>Ce que la nuit conserve</h2>
+      <div class="first-victory-lessons">
+        <article><i>♥</i><div><strong>Les blessures restent</strong><span>Une carte blessée conserve sa Vie entre les combats. À zéro, elle quitte cette run ; le deck reçoit un renfort s’il passe sous 10 cartes.</span></div></article>
+        <article><i>✦</i><div><strong>Les ressources du trajet</strong><span>Cette victoire a donné des Éclats et un Présage stellaire. Les Éclats servent aux haltes ; les Présages renforcent le prisme de fin de run.</span></div></article>
+        <article><i>▣</i><div><strong>Le deck évolue pendant la run</strong><span>La récompense suivante peut ajouter une carte. Refuser reste une vraie décision : la précision d’un petit deck a de la valeur.</span></div></article>
+      </div>
+      <div class="first-ayame-line">${guardianPortraitMarkup('controleur', 'first-guide-portrait')}<p><b>Ayame</b> « Le train n’oublie ni une blessure, ni une place offerte. Choisis ce qui montera avec nous. »</p></div>
+      <div class="modal-actions"><button class="primary-button large" data-action="ritual-first-tutorial-reward">Voir la récompense <b>→</b></button></div>`, 'first-tutorial-victory-modal');
+  }
+
+  function showFirstBattleMapLesson() {
+    openRitualModal(`<span class="kicker">LA VOIE SE DESSINE</span><h2>Après chaque arrêt, choisissez le suivant</h2>
+      <div class="first-map-lessons">
+        <article><b>1</b><strong>Suivez les lignes</strong><span>Seules les étapes reliées à votre position sont accessibles. Vous ne planifiez pas toute la run : vous décidez à chaque embranchement.</span></article>
+        <article><b>2</b><strong>Lisez avant de confirmer</strong><span>Cliquer sur une icône ouvre son détail. Vous pouvez annuler, comparer les autres voies, puis valider votre choix.</span></article>
+        <article><b>3</b><strong>Préparez le contrôle céleste</strong><span>Combats, haltes, contraintes et événements modifient votre deck avant le miniboss obligatoire puis la conductrice adverse.</span></article>
+      </div>
+      <p class="first-map-footnote">Le Manuel reste accessible pendant la run. Les prochains systèmes seront expliqués au moment exact où vous les rencontrerez.</p>
+      <div class="modal-actions"><button class="primary-button large" data-action="ritual-first-tutorial-map">Ouvrir la carte <b>→</b></button></div>`, 'first-tutorial-map-modal');
+  }
+
+  function completeFirstBattleTutorial() {
+    if (!run) return;
+    clearFirstBattleTutorialVisuals();
+    profile.firstBattleTutorialCompleted = true;
+    profile.tutorialSeen = true;
+    run.firstBattleTutorial = false;
+    queueCurrentDeckTutorials();
+    persist();
+    closeRitualModal();
+    showRitualMap();
   }
 
   function showUpgradeChoice() {
@@ -2785,23 +2984,43 @@
     return true;
   }
 
+  function scriptedTutorialDeck(refs) {
+    const remaining = [...refs];
+    const take = cardId => {
+      const index = remaining.findIndex(ref => cardIdOf(ref) === cardId);
+      if (index < 0) return null;
+      return remaining.splice(index, 1)[0];
+    };
+    const drawOrder = ['cloud_oni','paper_crane','bell_toad','thorn_oracle','shrine_fox','wisp_scribe','moon_hare'];
+    const scripted = drawOrder.map(take).filter(Boolean);
+    return [...remaining, ...scripted.reverse()];
+  }
+
+  function isFirstBattleTutorial(battle = run?.battle) {
+    return !!(run?.firstBattleTutorial && battle?.isOpening && battle?.tutorial?.id === FIRST_BATTLE_TUTORIAL_ID);
+  }
+
   function startBattle(isHunter, isMiniboss = false, isOpening = false) {
-    const encounter = encounterForBattle(isHunter, isMiniboss);
-    const battleDeck = shuffle(ensureRunCardStates().map(runBattleRef));
+    const firstTutorial = !!(isOpening && run?.firstBattleTutorial && !profile.firstBattleTutorialCompleted);
+    const encounter = firstTutorial
+      ? { id:'quai_zero_lesson', name:'Guetteur du quai zéro', deck:['wisp_scribe','paper_crane'], pressure:0, tutorial:true }
+      : encounterForBattle(isHunter, isMiniboss);
+    const runCards = ensureRunCardStates().map(runBattleRef);
+    const battleDeck = firstTutorial ? scriptedTutorialDeck(runCards) : shuffle(runCards);
     run.battle = {
       encounter, isHunter, isMiniboss, isOpening, deck:battleDeck, discard:[], hand:[],
       playerBoard:Array(BALANCE.lanes).fill(null), enemyBoard:Array(BALANCE.lanes).fill(null), forecast:Array(BALANCE.lanes).fill(null),
       selectedHand:null, progress:0, pursuit:(encounter.startPursuit || 0) + (run.maluses || []).filter(malus => malus.id === 'watching_eye').reduce((sum, malus) => sum + malus.value, 0),
       lumen:baseLumenForRun(), ashes:0, casualties:[],
       turn:1, drawUsed:true, stokedThisTurn:false, stokesThisBattle:0, nextLumen:0, resolving:false, firstDeathReturned:false, firstCardPlayed:false,
-      secretLastWords:{}, signatureBursts:[], bossRuleFx:null, weather:run.weather?.id || null, timeline:[], eventSeq:0
+      secretLastWords:{}, signatureBursts:[], bossRuleFx:null, weather:run.weather?.id || null, timeline:[], eventSeq:0,
+      tutorial:firstTutorial ? { id:FIRST_BATTLE_TUTORIAL_ID, step:'welcome', turnResolutions:0 } : null
     };
-    pushCombatEvent(isHunter ? 'rule' : isMiniboss ? 'rule' : 'start', isHunter ? 'Contrôle céleste' : isMiniboss ? 'Prévôt du Tribunal' : 'Incident de voie', encounter.name);
+    pushCombatEvent(firstTutorial ? 'start' : isHunter ? 'rule' : isMiniboss ? 'rule' : 'start', firstTutorial ? 'Leçon du quai zéro' : isHunter ? 'Contrôle céleste' : isMiniboss ? 'Prévôt du Tribunal' : 'Incident de voie', encounter.name);
     drawRitualCards(BALANCE.openingHand);
     if (encounter.boss && encounter.startPursuit) run.battle.bossRuleFx = { text:`Départ sous pression : +${encounter.startPursuit} Poursuite.`, lane:1, at:Date.now() };
     seedEnemyBoard(); generateForecast(); persist(); showRitualBattle();
     if (isHunter) showBossIntroModal();
-    else if (!profile.tutorialSeen) showRitualTutorial();
   }
 
   function dialogueShortName(entity, fallback = 'La conductrice') {
@@ -2959,6 +3178,11 @@
 
   function seedEnemyBoard() {
     const battle = run.battle, amount = battle.isHunter ? 2 : 1;
+    if (isFirstBattleTutorial(battle)) {
+      battle.enemyBoard = Array(BALANCE.lanes).fill(null);
+      battle.enemyBoard[2] = instantiate('wisp_scribe', 'enemy');
+      return;
+    }
     for (let i = 0; i < amount; i++) {
       const lane = (i * 2 + Math.floor(ritualRandom() * 2)) % BALANCE.lanes;
       const id = battle.encounter.deck[Math.floor(ritualRandom() * battle.encounter.deck.length)];
@@ -2969,6 +3193,14 @@
   function generateForecast() {
     const battle = run.battle;
     battle.forecast = Array(BALANCE.lanes).fill(null);
+    if (isFirstBattleTutorial(battle)) {
+      if (battle.turn === 1) {
+        const announced = instantiate('paper_crane', 'enemy');
+        announced.attack = 0;
+        battle.forecast[1] = announced;
+      }
+      return;
+    }
     const open = Array.from({ length:BALANCE.lanes }, (_, index) => index).filter(index => !battle.enemyBoard[index]);
     const snowSlow = battle.weather === 'glass_snow';
     const amount = Math.min(open.length, battle.isHunter && battle.turn > 1 && !snowSlow ? 2 : 1);
@@ -3034,7 +3266,7 @@
     $('#ritual-player-board').innerHTML = battle.playerBoard.map((unit, lane) => ritualSlotMarkup(unit, lane, 'player')).join('');
     const feed = $('#ritual-combat-feed');
     if (feed) feed.innerHTML = combatFeedMarkup(battle);
-    $('#ritual-hand').innerHTML = battle.hand.map((id, index) => ritualCardMarkup(effectiveCard(id) || getCard(id), `data-ritual-hand="${index}" draggable="true" aria-pressed="${battle.selectedHand === index}"`, null)).join('');
+    $('#ritual-hand').innerHTML = battle.hand.map((id, index) => ritualCardMarkup(effectiveCard(id) || getCard(id), `data-ritual-hand="${index}" data-ritual-card-id="${esc(cardIdOf(id))}" draggable="true" aria-pressed="${battle.selectedHand === index}"`, null)).join('');
     document.querySelectorAll('[data-ritual-draw]').forEach(button => {
       button.disabled = true;
       const small = button.querySelector('small');
@@ -3048,6 +3280,149 @@
       stokeButton.querySelector('small').textContent = battle.stokedThisTurn ? 'Détruire' : 'Chauffer';
     }
     $('#ritual-hint').innerHTML = battleCoachMarkup(selected);
+    renderFirstBattleTutorialCoach();
+  }
+
+  function firstBattleTutorialStep() {
+    if (!isFirstBattleTutorial()) return null;
+    return FIRST_BATTLE_TUTORIAL_STEPS[run.battle.tutorial.step] || FIRST_BATTLE_TUTORIAL_STEPS.welcome;
+  }
+
+  function renderFirstBattleTutorialCoach() {
+    const battle = run?.battle;
+    const step = firstBattleTutorialStep();
+    const screen = $('#screen-ritual-battle');
+    if (!battle || !step || !screen?.classList.contains('active')) {
+      clearFirstBattleTutorialVisuals();
+      return;
+    }
+    screen.classList.add('first-battle-guided');
+    const target = document.querySelector(step.target);
+    const existing = document.querySelector('.first-battle-tutorial-layer');
+    if (existing?.dataset.tutorialStep === battle.tutorial.step) {
+      document.querySelectorAll('.first-tutorial-focus').forEach(element => {
+        if (element !== target) element.classList.remove('first-tutorial-focus');
+      });
+      target?.classList.add('first-tutorial-focus');
+      return;
+    }
+    document.querySelectorAll('.first-tutorial-focus').forEach(element => element.classList.remove('first-tutorial-focus'));
+    existing?.remove();
+    target?.classList.add('first-tutorial-focus');
+    const rect = target?.getBoundingClientRect();
+    const position = rect && rect.top + rect.height / 2 > window.innerHeight * .56 ? 'coach-top' : 'coach-bottom';
+    const side = rect && rect.left + rect.width / 2 > window.innerWidth * .5 ? 'coach-left' : 'coach-right';
+    const interactive = !!step.button;
+    const layer = document.createElement('div');
+    layer.className = `first-battle-tutorial-layer ${position} ${side} ${interactive ? 'has-button' : 'awaits-action'}`;
+    layer.dataset.tutorialStep = battle.tutorial.step;
+    layer.setAttribute('aria-live', 'polite');
+    layer.innerHTML = `<aside class="first-battle-coach" role="dialog" aria-label="${esc(step.title)}">
+      <span class="first-coach-kicker">${esc(step.eyebrow)}</span>
+      <h3>${esc(step.title)}</h3>
+      <p>${esc(step.text)}</p>
+      ${interactive
+        ? `<button class="primary-button" data-action="ritual-first-tutorial-next">${esc(step.button)} <b>→</b></button>`
+        : `<small class="first-coach-action"><i></i> Faites ce geste pour continuer</small>`}
+    </aside>`;
+    screen.appendChild(layer);
+    requestAnimationFrame(() => layer.classList.add('visible'));
+  }
+
+  function clearFirstBattleTutorialVisuals() {
+    document.querySelectorAll('.first-tutorial-focus').forEach(element => element.classList.remove('first-tutorial-focus'));
+    document.querySelector('.first-battle-tutorial-layer')?.remove();
+    $('#screen-ritual-battle')?.classList.remove('first-battle-guided');
+  }
+
+  function nudgeFirstBattleTutorial(message = 'Suivez le repère lumineux pour poursuivre la leçon.') {
+    const coach = document.querySelector('.first-battle-coach');
+    coach?.classList.remove('nudge');
+    requestAnimationFrame(() => coach?.classList.add('nudge'));
+    ritualToast(message);
+  }
+
+  function setFirstBattleTutorialStep(step) {
+    const battle = run?.battle;
+    if (!isFirstBattleTutorial(battle) || !FIRST_BATTLE_TUTORIAL_STEPS[step]) return;
+    battle.tutorial.step = step;
+    persist();
+    renderRitualBattle();
+  }
+
+  function advanceFirstBattleTutorialInfo() {
+    const battle = run?.battle;
+    const step = firstBattleTutorialStep();
+    if (!isFirstBattleTutorial(battle) || !step?.next || battle.resolving) return;
+    setFirstBattleTutorialStep(step.next);
+  }
+
+  function firstBattleTutorialExpected(action, payload = {}) {
+    const battle = run?.battle;
+    if (!isFirstBattleTutorial(battle)) return true;
+    if (battle.resolving) return false;
+    const current = battle.tutorial.step;
+    const expected = {
+      select_cloud: ['select','cloud_oni'],
+      place_cloud: ['place',0,'cloud_oni'],
+      select_crane: ['select','paper_crane'],
+      place_crane: ['place',1,'paper_crane'],
+      depart_one: ['depart'],
+      select_wisp: ['select','wisp_scribe'],
+      stoke: ['stoke','wisp_scribe'],
+      select_fox: ['select','shrine_fox'],
+      place_fox: ['place',2,'shrine_fox'],
+      depart_two: ['depart'],
+      depart_final: ['depart']
+    }[current];
+    if (!expected) {
+      nudgeFirstBattleTutorial('Lisez ce repère, puis utilisez son bouton pour continuer.');
+      return false;
+    }
+    const selectedId = cardIdOf(battle.hand[battle.selectedHand]);
+    const cardId = payload.cardId || selectedId;
+    const valid = expected[0] === action
+      && (expected[1] === undefined || expected[1] === payload.lane || expected[1] === cardId)
+      && (expected[2] === undefined || expected[2] === cardId);
+    if (!valid) {
+      nudgeFirstBattleTutorial();
+      return false;
+    }
+    return true;
+  }
+
+  function advanceFirstBattleTutorialAction(action) {
+    const battle = run?.battle;
+    if (!isFirstBattleTutorial(battle)) return;
+    const current = battle.tutorial.step;
+    const next = {
+      select_cloud:'place_cloud',
+      place_cloud:'select_crane',
+      select_crane:'place_crane',
+      place_crane:'depart_one',
+      select_wisp:'stoke',
+      stoke:'select_fox',
+      select_fox:'place_fox',
+      place_fox:'depart_two'
+    }[current];
+    if (next) {
+      battle.tutorial.step = next;
+      persist();
+      renderRitualBattle();
+      return;
+    }
+    if (action === 'depart') {
+      battle.tutorial.step = current === 'depart_one' ? 'resolving_one' : current === 'depart_two' ? 'resolving_two' : 'resolving_final';
+      persist();
+    }
+  }
+
+  function finishFirstBattleTutorialTurn() {
+    const battle = run?.battle;
+    if (!isFirstBattleTutorial(battle)) return;
+    battle.tutorial.turnResolutions = Number(battle.tutorial.turnResolutions || 0) + 1;
+    if (battle.tutorial.step === 'resolving_one') battle.tutorial.step = 'after_one';
+    else if (battle.tutorial.step === 'resolving_two') battle.tutorial.step = 'after_two';
   }
 
   function selectedPlacementCard() {
@@ -3315,7 +3690,10 @@
   function selectHand(index) {
     const battle = run?.battle;
     if (!battle || battle.resolving || !battle.hand[index]) return;
+    const cardId = cardIdOf(battle.hand[index]);
+    if (!firstBattleTutorialExpected('select', { cardId })) return;
     battle.selectedHand = battle.selectedHand === index ? null : index;
+    if (isFirstBattleTutorial(battle)) return advanceFirstBattleTutorialAction('select');
     renderRitualBattle();
   }
 
@@ -3323,6 +3701,7 @@
     const battle = run?.battle;
     if (!battle || battle.resolving || battle.selectedHand === null) return;
     const selectedId = battle.hand[battle.selectedHand], card = getCard(selectedId);
+    if (!firstBattleTutorialExpected('place', { lane, cardId:cardIdOf(selectedId) })) return;
     const occupant = battle.playerBoard[lane];
     if (occupant) {
       const incoming = effectiveCard(selectedId) || card;
@@ -3383,11 +3762,14 @@
     applyTribeSetBonus();
     if (!unit.hp) { resolveZeroHealthArrival(unit, lane); killUnit(unit, lane, 'player'); }
     persist(); renderRitualBattle(); checkBattleEnd();
+    if (isFirstBattleTutorial(battle)) advanceFirstBattleTutorialAction('place');
   }
 
   function stokeSelectedCard() {
     const battle = run?.battle;
     if (!battle || battle.resolving || battle.selectedHand === null) return ritualToast('Sélectionnez une carte à envoyer dans la chaudière.');
+    const selectedCardId = cardIdOf(battle.hand[battle.selectedHand]);
+    if (!firstBattleTutorialExpected('stoke', { cardId:selectedCardId })) return;
     const id = battle.hand.splice(battle.selectedHand, 1)[0], card = getCard(id);
     const grantsLumen = !battle.stokedThisTurn;
     if (grantsLumen) {
@@ -3417,11 +3799,14 @@
     ritualToast(grantsLumen
       ? `${card?.name || 'La carte'} chauffe la chaudière : +${BALANCE.stokeGain} Lueurs et +1 Cendre.`
       : returnsNextCombat ? `${card?.name || 'La signature'} se reformera au prochain combat : +1 Cendre, aucune Lueur.` : `${card?.name || 'La carte'} est détruite pour la run : +1 Cendre, aucune Lueur.`);
+    if (isFirstBattleTutorial(battle)) advanceFirstBattleTutorialAction('stoke');
   }
 
   async function resolveRitualTurn() {
     const battle = run?.battle;
     if (!battle || battle.resolving) return;
+    if (!firstBattleTutorialExpected('depart')) return;
+    if (isFirstBattleTutorial(battle)) advanceFirstBattleTutorialAction('depart');
     pushCombatEvent('start', 'Départ du convoi', 'Résolution des trois wagons de gauche à droite.');
     battle.resolving = true; renderRitualBattle();
     await wait(260);
@@ -3455,7 +3840,7 @@
     pushCombatEvent('draw', 'Nouvelle main', `${drawn}/${BALANCE.turnDraw} cartes piochées · ${battle.lumen} Lueurs`);
     if (discarded) ritualToast(`${discarded} carte${discarded > 1 ? 's' : ''} non jouée${discarded > 1 ? 's' : ''} en défausse · ${drawn} piochée${drawn > 1 ? 's' : ''}.`);
     battle.resolving = false;
-    generateForecast(); persist(); renderRitualBattle(); enforceHandLimit();
+    generateForecast(); finishFirstBattleTutorialTurn(); persist(); renderRitualBattle(); enforceHandLimit();
   }
 
   function attackFrom(unit, lane, side) {
@@ -3617,6 +4002,7 @@
     run.pendingBossLoot = null;
     persist();
     if (continuation === 'boss') return showBossOutroDialogue(bossLoot);
+    if (continuation === 'first_tutorial') return showFirstBattleVictoryLesson();
     return showCardReward(continuation === 'opening' ? 'opening' : 'complete', continuation === 'miniboss');
   }
 
@@ -3635,6 +4021,7 @@
     const wasHunter = battle.isHunter;
     const wasMiniboss = battle.isMiniboss;
     const wasOpening = battle.isOpening;
+    const wasFirstTutorial = isFirstBattleTutorial(battle);
     const bossLoot = wasHunter ? `boss_${battle.encounter.id}_technique` : null;
     const casualtyReport = finalizeRunDeckAfterBattle(battle);
     run.battle = null;
@@ -3655,8 +4042,9 @@
     }
     run.pendingBossLoot = bossLoot;
     persist();
-    if (casualtyReport.lost.length || casualtyReport.returned.length) return showRunCasualtyReport(casualtyReport, wasHunter ? 'boss' : wasOpening ? 'opening' : wasMiniboss ? 'miniboss' : 'combat');
+    if (casualtyReport.lost.length || casualtyReport.returned.length) return showRunCasualtyReport(casualtyReport, wasHunter ? 'boss' : wasFirstTutorial ? 'first_tutorial' : wasOpening ? 'opening' : wasMiniboss ? 'miniboss' : 'combat');
     if (wasHunter) showBossOutroDialogue(bossLoot);
+    else if (wasFirstTutorial) showFirstBattleVictoryLesson();
     else showCardReward(wasOpening ? 'opening' : 'complete', wasMiniboss);
   }
 
@@ -4888,6 +5276,7 @@
       const handled = ({
         'home': () => showRitualScreen('menu'),
         'ritual-new': beginRitual,
+        'ritual-start-first-night': () => startRitual('controleur', { firstBattleTutorial:true }),
         'ritual-observatory': showObservatory,
         'ritual-night-album': showNightAlbum,
         'ritual-choose-guardian': showGuardianChoice,
@@ -4899,6 +5288,9 @@
         'ritual-card-type-tutorial-close': closeRitualModal,
         'ritual-end-turn': resolveRitualTurn,
         'ritual-stoke': stokeSelectedCard,
+        'ritual-first-tutorial-next': advanceFirstBattleTutorialInfo,
+        'ritual-first-tutorial-reward': () => { closeRitualModal(); showCardReward('opening'); },
+        'ritual-first-tutorial-map': completeFirstBattleTutorial,
         'ritual-rulebook': () => showRitualRulebook(false),
         'ritual-rulebook-from-tutorial': () => showRitualRulebook(true),
         'ritual-return-opening-tutorial': showRitualTutorial,
@@ -4941,6 +5333,10 @@
   function handleDragStart(event) {
     const card = event.target.closest('[data-ritual-hand]');
     if (!card || !run?.battle || run.battle.resolving) return;
+    if (!prepareFirstBattleTutorialDrag(Number(card.dataset.ritualHand))) {
+      event.preventDefault();
+      return;
+    }
     event.dataTransfer.setData('text/plain', card.dataset.ritualHand);
     event.dataTransfer.effectAllowed = 'move';
     run.battle.selectedHand = Number(card.dataset.ritualHand);
@@ -4975,6 +5371,10 @@
     if (!ritualPointerDrag.dragging && Math.hypot(dx, dy) < 8) return;
     if (!ritualPointerDrag.dragging) {
       const source = document.querySelector(`[data-ritual-hand="${ritualPointerDrag.index}"]`);
+      if (!prepareFirstBattleTutorialDrag(ritualPointerDrag.index)) {
+        ritualPointerDrag = null;
+        return;
+      }
       ritualPointerDrag.dragging = true;
       run.battle.selectedHand = ritualPointerDrag.index;
       source?.classList.add('pointer-drag-source');
@@ -4995,6 +5395,29 @@
     if (!ghost) return;
     ghost.style.left = `${event.clientX}px`;
     ghost.style.top = `${event.clientY}px`;
+  }
+
+  function prepareFirstBattleTutorialDrag(index) {
+    const battle = run?.battle;
+    if (!isFirstBattleTutorial(battle)) return true;
+    const ref = battle.hand[index];
+    const cardId = cardIdOf(ref);
+    const current = battle.tutorial.step;
+    if (!['select_cloud','select_crane','select_wisp','select_fox'].includes(current)) {
+      nudgeFirstBattleTutorial();
+      return false;
+    }
+    if (!firstBattleTutorialExpected('select', { cardId })) return false;
+    battle.selectedHand = index;
+    const next = {
+      select_cloud:'place_cloud',
+      select_crane:'place_crane',
+      select_wisp:'stoke',
+      select_fox:'place_fox'
+    }[current];
+    battle.tutorial.step = next;
+    persist();
+    return true;
   }
 
   function finishRitualPointerDrag(event, cancelled = false) {
@@ -5050,7 +5473,8 @@
       cards = await cardsResponse.json(); story = await storyResponse.json();
       cardMap = Object.fromEntries(cards.map(card => [card.id, card]));
       if (run?.battle) migrateBattle(run.battle);
-      if (run?.deck?.length) queueCurrentDeckTutorials(); else profile.pendingCardTypeTutorials = [];
+      const guidedBattleActive = !!(run?.firstBattleTutorial && run?.battle?.tutorial?.id === FIRST_BATTLE_TUTORIAL_ID);
+      if (run?.deck?.length && !guidedBattleActive) queueCurrentDeckTutorials(); else if (!run?.deck?.length) profile.pendingCardTypeTutorials = [];
       ritualReady = true; renderRitualProfile();
       document.addEventListener('click', handleClick);
       document.addEventListener('dragstart', handleDragStart);
@@ -5063,7 +5487,7 @@
       document.addEventListener('keydown', handleKey);
       window.addEventListener('resize', scheduleRouteViewportFocus);
       $('#ritual-route-viewport')?.addEventListener('keydown', handleRouteViewportKey);
-      if (run?.deck?.length) setTimeout(() => showPendingCardTypeTutorial(), 320);
+      if (run?.deck?.length && !guidedBattleActive) setTimeout(() => showPendingCardTypeTutorial(), 320);
     } catch (error) {
       console.error('Ritual boot failed', error);
       ritualToast('La Centième Nuit n’a pas pu charger ses cartes.');
