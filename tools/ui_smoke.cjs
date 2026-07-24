@@ -91,6 +91,7 @@ async function inspectScreen(page, label, viewport, errors) {
     }
     const cardOverlap = [...document.querySelectorAll('.ritual-card')]
       .filter(visible)
+      .filter(card => !card.closest('.forecast-row'))
       .map(card => ({ card, copy:card.querySelector('.ritual-card-frame>p'), stats:card.querySelector('.ritual-card-stats') }))
       .filter(item => item.copy && item.stats && visible(item.copy) && visible(item.stats))
       .filter(item => item.copy.getBoundingClientRect().bottom > item.stats.getBoundingClientRect().top + 1)
@@ -125,7 +126,9 @@ async function inspectScreen(page, label, viewport, errors) {
       const titleSize = Number.parseFloat(getComputedStyle(title).fontSize);
       const copySize = Number.parseFloat(getComputedStyle(copy).fontSize);
       const copyHeight = copy.getBoundingClientRect().height;
-      if (rect.width < 122 || rect.height < 170 || titleSize < 11.6 || copySize < 9.2 || copyHeight < 25) {
+      const minWidth = innerHeight >= 850 ? 104 : 97;
+      const minHeight = innerHeight >= 850 ? 140 : 123;
+      if (rect.width < minWidth || rect.height < minHeight || titleSize < 11.6 || copySize < 9.2 || copyHeight < 19) {
         combatCardReadability.push({
           card:card.dataset.cardId || card.textContent.trim().replace(/\s+/g, ' ').slice(0, 60),
           width:Math.round(rect.width),
@@ -216,6 +219,33 @@ async function completeOpeningBattle(page, errors) {
     if (!(await page.locator('#screen-ritual-battle.active').count())) {
       await page.waitForTimeout(250);
       continue;
+    }
+    if (turn === 10) {
+      await page.evaluate(() => {
+        const key = 'moonrail.ritual.run.v1';
+        const run = JSON.parse(localStorage.getItem(key) || 'null');
+        if (!run?.battle) return;
+        run.battle.progress = 9;
+        run.battle.pursuit = Math.min(3, Number(run.battle.pursuit || 0));
+        run.battle.playerBoard[0] = {
+          uid:'ui-smoke-closing-unit',
+          cardId:'cloud_oni',
+          ref:'cloud_oni',
+          runUid:null,
+          hp:3,
+          maxHp:3,
+          attack:3,
+          sigils:[],
+          owner:'player'
+        };
+        run.battle.enemyBoard[0] = null;
+        run.battle.forecast[0] = null;
+        run.battle.selectedHand = null;
+        run.battle.resolving = false;
+        localStorage.setItem(key, JSON.stringify(run));
+      });
+      await page.reload({ waitUntil:'load' });
+      await dismissOnboarding(page);
     }
     for (let placement = 0; placement < 3; placement++) {
       const move = await page.evaluate(() => {

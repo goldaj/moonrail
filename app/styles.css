@@ -6891,7 +6891,7 @@ button:focus-visible,
   #screen-ritual-battle .ritual-hand .ritual-card:focus-visible{width:132px!important;height:184px!important;flex-basis:132px!important}
   #screen-ritual-battle .ritual-hand .ritual-card-art{height:66px!important}
   #screen-ritual-battle .ritual-bell{width:106px!important;height:106px!important}
-  #app .toast.battle-toast{bottom:210px!important}
+  #app .toast.battle-toast{bottom:236px!important}
 }
 @media(max-width:980px){
   #screen-ritual-battle.ritual-battle-screen{padding:0!important}
@@ -7423,7 +7423,7 @@ button:focus-visible,
   color:#fff1c9!important;
   font-family:var(--display)!important;
   font-size:clamp(34px,3.2vw,49px)!important;
-  line-height:1!important;
+  line-height:1.08!important;
 }
 #screen-ritual-battle .ritual-battle-header{
   height:76px!important;
@@ -7783,17 +7783,6 @@ button:focus-visible,
   display:block!important;
   min-width:0;
   will-change:width;
-}
-
-/* Garde combat 11.3 : le 100 % navigateur reprend la densité homogène du 80 %. */
-#screen-ritual-battle.ritual-battle-screen{
-  padding:78px 6px 6px!important;
-}
-#screen-ritual-battle .ritual-table{
-  width:min(1480px,calc((100vw - 12px) * 1.25))!important;
-  height:calc((100dvh - 84px) * 1.25)!important;
-  max-height:none!important;
-  zoom:.8;
 }
 
 /* Un écran bas ne doit jamais rendre une récompense plus haute qu'un écran normal. */
@@ -8588,5 +8577,473 @@ button:focus-visible,
   #screen-ritual-battle.first-battle-guided .first-tutorial-focus,
   .first-coach-action i,
   .first-battle-coach.nudge{animation:none!important}
+}
+
+/* Passe tutoriel 12.0 : un coach lisible, mesuré contre sa cible et sans toast parasite. */
+#screen-ritual-battle.first-battle-guided .first-tutorial-focus{
+  outline:2px solid #ffd98b!important;
+  outline-offset:5px!important;
+  filter:none!important;
+  box-shadow:0 0 0 7px rgba(156,105,203,.2),0 0 28px rgba(255,214,134,.58)!important;
+}
+.first-battle-coach{
+  width:min(448px,calc(100vw - 32px));
+  max-height:calc(100dvh - 110px);
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,217,139,.62) rgba(15,12,25,.72);
+}
+.first-battle-coach:focus-within{
+  border-color:rgba(255,224,163,.82);
+}
+.first-coach-facts{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+.first-coach-facts span{
+  padding:6px 9px;
+  border:1px solid rgba(215,176,255,.24);
+  border-radius:999px;
+  background:rgba(170,112,211,.09);
+  color:#f4e9ff;
+  font-size:11px;
+  font-weight:800;
+  line-height:1.2;
+  letter-spacing:.035em;
+}
+.first-coach-card-readout{
+  display:grid;
+  grid-template-columns:68px minmax(0,1fr) auto;
+  align-items:center;
+  gap:11px;
+  margin-top:13px;
+  padding:9px;
+  border:1px solid rgba(255,221,153,.25);
+  border-radius:12px;
+  background:rgba(4,11,22,.54);
+}
+.first-coach-card-readout>i{
+  display:block;
+  width:68px;
+  height:68px;
+  border-radius:9px;
+  background-repeat:no-repeat;
+  box-shadow:0 5px 18px rgba(0,0,0,.35);
+}
+.first-coach-card-readout>div{
+  min-width:0;
+}
+.first-coach-card-readout small,
+.first-coach-card-readout strong,
+.first-coach-card-readout span{
+  display:block;
+}
+.first-coach-card-readout>div small{
+  color:#d7b9f4;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+.first-coach-card-readout>div strong{
+  margin:3px 0;
+  color:#fff0ca;
+  font:18px/1.05 var(--display);
+}
+.first-coach-card-readout>div span{
+  color:#d8cedd;
+  font-size:11.5px;
+  line-height:1.35;
+}
+.first-coach-card-readout>aside{
+  display:grid;
+  grid-template-columns:repeat(3,auto);
+  gap:5px;
+  justify-items:end;
+}
+.first-coach-card-readout>aside b{
+  min-width:37px;
+  padding:5px 6px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:8px;
+  background:rgba(255,255,255,.04);
+  color:#ffe3a2;
+  font-size:11px;
+  text-align:center;
+}
+.first-coach-card-readout>aside small{
+  grid-column:1 / 4;
+  max-width:124px;
+  color:#bff3ee;
+  font-size:9.5px;
+  font-weight:800;
+  line-height:1.25;
+  text-align:right;
+}
+.first-coach-live-event{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  align-items:center;
+  gap:9px;
+  margin-top:12px;
+  padding:8px 10px;
+  border:1px solid rgba(126,219,213,.25);
+  border-radius:10px;
+  background:rgba(7,32,39,.58);
+}
+.first-coach-live-event>i{
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  border-radius:9px;
+  background:rgba(126,219,213,.12);
+  color:#aef7ef;
+  font-style:normal;
+  font-size:17px;
+}
+.first-coach-live-event small,
+.first-coach-live-event strong,
+.first-coach-live-event span{
+  display:block;
+}
+.first-coach-live-event small{
+  color:#8dded7;
+  font-size:8.5px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+.first-coach-live-event strong{
+  margin:2px 0;
+  color:#fff0ca;
+  font-size:13px;
+}
+.first-coach-live-event span{
+  color:#d9d0de;
+  font-size:11px;
+  line-height:1.25;
+}
+.first-coach-correction{
+  display:none;
+  margin-top:10px;
+  padding:8px 10px;
+  border-left:3px solid #ffca70;
+  background:rgba(255,176,87,.09);
+  color:#ffe3af;
+  font-size:11.5px;
+  font-weight:800;
+  line-height:1.35;
+}
+.first-coach-correction.visible{display:block}
+.first-wound-proof,
+.first-reward-confirmed{
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr);
+  align-items:center;
+  gap:10px;
+  margin-top:11px;
+  padding:9px;
+  border:1px solid rgba(255,139,159,.2);
+  border-radius:10px;
+  background:rgba(94,26,48,.16);
+}
+.first-wound-proof>i,
+.first-reward-confirmed>i{
+  display:block;
+  width:54px;
+  height:54px;
+  border-radius:8px;
+  background-repeat:no-repeat;
+}
+.first-wound-proof small,
+.first-wound-proof strong,
+.first-wound-proof span,
+.first-reward-confirmed small,
+.first-reward-confirmed strong,
+.first-reward-confirmed span{display:block}
+.first-wound-proof small,
+.first-reward-confirmed small{color:#e5b9f7;font-size:8px;font-weight:900;letter-spacing:.1em}
+.first-wound-proof strong,
+.first-reward-confirmed strong{margin:2px 0;color:#fff0ca;font-size:13px}
+.first-wound-proof span,
+.first-reward-confirmed span{color:#d2c8d8;font-size:10.5px;line-height:1.3}
+.first-reward-confirmed{
+  max-width:620px;
+  margin:12px auto 2px;
+  border-color:rgba(126,219,213,.25);
+  background:rgba(23,89,92,.13);
+  text-align:left;
+}
+
+/* Passe combat 12.0 : dimensions réelles à 100 %, sans réduction globale des textes. */
+#screen-ritual-battle .ritual-table{
+  width:min(1480px,calc(100vw - 12px))!important;
+  height:100%!important;
+  max-height:100%!important;
+  zoom:1!important;
+}
+#screen-ritual-battle .combat-life-bar header{font-size:10.5px!important}
+#screen-ritual-battle .boss-rule-banner,
+#screen-ritual-battle .weather-rule-banner{font-size:10px!important}
+#screen-ritual-battle .ritual-forecast-label{font-size:10.5px!important}
+#screen-ritual-battle .forecast-row .ritual-card-frame>strong,
+#screen-ritual-battle .forecast-row .ritual-card:hover .ritual-card-frame>strong,
+#screen-ritual-battle .forecast-row .ritual-card:focus-visible .ritual-card-frame>strong{font-size:11.5px!important}
+#screen-ritual-battle .forecast-row .ritual-card-frame>p,
+#screen-ritual-battle .forecast-row .ritual-card:hover .ritual-card-frame>p,
+#screen-ritual-battle .forecast-row .ritual-card:focus-visible .ritual-card-frame>p{font-size:9.5px!important;line-height:1.05!important}
+#screen-ritual-battle .forecast-row .ritual-cost{font-size:9px!important}
+#screen-ritual-battle .lane-signal small{font-size:9.5px!important}
+#screen-ritual-battle .lane-signal b{font-size:10px!important}
+#screen-ritual-battle .lane-signal strong{font-size:12px!important}
+#screen-ritual-battle .lane-signal span{font-size:9.5px!important;line-height:1.08!important}
+#screen-ritual-battle .ritual-quick-guide,
+#screen-ritual-battle .ritual-quick-guide button{font-size:10.5px!important}
+#screen-ritual-battle .combat-feed-empty span,
+#screen-ritual-battle .combat-feed-item span,
+#screen-ritual-battle .combat-feed-item small{font-size:9.5px!important}
+#screen-ritual-battle .ritual-slot .ritual-card-frame>strong{font-size:11.5px!important}
+#screen-ritual-battle .ritual-slot .ritual-card-frame>p{font-size:9.5px!important;line-height:1.15!important}
+#screen-ritual-battle .ritual-hand .ritual-card-frame>strong,
+#screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>strong,
+#screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>strong{
+  min-height:34px!important;
+  max-height:34px!important;
+  font-size:13.2px!important;
+}
+#screen-ritual-battle .ritual-hand .ritual-card-frame>p,
+#screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>p,
+#screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>p{
+  height:29px!important;
+  font-size:10.3px!important;
+  line-height:1.18!important;
+}
+#screen-ritual-battle .ritual-hand .ritual-cost{font-size:11px!important}
+#screen-ritual-battle .ritual-piles button small,
+#screen-ritual-battle .ritual-resource-orbs>span small,
+#screen-ritual-battle .ritual-bell small{font-size:9.5px!important}
+#screen-ritual-battle .ritual-hint{font-size:11px!important}
+#screen-ritual-battle .battle-coach b{font-size:10px!important}
+#screen-ritual-battle .battle-coach span,
+#screen-ritual-battle .battle-coach .coach-effect{font-size:11px!important}
+
+@media(max-height:820px){
+  #screen-ritual-battle .ritual-row .ritual-slot{
+    width:90px!important;
+    max-width:90px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card,
+  #screen-ritual-battle .ritual-slot .ritual-card:hover,
+  #screen-ritual-battle .ritual-slot .ritual-card:focus-visible{
+    width:86px!important;
+    max-width:86px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card-frame>p{display:none!important}
+  #screen-ritual-battle .ritual-slot .ritual-card-art{height:48px!important}
+  #screen-ritual-battle .ritual-slot .ritual-card-frame>strong{
+    min-height:25px!important;
+    max-height:25px!important;
+    font-size:11px!important;
+  }
+}
+@media(max-height:740px){
+  #screen-ritual-battle .ritual-row .ritual-slot{
+    width:82px!important;
+    max-width:82px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card,
+  #screen-ritual-battle .ritual-slot .ritual-card:hover,
+  #screen-ritual-battle .ritual-slot .ritual-card:focus-visible{
+    width:78px!important;
+    max-width:78px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card-art{height:43px!important}
+  #screen-ritual-battle .ritual-slot .ritual-card-frame>strong{
+    min-height:23px!important;
+    max-height:23px!important;
+    font-size:10.5px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>strong,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>strong,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>strong{
+    min-height:31px!important;
+    max-height:31px!important;
+    font-size:12.5px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>p,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>p,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>p{
+    height:25px!important;
+    font-size:9.8px!important;
+  }
+}
+@media(max-height:650px){
+  #screen-ritual-battle .ritual-table{
+    grid-template-rows:60px 12px 34px 34px 88px 6px 88px 18px 0 132px 26px!important;
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+  #screen-ritual-battle .ritual-battle-header{
+    height:100%!important;
+    min-height:0!important;
+  }
+  #screen-ritual-battle .battle-title-block h2{font-size:16px!important}
+  #screen-ritual-battle .battle-guardian-badge{height:48px!important}
+  #screen-ritual-battle .combat-life-bar{padding:3px 6px!important}
+  #screen-ritual-battle .combat-life-bar header{margin-bottom:2px!important}
+  #screen-ritual-battle .combat-life-bar header b{font-size:18px!important}
+  #screen-ritual-battle .combat-life-bar .health-track{height:11px!important}
+  #screen-ritual-battle .ritual-row .ritual-slot{
+    width:70px!important;
+    max-width:70px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card,
+  #screen-ritual-battle .ritual-slot .ritual-card:hover,
+  #screen-ritual-battle .ritual-slot .ritual-card:focus-visible{
+    width:66px!important;
+    max-width:66px!important;
+    height:86px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card-art{height:35px!important}
+  #screen-ritual-battle .ritual-slot .ritual-card-sigils{
+    display:flex!important;
+    top:4px!important;
+    right:3px!important;
+    gap:0!important;
+    transform:scale(.72);
+    transform-origin:top right;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card-frame>strong{
+    min-height:21px!important;
+    max-height:21px!important;
+    font-size:9.5px!important;
+  }
+  #screen-ritual-battle .ritual-slot .ritual-card-stats b{
+    width:19px!important;
+    height:19px!important;
+    font-size:11px!important;
+  }
+  #screen-ritual-battle .ritual-battle-controls{
+    height:100%!important;
+    min-height:0!important;
+    grid-template-columns:98px 82px minmax(0,1fr) 82px!important;
+    gap:7px!important;
+  }
+  #screen-ritual-battle .ritual-hand{height:100%!important;min-height:0!important}
+  #screen-ritual-battle .ritual-hand .ritual-card,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible{
+    flex-basis:98px!important;
+    width:98px!important;
+    height:128px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-art{height:42px!important}
+  #screen-ritual-battle .ritual-hand .ritual-card-sigils{top:5px!important}
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>strong{
+    min-height:25px!important;
+    max-height:25px!important;
+    font-size:11.5px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>p{
+    height:21px!important;
+    font-size:9.2px!important;
+    line-height:1.12!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-stats b{
+    width:21px!important;
+    height:21px!important;
+    font-size:12px!important;
+  }
+  #screen-ritual-battle .ritual-bell{width:74px!important;height:74px!important}
+  #screen-ritual-battle .ritual-hint{font-size:10.2px!important}
+  .first-battle-coach{padding:13px 15px}
+  .first-battle-coach h3{font-size:22px}
+  .first-battle-coach p{font-size:12.5px;line-height:1.4}
+  .first-coach-card-readout{grid-template-columns:54px minmax(0,1fr)}
+  .first-coach-card-readout>i{width:54px;height:54px}
+  .first-coach-card-readout>aside{display:none}
+}
+@media(max-width:680px){
+  .first-coach-card-readout{grid-template-columns:52px minmax(0,1fr)}
+  .first-coach-card-readout>i{width:52px;height:52px}
+  .first-coach-card-readout>aside{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .first-battle-tutorial-layer{transition:none!important}
+  #screen-ritual-battle.first-battle-guided .first-tutorial-focus{animation:none!important}
+}
+
+/* Passe combat 12.1 : densité du plateau sans dézoomer le texte ni déformer les aperçus. */
+#screen-ritual-battle .ritual-table{
+  width:min(1200px,calc(100vw - 12px))!important;
+}
+#screen-ritual-battle .forecast-row .ritual-slot{
+  width:100%!important;
+  max-width:none!important;
+  height:calc(100% - 6px)!important;
+  align-self:center!important;
+}
+#screen-ritual-battle .forecast-row .ritual-card,
+#screen-ritual-battle .forecast-row .ritual-card:hover,
+#screen-ritual-battle .forecast-row .ritual-card:focus-visible{
+  width:100%!important;
+  max-width:none!important;
+  height:100%!important;
+}
+@media(max-height:820px){
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>strong,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>strong,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>strong{
+    min-height:29px!important;
+    max-height:29px!important;
+    line-height:1.05!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>p,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>p,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>p{
+    height:23px!important;
+    line-height:1.1!important;
+  }
+}
+
+#modal-layer .death-modal .run-murmur-report small,
+#modal-layer .death-modal>.memory-note{
+  font-size:9.5px!important;
+  line-height:1.3!important;
+}
+@media(min-height:651px){
+  #screen-ritual-battle .ritual-piles button{
+    height:68px!important;
+  }
+}
+@media(max-height:740px){
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>strong,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>strong,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>strong{
+    min-height:27px!important;
+    max-height:27px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>p,
+  #screen-ritual-battle .ritual-hand .ritual-card:hover .ritual-card-frame>p,
+  #screen-ritual-battle .ritual-hand .ritual-card:focus-visible .ritual-card-frame>p{
+    height:22px!important;
+  }
+}
+@media(max-height:650px){
+  #screen-ritual-battle .ritual-battle-controls{
+    grid-template-columns:112px 82px minmax(0,1fr) 82px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>strong{
+    min-height:25px!important;
+    max-height:25px!important;
+    font-size:11.8px!important;
+  }
+  #screen-ritual-battle .ritual-hand .ritual-card-frame>p{
+    height:21px!important;
+    font-size:9.4px!important;
+  }
 }
 
