@@ -1,4 +1,4 @@
-# Moonrail — La Centième Nuit
+# Moonrail — La Centième Nuit | roguelite narratif et deckbuilder
 
 Moonrail est un roguelite tactique original dans lequel un train céleste transporte une aube vivante à travers un monde de fantasy nocturne. Les contrôleurs du ciel remontent les voies pour l’intercepter ; chaque tentative révèle de nouveaux passagers, plans d’atelier et fragments d’histoire.
 
@@ -52,3 +52,18 @@ python tools/balance_ritual.py
 Les tests valident les données, les assets, les règles fondamentales de la boucle Moonrail, la disparition du mode legacy exposé, le gacha rituel et les garde-fous d’interface. Le rapport d’équilibrage donne des métriques reproductibles sur les coûts, les statistiques et les decks de départ.
 
 La direction produit détaillée se trouve dans [`REFONTE_CENTIEME_NUIT.md`](REFONTE_CENTIEME_NUIT.md).
+
+
+## Distinguer les prototypes de jeux
+
+Ce dépôt est le jeu narratif web Moonrail, avec cartes et tactique à trois wagons. Les autres prototypes sont des projets distincts :
+
+| Dépôt | Périmètre |
+| --- | --- |
+| `roguelite-bestiary-deckbuilder` | Bestiaire, deckbuilding et progression des combats Python |
+| `decklite-roguelite-deckbuilder` | DeckLite : prototype cartes, événements, récompenses et boutique |
+| `tilemap-exploration-roguelite` | Exploration de grille, déplacements, combat, boutique et inventaire |
+| `chess-roguelite` | Prototype autour des règles et pièces d'échecs |
+| `idle-clicker-tkinter` | Jeu incrémental à interface Tkinter |
+
+Le renommage du dépôt conserve son identité GitHub et tout son historique.
