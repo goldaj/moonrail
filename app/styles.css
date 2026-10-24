@@ -9047,3 +9047,8 @@ button:focus-visible,
   }
 }
 
+
+/* Compact access to portable local progression backups. */
+.profile-backup-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:0.5rem; margin:0.45rem auto 0; }
+.profile-backup-actions .text-button { font:inherit; font-size:0.78rem; min-height:34px; padding:0.35rem 0.8rem; border:1px solid rgba(183,217,221,0.34); border-radius:8px; background:rgba(6,25,34,0.5); color:inherit; cursor:pointer; }
+.profile-backup-actions .text-button:focus-visible { outline:2px solid #c4e9ea; outline-offset:2px; }

@@ -6,6 +6,7 @@ import os
 import socket
 import socketserver
 import threading
+import urllib.parse
 import urllib.error
 import urllib.request
 import webbrowser
@@ -19,8 +20,19 @@ MOONRAIL_MARKER = b"<title>Moonrail"
 
 
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
+    # Serve game assets, never repository sources or private product documents.
+    PUBLIC_PREFIXES = ("/app/", "/assets/", "/data/")
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
+
+    def send_head(self):
+        path = urllib.parse.unquote(urllib.parse.urlsplit(self.path).path)
+        if (".." in path.split("/")
+                or not (path == "/app" or path.startswith(self.PUBLIC_PREFIXES))):
+            self.send_error(403, "Only Moonrail game assets are public")
+            return None
+        return super().send_head()
 
     def log_message(self, format: str, *args) -> None:
         pass

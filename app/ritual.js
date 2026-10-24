@@ -885,6 +885,62 @@
     }));
   }
 
+  // Portable profile backups: never embed the currently active run in this file.
+  function exportRitualProfile() {
+    const backup = {
+      format: 'moonrail-profile-v1',
+      exportedAt: new Date().toISOString(),
+      profile: structuredClone(profile)
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `moonrail-progression-${backup.exportedAt.slice(0,10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function selectRitualProfileImport() {
+    if (run) {
+      openRitualModal('<h2>Progression en cours</h2><p>Terminez ou abandonnez cette tentative avant de restaurer une autre progression.</p><div class="modal-actions"><button data-action="ritual-modal-close">Compris</button></div>');
+      return;
+    }
+    $('#ritual-backup-import')?.click();
+  }
+
+  async function importRitualProfileFile(event) {
+    const input = event.target;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+    try {
+      if (file.size > 2_000_000) throw new Error('Fichier trop volumineux.');
+      const backup = JSON.parse(await file.text());
+      if (backup?.format !== 'moonrail-profile-v1'
+          || !backup.profile || typeof backup.profile !== 'object'
+          || Array.isArray(backup.profile)
+          || !Array.isArray(backup.profile.unlockedCards)
+          || !Array.isArray(backup.profile.truths)) {
+        throw new Error('Format de sauvegarde Moonrail non reconnu.');
+      }
+      if (run) throw new Error('Terminez d’abord votre tentative en cours.');
+      if (!window.confirm('Remplacer la progression locale par celle du fichier ? Cette opération est irréversible sans export préalable.')) return;
+      const restored = normalizeProfile(backup.profile);
+      // Do not change in-memory progression until the complete file is verified.
+      const previous = profile;
+      profile = restored;
+      try { persist(); }
+      catch (error) { profile = previous; throw error; }
+      showRitualScreen('menu');
+      openRitualModal('<h2>Progression restaurée</h2><p>La collection et les déblocages ont été chargés.</p><div class="modal-actions"><button data-action="ritual-modal-close">Continuer</button></div>');
+    } catch (error) {
+      openRitualModal(`<h2>Import impossible</h2><p>${esc(error.message || 'Fichier invalide.')}</p><div class="modal-actions"><button data-action="ritual-modal-close">Fermer</button></div>`);
+    }
+  }
+
   function persist() {
     if (ritualReady) { refreshGuardianUnlocks(); refreshMilestones(); }
     localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -6356,6 +6412,8 @@
       const handled = ({
         'home': returnRitualHome,
         'ritual-new': beginRitual,
+        'ritual-export-profile': exportRitualProfile,
+        'ritual-import-profile': selectRitualProfileImport,
         'ritual-start-first-night': () => startRitual('controleur', { firstBattleTutorial:true }),
         'ritual-observatory': showObservatory,
         'ritual-night-album': showNightAlbum,
@@ -6680,6 +6738,7 @@
       const guidedBattleActive = !!(run?.firstBattleTutorial && run?.battle?.tutorial?.id === FIRST_BATTLE_TUTORIAL_ID);
       if (run?.deck?.length && !guidedBattleActive) queueCurrentDeckTutorials(); else if (!run?.deck?.length) profile.pendingCardTypeTutorials = [];
       ritualReady = true; renderRitualProfile();
+      $('#ritual-backup-import')?.addEventListener('change', importRitualProfileFile);
       document.addEventListener('click', handleClick);
       document.addEventListener('dragstart', handleDragStart);
       document.addEventListener('dragover', handleDragOver);
