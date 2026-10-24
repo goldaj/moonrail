@@ -9,3 +9,8 @@
 - Keep product-facing changes documented in `DOSSIER_PRODUIT_PRIVE_MOONRAIL.md`. Skip the bible only for purely internal, non-product-visible maintenance or tiny copy removals that do not change behavior, systems, lore, unlocks, UI structure, or player-facing rules.
 - Version every project modification cleanly with git: inspect status first, commit the scoped change after validation, and push to `origin/main` when the pass is complete.
 - End every modification pass with a concise handoff: what changed, what was validated, commit hash, and whether it was pushed.
+
+
+## Contexte conversationnel ChatGPT / passation Codex
+
+Lire aussi **`docs/CHATGPT_PROJECT_HISTORY.md`** pour les échanges et décisions retrouvés. Ce journal est explicitement partiel ; ne jamais présenter un résumé comme un verbatim. À chaque changement de projet, ajouter les nouveaux échanges pertinents avec rôles Utilisateur/Assistant, texte exact et horodatages uniquement lorsqu'ils sont disponibles ; sinon noter la lacune. Préserver l'ensemble des règles et documents existants de ce dépôt et ne publier aucun secret.
