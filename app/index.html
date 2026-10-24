@@ -47,6 +47,11 @@
             <button class="secondary-button large observatory-button" data-action="ritual-rulebook"><span>Manuel<small>Règles et interface</small></span><b>?</b></button>
             <button class="secondary-button large gacha-test-button" data-action="test-gacha"><span>Centre de test complet<small>Gacha · pitié · doublons · statistiques</small></span><b>◈</b></button>
           </div>
+          <div class="profile-backup-actions" aria-label="Sauvegardes du joueur">
+            <button type="button" class="text-button" data-action="ritual-export-profile">Exporter ma progression</button>
+            <button type="button" class="text-button" data-action="ritual-import-profile">Restaurer une progression</button>
+            <input id="ritual-backup-import" type="file" accept="application/json,.json" hidden aria-label="Choisir un fichier de progression Moonrail">
+          </div>
           <div class="profile-strip">
             <div><strong id="ritual-attempts">0</strong><span>nuits tentées</span></div>
             <i></i>
